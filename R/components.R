@@ -14,10 +14,10 @@
 #'   library(shiny)
 #'   library(tabler)
 #'
-#'   ui <- tabler_page(
+#'   ui <- tablerPage(
 #'     title = "Card Demo",
-#'     body = tabler_body(
-#'       tabler_card(
+#'     body = tablerBody(
+#'       tablerCard(
 #'         title = "Sample Card",
 #'         "This is card content",
 #'         footer = "Card footer",
@@ -29,7 +29,7 @@
 #'   server <- function(input, output, session) {}
 #'   shinyApp(ui, server)
 #' }
-tabler_card <- function(..., title = NULL, footer = NULL, status = NULL, class = NULL) {
+tablerCard <- function(..., title = NULL, footer = NULL, status = NULL, class = NULL) {
   # Build status class
   status_class <- if (!is.null(status)) paste0("card-status-", status) else NULL
 
@@ -71,9 +71,9 @@ tabler_card <- function(..., title = NULL, footer = NULL, status = NULL, class =
 #' @param width Column width (1-12)
 #'
 #' @export
-tabler_value_box <- function(value, title, icon = NULL, color = "primary", width = 3) {
+tablerValueBox <- function(value, title, icon = NULL, color = "primary", width = 3) {
   icon_tag <- if (!is.null(icon)) {
-    tabler_icon(icon)
+    tablerIcon(icon)
   }
 
   shiny::tags$div(
@@ -119,7 +119,7 @@ tabler_value_box <- function(value, title, icon = NULL, color = "primary", width
 #' @param class Additional CSS classes
 #'
 #' @export
-tabler_icon <- function(name, library = "tabler", class = NULL) {
+tablerIcon <- function(name, library = "tabler", class = NULL) {
   icon_class <- switch(library,
     "tabler" = "ti ti-",
     "bootstrap" = "bi bi-",
@@ -142,7 +142,7 @@ tabler_icon <- function(name, library = "tabler", class = NULL) {
 #' @param label Show percentage label
 #'
 #' @export
-tabler_progress <- function(value, color = "primary", size = "md", label = TRUE) {
+tablerProgress <- function(value, color = "primary", size = "md", label = TRUE) {
   size_class <- if (size != "md") paste0("progress-", size) else NULL
 
   shiny::tags$div(
@@ -169,7 +169,7 @@ tabler_progress <- function(value, color = "primary", size = "md", label = TRUE)
 #' @param title Alert title (optional)
 #'
 #' @export
-tabler_alert <- function(..., type = "info", dismissible = FALSE, title = NULL) {
+tablerAlert <- function(..., type = "info", dismissible = FALSE, title = NULL) {
   dismiss_button <- if (dismissible) {
     shiny::tags$button(
       type = "button",
@@ -205,13 +205,13 @@ tabler_alert <- function(..., type = "info", dismissible = FALSE, title = NULL) 
 #' @param ... Additional HTML attributes
 #'
 #' @export
-tabler_button <- function(label, onclick = NULL, color = "primary",
-                          size = "md", outline = FALSE, icon = NULL, ...) {
+tablerButton <- function(label, onclick = NULL, color = "primary",
+                         size = "md", outline = FALSE, icon = NULL, ...) {
   size_class <- if (size != "md") paste0("btn-", size) else NULL
   color_class <- paste0("btn-", if (outline) "outline-", color)
 
   icon_tag <- if (!is.null(icon)) {
-    list(tabler_icon(icon), " ")
+    list(tablerIcon(icon), " ")
   }
 
   shiny::tags$button(

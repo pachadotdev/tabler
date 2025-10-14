@@ -3,7 +3,7 @@ Title: Create Dashboards with 'Tabler' and 'Shiny'
 Version: 0.1.0
 Authors@R: c(
     person("Mauricio", "Vargas Sepulveda", role = c("aut", "cre"), email = "m.vargas.sepulveda@gmail.com"),
-    person(family = "Tabler", role = c("ctb", "cph"), comment = "Tabler dashboard theme")
+    person(family = "Tabler", role = c("ctb", "cph"), comment = "Tabler Dashboard")
     )
 Description: Create beautiful dashboards using the Tabler CSS framework with Shiny.
     This package provides R functions to build interactive dashboards with the modern
@@ -15,11 +15,9 @@ Depends:
 License: Apache License (>= 2)
 Imports:
     shiny (>= 1.0.0),
-    htmltools (>= 0.3.5),
-    utils,
-    stats
+    htmltools (>= 0.3.5)
 Suggests:
-    ggplot2,
+    highcharter,
     DT
 RoxygenNote: 7.3.2
 Encoding: UTF-8
