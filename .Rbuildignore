@@ -1,0 +1,11 @@
+^.*\.Rproj$
+^\.Rproj\.user$
+^tools$
+^srcjs$
+^tests-manual$
+^\.travis\.yml$
+^appveyor\.yml$
+^\.github$
+^dev$
+^LICENSE\.md$
+^dev$
