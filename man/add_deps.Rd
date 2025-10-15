@@ -4,10 +4,12 @@
 \alias{add_deps}
 \title{Add Tabler Dependencies}
 \usage{
-add_deps(tag)
+add_deps(tag, layout = "default")
 }
 \arguments{
 \item{tag}{HTML tag object to attach dependencies to}
+
+\item{layout}{Layout type (for RTL-specific CSS)}
 }
 \value{
 HTML tag with dependencies attached

@@ -4,3 +4,4 @@
 *.sublime-*
 .*.Rnb.cached
 dev/tabler-git
+README.html

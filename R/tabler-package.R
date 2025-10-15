@@ -38,9 +38,13 @@
 #' Attach necessary CSS and JavaScript dependencies for Tabler dashboard
 #'
 #' @param tag HTML tag object to attach dependencies to
+#' @param layout Layout type (for RTL-specific CSS)
 #' @return HTML tag with dependencies attached
 #' @keywords internal
-add_deps <- function(tag) {
+add_deps <- function(tag, layout = "default") {
+  # Determine if RTL CSS is needed
+  is_rtl <- layout == "rtl"
+
   # Core dependencies
   deps <- list(
     # Tabler Core CSS and JS (mandatory)
@@ -48,7 +52,7 @@ add_deps <- function(tag) {
       name = "tabler-core",
       version = "1.4.0",
       src = c(file = system.file("tabler-1.4.0", package = "tabler")),
-      stylesheet = "css/tabler.min.css",
+      stylesheet = if (!is_rtl) "css/tabler.min.css" else "css/tabler.rtl.min.css",
       script = "js/tabler.min.js"
     ),
 

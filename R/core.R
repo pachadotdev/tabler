@@ -93,19 +93,25 @@ tablerPage <- function(title = NULL, navbar = NULL, sidebar = NULL, body = NULL,
   page_content <- get_layout_structure(layout, navbar, sidebar, body, footer)
 
   # Build the HTML structure
-  shiny::tagList(
-    shiny::tags$head(
-      shiny::tags$meta(charset = "utf-8"),
-      shiny::tags$meta(name = "viewport", content = "width=device-width, initial-scale=1, viewport-fit=cover"),
-      shiny::tags$meta(`http-equiv` = "X-UA-Compatible", content = "ie=edge"),
-      if (!is.null(title)) shiny::tags$title(title)
-    ),
-    do.call(shiny::tags$body, c(
-      body_attrs,
-      list(page_content)
-    ))
-  ) |>
-    add_deps()
+  # For RTL, we need to set dir on html tag
+  html_attrs <- if (layout == "rtl") list(dir = "rtl", lang = "en") else list(lang = "en")
+  
+  do.call(shiny::tags$html, c(
+    html_attrs,
+    list(
+      shiny::tags$head(
+        shiny::tags$meta(charset = "utf-8"),
+        shiny::tags$meta(name = "viewport", content = "width=device-width, initial-scale=1, viewport-fit=cover"),
+        shiny::tags$meta(`http-equiv` = "X-UA-Compatible", content = "ie=edge"),
+        if (!is.null(title)) shiny::tags$title(title)
+      ),
+      do.call(shiny::tags$body, c(
+        body_attrs,
+        list(page_content)
+      ))
+    )
+  )) |>
+    add_deps(layout = layout)
 }
 
 # Get layout-specific body attributes
@@ -120,17 +126,11 @@ get_layout_attributes <- function(layout) {
     "navbar-overlap" = "layout-navbar-overlap",
     "navbar-sticky" = "layout-navbar-sticky",
     "vertical-transparent" = "layout-vertical-transparent",
-    "rtl" = "layout-rtl",
     NULL
   )
 
   # Additional attributes for specific layouts
   attrs <- list(class = css_class(base_class, layout_class))
-
-  # RTL layout needs dir attribute
-  if (layout == "rtl") {
-    attrs$dir <- "rtl"
-  }
 
   # Dark navbar layouts
   if (layout == "navbar-dark") {

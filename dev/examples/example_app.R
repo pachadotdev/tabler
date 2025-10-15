@@ -12,7 +12,7 @@ load_all()
 #          "fluid-vertical" PENDING, "horizontal" PENDING, "navbar-dark",
 #          "navbar-overlap" PENDING, "navbar-sticky" PENDING, "rtl" PENDING, "vertical",
 #          "vertical-right" PENDING, "vertical-transparent" PENDING
-LAYOUT_TYPE <- "condensed"
+LAYOUT_TYPE <- "rtl"
 
 # Common content for all layouts
 dashboardContent <- tablerBody(
