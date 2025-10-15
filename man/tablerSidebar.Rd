@@ -4,10 +4,14 @@
 \alias{tablerSidebar}
 \title{Create a Dashboard Sidebar}
 \usage{
-tablerSidebar(..., theme = "dark")
+tablerSidebar(..., title = NULL, brand_image = NULL, theme = "dark")
 }
 \arguments{
-\item{...}{Sidebar content (typically tabler_nav_menu)}
+\item{...}{Sidebar content (typically sidebarMenu)}
+
+\item{title}{Brand title/text for sidebar header}
+
+\item{brand_image}{URL or path to brand image}
 
 \item{theme}{Sidebar theme: "light" or "dark"}
 }

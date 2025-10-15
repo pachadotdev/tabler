@@ -7,24 +7,24 @@
 tablerPage(
   title = NULL,
   navbar = NULL,
-  sidebar = NULL,
   body = NULL,
   footer = NULL,
-  layout = "default"
+  layout = "boxed"
 )
 }
 \arguments{
 \item{title}{App title}
 
-\item{navbar}{Dashboard navbar (optional)}
-
-\item{sidebar}{Dashboard sidebar (optional)}
+\item{navbar}{Dashboard navbar/menu. Can be:
+- `tablerNavbar()` for top navigation bar (most layouts)
+- `tablerSidebar()` for vertical sidebar (vertical layouts)
+- `horizontalMenu()` for horizontal menu (horizontal layout only)}
 
 \item{body}{Dashboard body content}
 
 \item{footer}{Dashboard footer (optional)}
 
-\item{layout}{Layout type: "default", "boxed", "combo", "condensed", "fluid",
+\item{layout}{Layout type: "boxed", "combo", "condensed", "fluid",
 "fluid-vertical", "horizontal", "navbar-dark", "navbar-overlap",
 "navbar-sticky", "rtl", "vertical", "vertical-right", "vertical-transparent"}
 }
@@ -36,7 +36,7 @@ if (interactive()) {
   library(shiny)
   library(tabler)
 
-  # Default layout
+  # Boxed layout (default)
   ui1 <- tablerPage(
     title = "My Dashboard",
     body = tablerBody(
@@ -44,36 +44,21 @@ if (interactive()) {
     )
   )
 
-  # Boxed layout
+  # Boxed layout with navbar
   ui2 <- tablerPage(
     title = "Boxed Dashboard",
     layout = "boxed",
+    navbar = tablerNavbar(title = "My App"),
     body = tablerBody(
       h1("Boxed Layout!")
     )
   )
 
-  # Combo layout with sidebar
+  # Vertical layout with sidebar
   ui3 <- tablerPage(
-    title = "Combo Dashboard",
-    layout = "combo",
-    navbar = tablerNavbar(title = "My App"),
-    sidebar = tablerSidebar(
-      sidebarMenu(
-        menuItem("Dashboard", tabName = "dashboard", icon = "home"),
-        menuItem("Users", tabName = "users", icon = "users")
-      )
-    ),
-    body = tablerBody(
-      h1("Combo Layout!")
-    )
-  )
-
-  # Vertical layout (sidebar-only)
-  ui4 <- tablerPage(
     title = "Vertical Dashboard",
     layout = "vertical",
-    sidebar = tablerSidebar(
+    navbar = tablerSidebar(
       sidebarMenu(
         menuItem("Dashboard", icon = "home"),
         menuItem("Users", icon = "users")
@@ -82,12 +67,30 @@ if (interactive()) {
     body = tablerBody(h1("Vertical Layout!"))
   )
 
-  # Fluid layout (full width)
+  # Horizontal layout with menu
+  ui4 <- tablerPage(
+    title = "Horizontal Dashboard",
+    layout = "horizontal",
+    navbar = horizontalMenu(
+      menuItem("Home", icon = "home"),
+      menuItem("Analytics", icon = "chart-bar")
+    ),
+    body = tablerBody(h1("Horizontal Layout!"))
+  )
+
+  # Combo layout with both navbar and sidebar
   ui5 <- tablerPage(
-    title = "Fluid Dashboard",
-    layout = "fluid",
-    navbar = tablerNavbar(title = "Fluid Layout"),
-    body = tablerBody(h1("Fluid Layout!"))
+    title = "Combo Dashboard",
+    layout = "combo",
+    navbar = list(
+      top = tablerNavbar(title = "My App"),
+      side = tablerSidebar(
+        sidebarMenu(
+          menuItem("Dashboard", icon = "home")
+        )
+      )
+    ),
+    body = tablerBody(h1("Combo Layout!"))
   )
 
   server <- function(input, output, session) {}
