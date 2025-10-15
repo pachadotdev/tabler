@@ -8,6 +8,8 @@
 
 # Tabler Dashboard for Shiny
 
+# NOT READY FOR GENERAL USE
+
 A modern dashboard framework for R Shiny using the beautiful Tabler
 Bootstrap theme.
 

@@ -132,11 +132,6 @@ get_layout_attributes <- function(layout) {
   # Additional attributes for specific layouts
   attrs <- list(class = css_class(base_class, layout_class))
 
-  # Dark navbar layouts
-  if (layout == "navbar-dark") {
-    attrs$`data-bs-theme` <- "dark"
-  }
-
   attrs
 }
 
@@ -149,6 +144,9 @@ get_layout_structure <- function(layout, navbar, sidebar, body, footer) {
     "vertical-transparent" = build_vertical_layout(navbar, sidebar, body, footer),
     "horizontal" = build_horizontal_layout(navbar, sidebar, body, footer),
     "fluid-vertical" = build_vertical_layout(navbar, sidebar, body, footer),
+    "navbar-overlap" = build_navbar_overlap_layout(navbar, sidebar, body, footer),
+    "navbar-dark" = build_navbar_dark_layout(navbar, sidebar, body, footer),
+    "navbar-sticky" = build_navbar_sticky_layout(navbar, sidebar, body, footer),
     build_default_layout(navbar, sidebar, body, footer)
   )
 }
@@ -250,20 +248,104 @@ build_vertical_layout <- function(navbar, sidebar, body, footer, side = "left") 
 # Helper function for horizontal layout
 build_horizontal_layout <- function(navbar, sidebar, body, footer) {
   shiny::tags$div(
-    class = "page page-center",
-    # Navbar with horizontal nav
+    class = "page",
+    # Navbar
+    if (!is.null(navbar)) navbar,
+
+    # Main content wrapper
+    shiny::tags$div(
+      class = "page-wrapper",
+
+      # Page body
+      shiny::tags$div(
+        class = "page-body",
+        body
+      ),
+
+      # Footer
+      if (!is.null(footer)) footer
+    )
+  )
+}
+
+# Helper function for navbar-overlap layout
+build_navbar_overlap_layout <- function(navbar, sidebar, body, footer) {
+  shiny::tags$div(
+    class = "page",
+    # Navbar with overlap class and dark theme
     if (!is.null(navbar)) {
-      shiny::tagAppendAttributes(navbar, class = "navbar-horizontal")
+      shiny::tagAppendAttributes(navbar, 
+        class = "navbar-overlap",
+        `data-bs-theme` = "dark"
+      )
     },
 
-    # Container for horizontal content
+    # Main content wrapper
     shiny::tags$div(
-      class = "container-xl d-flex flex-column justify-content-center",
-      body
-    ),
+      class = "page-wrapper",
 
-    # Footer
-    if (!is.null(footer)) footer
+      # Page body
+      shiny::tags$div(
+        class = "page-body",
+        body
+      ),
+
+      # Footer
+      if (!is.null(footer)) footer
+    )
+  )
+}
+
+# Helper function for navbar-dark layout
+build_navbar_dark_layout <- function(navbar, sidebar, body, footer) {
+  shiny::tags$div(
+    class = "page",
+    # Navbar with dark theme
+    if (!is.null(navbar)) {
+      shiny::tagAppendAttributes(navbar, `data-bs-theme` = "dark")
+    },
+
+    # Main content wrapper
+    shiny::tags$div(
+      class = "page-wrapper",
+
+      # Page body
+      shiny::tags$div(
+        class = "page-body",
+        body
+      ),
+
+      # Footer
+      if (!is.null(footer)) footer
+    )
+  )
+}
+
+# Helper function for navbar-sticky layout
+build_navbar_sticky_layout <- function(navbar, sidebar, body, footer) {
+  shiny::tags$div(
+    class = "page",
+    # Sticky wrapper containing navbar
+    if (!is.null(navbar)) {
+      shiny::tags$div(
+        class = "sticky-top",
+        shiny::tagAppendAttributes(navbar, class = "sticky-top")
+      )
+    },
+
+    # Main content wrapper
+    shiny::tags$div(
+      class = "page-wrapper",
+
+      # Page body
+      shiny::tags$div(
+        class = "page-body",
+        body
+      ),
+
+      # Footer
+      if (!is.null(footer)) footer
+    )
   )
 }
 
