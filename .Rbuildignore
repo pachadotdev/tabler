@@ -6,6 +6,6 @@
 ^\.travis\.yml$
 ^appveyor\.yml$
 ^\.github$
-^dev$
 ^LICENSE\.md$
 ^dev$
+^README\.Rmd$

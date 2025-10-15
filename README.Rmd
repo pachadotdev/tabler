@@ -1,15 +1,25 @@
+---
+output: github_document
+---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 <!-- badges: start -->
-
 [![R-CMD-check](https://github.com/pachadotdev/tabler/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/pachadotdev/tabler/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
 # Tabler Dashboard for Shiny
 
-A modern dashboard framework for R Shiny using the beautiful Tabler
-Bootstrap theme.
+A modern dashboard framework for R Shiny using the beautiful Tabler Bootstrap theme.
 
 ## Overview
 
@@ -17,13 +27,13 @@ Uses Shiny
 
 ## Installation
 
-``` r
+```r
 pak::pak("pachadotdev/tabler")
 ```
 
 ## Quick Start
 
-``` r
+```r
 library(shiny)
 library(tabler)
 
@@ -38,7 +48,7 @@ shinyApp(ui, server)
 
 Basic dashboard with top navbar and main content area.
 
-``` r
+```r
 ui <- tablerPage(
   title = "Default Layout",
   layout = "default",
@@ -54,7 +64,7 @@ ui <- tablerPage(
 
 Constrained width layout with centered content.
 
-``` r
+```r
 ui <- tablerPage(
   title = "Boxed Layout", 
   layout = "boxed",
@@ -69,7 +79,7 @@ ui <- tablerPage(
 
 Combines vertical sidebar navigation with top header.
 
-``` r
+```r
 ui <- tablerPage(
   title = "Combo Layout",
   layout = "combo",
@@ -92,7 +102,7 @@ ui <- tablerPage(
 
 Compact layout with reduced spacing.
 
-``` r
+```r
 ui <- tablerPage(
   title = "Condensed Layout",
   layout = "condensed",
@@ -107,7 +117,7 @@ ui <- tablerPage(
 
 Full-width layout without container constraints.
 
-``` r
+```r
 ui <- tablerPage(
   title = "Fluid Layout",
   layout = "fluid",
@@ -122,7 +132,7 @@ ui <- tablerPage(
 
 Full-width layout with vertical sidebar.
 
-``` r
+```r
 ui <- tablerPage(
   title = "Fluid Vertical Layout",
   layout = "fluid-vertical",
@@ -142,7 +152,7 @@ ui <- tablerPage(
 
 Centered horizontal layout.
 
-``` r
+```r
 ui <- tablerPage(
   title = "Horizontal Layout",
   layout = "horizontal",
@@ -157,7 +167,7 @@ ui <- tablerPage(
 
 Layout with dark navbar theme.
 
-``` r
+```r
 ui <- tablerPage(
   title = "Dark Navbar Layout",
   layout = "navbar-dark",
@@ -172,7 +182,7 @@ ui <- tablerPage(
 
 Layout where content overlaps with navbar.
 
-``` r
+```r
 ui <- tablerPage(
   title = "Navbar Overlap Layout",
   layout = "navbar-overlap",
@@ -187,7 +197,7 @@ ui <- tablerPage(
 
 Layout with sticky/fixed navbar.
 
-``` r
+```r
 ui <- tablerPage(
   title = "Sticky Navbar Layout",
   layout = "navbar-sticky",
@@ -202,7 +212,7 @@ ui <- tablerPage(
 
 Right-to-left layout for Arabic/Hebrew languages.
 
-``` r
+```r
 ui <- tablerPage(
   title = "RTL Layout",
   layout = "rtl",
@@ -217,7 +227,7 @@ ui <- tablerPage(
 
 Pure vertical sidebar layout without top navbar.
 
-``` r
+```r
 ui <- tablerPage(
   title = "Vertical Layout",
   layout = "vertical",
@@ -238,7 +248,7 @@ ui <- tablerPage(
 
 Vertical sidebar positioned on the right side.
 
-``` r
+```r
 ui <- tablerPage(
   title = "Vertical Right Layout",
   layout = "vertical-right",
@@ -258,7 +268,7 @@ ui <- tablerPage(
 
 Vertical layout with transparent/semi-transparent sidebar.
 
-``` r
+```r
 ui <- tablerPage(
   title = "Vertical Transparent Layout",
   layout = "vertical-transparent",
@@ -279,7 +289,7 @@ ui <- tablerPage(
 
 ### Sidebar
 
-``` r
+```r
 tablerSidebar(
   sidebarMenu(
     menuItem("Item 1", tabName = "tab1", icon = "home"),
@@ -291,7 +301,7 @@ tablerSidebar(
 
 ### Navigation Items
 
-``` r
+```r
 menuItem(
   text = "Dashboard",
   tabName = "dashboard",  # For tab switching
@@ -303,8 +313,7 @@ menuItem(
 
 ## Layout Structure
 
-The package automatically handles the HTML structure for each layout
-type:
+The package automatically handles the HTML structure for each layout type:
 
 - **Default/Boxed/Fluid**: Simple page wrapper with navbar and content
 - **Combo**: Sidebar + header + content area
@@ -317,7 +326,7 @@ type:
 - `layout-navbar-overlap`: Applied to body for navbar overlap
 - `data-bs-theme="dark"`: Applied to sidebar for dark theme
 
-``` r
+```r
 tablerPage(
   layout = "combo", # Choose your layout
   navbar = tablerNavbar(),
@@ -328,4 +337,4 @@ tablerPage(
 
 ## License
 
-Apache License (\>= 2)
+Apache License (>= 2)

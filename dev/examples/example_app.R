@@ -1,5 +1,8 @@
 # Example of the new simplified tabler package with different layouts
 library(shiny)
+library(d3po)
+library(dplyr)
+library(stringr)
 # library(tabler)
 document()
 load_all()
@@ -8,8 +11,8 @@ load_all()
 # Options: "default", "boxed", "combo", "condensed", "fluid" PENDING,
 #          "fluid-vertical" PENDING, "horizontal" PENDING, "navbar-dark",
 #          "navbar-overlap" PENDING, "navbar-sticky" PENDING, "rtl" PENDING, "vertical",
-#          "vertical-right" PENDING, "vertical-transparent"
-LAYOUT_TYPE <- "vertical-transparent"
+#          "vertical-right" PENDING, "vertical-transparent" PENDING
+LAYOUT_TYPE <- "condensed"
 
 # Common content for all layouts
 dashboardContent <- tablerBody(
@@ -23,37 +26,38 @@ dashboardContent <- tablerBody(
       width = 3
     )
   ),
-  
+
   fluidRow(
-    column(8,
+    column(12)
+  ),
+
+  fluidRow(
+    column(
+      8,
       tablerCard(
         title = "Sample Chart",
-        plotOutput("plot"),
+        d3po_output("count_tree", height = "650px"),
         status = "primary"
       )
     ),
-    column(4,
-      tablerCard(
-        title = "Progress Status",
-        tablerProgress(75, color = "success", label = TRUE),
-        br(),
-        tablerProgress(45, color = "warning", label = TRUE),
-        br(),
-        tablerProgress(90, color = "info", label = TRUE)
-      ),
-      
+    column(
+      4,
       tablerAlert(
         title = "Important Notice",
         paste("This is a", LAYOUT_TYPE, "layout example."),
         type = "info",
         dismissible = TRUE
+      ),
+      tablerCard(
+        d3po_output("count_bar", height = "650px")
       )
     )
   )
 )
 
 # Build UI based on selected layout
-ui <- switch(LAYOUT_TYPE,
+ui <- switch(
+  LAYOUT_TYPE,
   "default" = tablerPage(
     title = "Default Layout - Tabler Dashboard",
     layout = "default",
@@ -64,18 +68,18 @@ ui <- switch(LAYOUT_TYPE,
       right = "Built with Tabler - Default Layout"
     )
   ),
-  
+
   "boxed" = tablerPage(
-    title = "Boxed Layout - Tabler Dashboard", 
+    title = "Boxed Layout - Tabler Dashboard",
     layout = "boxed",
     navbar = tablerNavbar(title = "Boxed Layout"),
     body = dashboardContent,
     footer = tablerFooter(
-      left = "© 2024 My Company", 
+      left = "© 2024 My Company",
       right = "Built with Tabler - Boxed Layout"
     )
   ),
-  
+
   "combo" = tablerPage(
     title = "Combo Layout - Tabler Dashboard",
     layout = "combo",
@@ -83,7 +87,12 @@ ui <- switch(LAYOUT_TYPE,
     sidebar = tablerSidebar(
       sidebarMenu(
         menuItem("Dashboard", tabName = "dashboard", icon = "home"),
-        menuItem("Analytics", tabName = "analytics", icon = "chart-bar", badge = "New"),
+        menuItem(
+          "Analytics",
+          tabName = "analytics",
+          icon = "chart-bar",
+          badge = "New"
+        ),
         menuItem("Users", tabName = "users", icon = "users"),
         menuItem("Settings", tabName = "settings", icon = "settings")
       ),
@@ -95,7 +104,7 @@ ui <- switch(LAYOUT_TYPE,
       right = "Built with Tabler - Combo Layout"
     )
   ),
-  
+
   "vertical" = tablerPage(
     title = "Vertical Layout - Tabler Dashboard",
     layout = "vertical",
@@ -114,7 +123,7 @@ ui <- switch(LAYOUT_TYPE,
       right = "Built with Tabler - Vertical Layout"
     )
   ),
-  
+
   "condensed" = tablerPage(
     title = "Condensed Layout - Tabler Dashboard",
     layout = "condensed",
@@ -125,7 +134,7 @@ ui <- switch(LAYOUT_TYPE,
       right = "Built with Tabler - Condensed Layout"
     )
   ),
-  
+
   "navbar-dark" = tablerPage(
     title = "Dark Navbar Layout - Tabler Dashboard",
     layout = "navbar-dark",
@@ -139,8 +148,48 @@ ui <- switch(LAYOUT_TYPE,
 )
 
 server <- function(input, output, session) {
-  output$plot <- renderPlot({
-    plot(cars, main = "Sample Plot", col = "steelblue", pch = 19)
+  d1 <- d3po::pokemon %>%
+    mutate(
+      type_2 = ifelse(is.na(!!sym("type_2")), "None", !!sym("type_2")),
+      color_2 = ifelse(is.na(!!sym("color_2")), "#d3d3d3", !!sym("color_2"))
+    ) %>%
+    group_by(
+      !!sym("type_1"),
+      !!sym("color_1"),
+      !!sym("type_2"),
+      !!sym("color_2")
+    ) %>%
+    count() %>%
+    ungroup()
+
+  d2 <- d3po::pokemon %>%
+    group_by(!!sym("type_1"), !!sym("color_1")) %>%
+    count() %>%
+    ungroup()
+
+  output$count_tree <- render_d3po({
+    d3po(d1) %>%
+      po_treemap(
+        daes(
+          size = !!sym("n"),
+          group = !!sym("type_1"),
+          color = !!sym("color_1")
+        )
+      ) %>%
+      po_title("Count of Pokemon by Type 1 and 2")
+  })
+
+  output$count_bar <- render_d3po({
+    d3po(d2) %>%
+      po_bar(
+        daes(
+          x = !!sym("type_1"),
+          y = !!sym("n"),
+          group = !!sym("type_1"),
+          color = !!sym("color_1")
+        )
+      ) %>%
+      po_title("Count of Pokemon by Type")
   })
 }
 

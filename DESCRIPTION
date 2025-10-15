@@ -17,7 +17,7 @@ Imports:
     shiny (>= 1.0.0),
     htmltools (>= 0.3.5)
 Suggests:
-    highcharter,
+    d3po,
     DT
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 Encoding: UTF-8
