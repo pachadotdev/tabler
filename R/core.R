@@ -101,7 +101,7 @@ tablerPage <- function(title = NULL, navbar = NULL, body = NULL, footer = NULL, 
   # For RTL, we need to set dir on html tag
   html_attrs <- if (layout == "rtl") list(dir = "rtl", lang = "en") else list(lang = "en")
   
-  do.call(shiny::tags$html, c(
+  html_tag <- do.call(shiny::tags$html, c(
     html_attrs,
     list(
       shiny::tags$head(
@@ -115,8 +115,9 @@ tablerPage <- function(title = NULL, navbar = NULL, body = NULL, footer = NULL, 
         list(page_content)
       ))
     )
-  )) |>
-    add_deps(layout = layout)
+  ))
+
+  add_deps(html_tag, layout = layout)
 }
 
 # Get layout-specific body attributes

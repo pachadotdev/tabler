@@ -88,7 +88,7 @@ tablerValueBox <- function(value, title, icon = NULL, color = "primary", width =
             class = "col-auto",
             if (!is.null(icon_tag)) {
               shiny::tags$span(
-                class = paste("bg-", color, "text-white avatar"),
+                class = paste0("bg-", color, " text-white avatar"),
                 icon_tag
               )
             }
@@ -100,7 +100,7 @@ tablerValueBox <- function(value, title, icon = NULL, color = "primary", width =
               value
             ),
             shiny::tags$div(
-              class = "text-muted",
+              class = "text-secondary",
               title
             )
           )

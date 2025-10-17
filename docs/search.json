@@ -1,0 +1,104 @@
+[
+  {
+    "title": "tablerCard",
+    "url": "reference/tablerCard.html",
+    "content": "tablerCard Create a Tabler Card tablerCard(..., title = NULL, footer = NULL, status = NULL, class = NULL) ...Card body content title Card title (optional) footer Card footer content (optional) status Card color status: \"primary\", \"secondary\", \"success\", \"warning\", \"danger\", etc. class Additional CSS classes Build a modern card component with optional header, body, and footer if (interactive()) library(shiny) library(tabler) ui <- tablerPage( title = \"Card Demo\", body = tablerBody( tablerCard( title = \"Sample Card\", \"This is card content\", footer = \"Card footer\", status = \"primary\" ) ) ) server <- function(input, output, session) shinyApp(ui, server)",
+    "type": "function"
+  },
+  {
+    "title": "tablerValueBox",
+    "url": "reference/tablerValueBox.html",
+    "content": "tablerValueBox Create a Value Box tablerValueBox(value, title, icon = NULL, color = \"primary\", width = 3) valueMain value to display title Title/label for the value icon Icon name (optional) color Color theme width Column width (1-12) Display a key metric or value prominently",
+    "type": "function"
+  },
+  {
+    "title": "tablerIcon",
+    "url": "reference/tablerIcon.html",
+    "content": "tablerIcon Create an Icon tablerIcon(name, library = \"tabler\", class = NULL) nameIcon name library Icon library: \"tabler\", \"bootstrap\", \"feather\" class Additional CSS classes Display an icon from Tabler Icons or other icon libraries",
+    "type": "function"
+  },
+  {
+    "title": "tablerAlert",
+    "url": "reference/tablerAlert.html",
+    "content": "tablerAlert Create an Alert/Notification tablerAlert(..., type = \"info\", dismissible = FALSE, title = NULL) ...Alert content type Alert type: \"info\", \"success\", \"warning\", \"danger\" dismissible Whether alert can be dismissed title Alert title (optional) Display important messages to users",
+    "type": "function"
+  },
+  {
+    "title": "tablerButton",
+    "url": "reference/tablerButton.html",
+    "content": "tablerButton Create a Button tablerButton( label, onclick = NULL, color = \"primary\", size = \"md\", outline = FALSE, icon = NULL, ... ) labelButton text onclick JavaScript to execute on click color Button color theme size Button size: \"sm\", \"md\", \"lg\" outline Use outline style icon Icon to include ... Additional HTML attributes Create interactive buttons with Tabler styling",
+    "type": "function"
+  },
+  {
+    "title": "tablerPage",
+    "url": "reference/tablerPage.html",
+    "content": "tablerPage Create a Tabler Dashboard Page tablerPage( title = NULL, navbar = NULL, body = NULL, footer = NULL, layout = \"boxed\" ) titleApp title navbar Dashboard navbar/menu. Can be: - `tablerNavbar()` for top navigation bar (most layouts) - `tablerSidebar()` for vertical sidebar (vertical layouts) - `horizontalMenu()` for horizontal menu (horizontal layout only) body Dashboard body content footer Dashboard footer (optional) layout Layout type: \"boxed\", \"combo\", \"condensed\", \"fluid\", \"fluid-vertical\", \"horizontal\", \"navbar-dark\", \"navbar-overlap\", \"navbar-sticky\", \"rtl\", \"vertical\", \"vertical-right\", \"vertical-transparent\" Main function to create a complete dashboard page with Tabler theme if (interactive()) library(shiny) library(tabler) # Boxed layout (default) ui1 <- tablerPage( title = \"My Dashboard\", body = tablerBody( h1(\"Welcome to Tabler!\") ) ) # Boxed layout with navbar ui2 <- tablerPage( title = \"Boxed Dashboard\", layout = \"boxed\", navbar = tablerNavbar(title = \"My App\"), body = tablerBody( h1(\"Boxed Layout!\") ) ) # Vertical layout with sidebar ui3 <- tablerPage( title = \"Vertical Dashboard\", layout = \"vertical\", navbar = tablerSidebar( sidebarMenu( menuItem(\"Dashboard\", icon = \"home\"), menuItem(\"Users\", icon = \"users\") ) ), body = tablerBody(h1(\"Vertical Layout!\")) ) # Horizontal layout with menu ui4 <- tablerPage( title = \"Horizontal Dashboard\", layout = \"horizontal\", navbar = horizontalMenu( menuItem(\"Home\", icon = \"home\"), menuItem(\"Analytics\", icon = \"chart-bar\") ), body = tablerBody(h1(\"Horizontal Layout!\")) ) # Combo layout with both navbar and sidebar ui5 <- tablerPage( title = \"Combo Dashboard\", layout = \"combo\", navbar = list( top = tablerNavbar(title = \"My App\"), side = tablerSidebar( sidebarMenu( menuItem(\"Dashboard\", icon = \"home\") ) ) ), body = tablerBody(h1(\"Combo Layout!\")) ) server <- function(input, output, session) shinyApp(ui1, server)",
+    "type": "function"
+  },
+  {
+    "title": "tablerBody",
+    "url": "reference/tablerBody.html",
+    "content": "tablerBody Create a Dashboard Body tablerBody(..., class = NULL) ...Content to include in the body class Additional CSS classes Container for dashboard content",
+    "type": "function"
+  },
+  {
+    "title": "tablerPageHeader",
+    "url": "reference/tablerPageHeader.html",
+    "content": "tablerPageHeader Create a Page Header tablerPageHeader(title, subtitle = NULL, ...) titleMain page title subtitle Optional subtitle or description ... Additional header content (e.g., buttons, breadcrumbs) Displays a prominent title and subtitle at the top of the page",
+    "type": "function"
+  },
+  {
+    "title": "tablerNavbar",
+    "url": "reference/tablerNavbar.html",
+    "content": "tablerNavbar Create a Dashboard Navbar tablerNavbar(title = NULL, brand_image = NULL, ...) titleBrand title/text brand_image URL or path to brand image ... Additional navbar items Top navigation bar for the dashboard",
+    "type": "function"
+  },
+  {
+    "title": "tablerFooter",
+    "url": "reference/tablerFooter.html",
+    "content": "tablerFooter Create a Dashboard Footer tablerFooter(left = NULL, right = NULL) leftLeft-aligned content right Right-aligned content Footer for the dashboard",
+    "type": "function"
+  },
+  {
+    "title": "tablerSidebar",
+    "url": "reference/tablerSidebar.html",
+    "content": "tablerSidebar Create a Dashboard Sidebar tablerSidebar(..., title = NULL, brand_image = NULL, theme = \"dark\") ...Sidebar content (typically sidebarMenu) title Brand title/text for sidebar header brand_image URL or path to brand image theme Sidebar theme: \"light\" or \"dark\" Vertical sidebar for navigation",
+    "type": "function"
+  },
+  {
+    "title": "sidebarMenu",
+    "url": "reference/sidebarMenu.html",
+    "content": "sidebarMenu Create a Navigation Menu sidebarMenu(...) ...Navigation items (menuItem) Container for navigation items in sidebar",
+    "type": "function"
+  },
+  {
+    "title": "horizontalMenu",
+    "url": "reference/horizontalMenu.html",
+    "content": "horizontalMenu Create a Horizontal Navigation Menu horizontalMenu(...) ...Navigation items (menuItem) Container for navigation items in horizontal layout",
+    "type": "function"
+  },
+  {
+    "title": "menuItem",
+    "url": "reference/menuItem.html",
+    "content": "menuItem Create a Navigation Item menuItem(text, tabName = NULL, icon = NULL, href = NULL, badge = NULL) textItem text/label tabName Tab name for routing icon Icon name (optional) href Link URL (optional, alternative to tabName) badge Badge text (optional) Individual navigation item for sidebar",
+    "type": "function"
+  },
+  {
+    "title": "tablerTabItems",
+    "url": "reference/tablerTabItems.html",
+    "content": "tablerTabItems Create Tab Items Container tablerTabItems(...) ...Tab items created with tablerTabItem() Container for multiple tab panels in tabbed layouts",
+    "type": "function"
+  },
+  {
+    "title": "tablerTabItem",
+    "url": "reference/tablerTabItem.html",
+    "content": "tablerTabItem Create a Tab Item tablerTabItem(tabName, ...) tabNameUnique identifier for the tab (must match menuItem tabName) ... Content for this tab Individual tab panel content",
+    "type": "function"
+  },
+  {
+    "title": "check_deps",
+    "url": "reference/check_deps.html",
+    "content": "check_deps Check if Tabler package dependencies are available check_deps() TRUE if all required dependencies are available Check if Tabler package dependencies are available",
+    "type": "function"
+  }
+]

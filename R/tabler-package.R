@@ -55,6 +55,14 @@ add_deps <- function(tag, layout = "default") {
       stylesheet = if (!is_rtl) "css/tabler.min.css" else "css/tabler.rtl.min.css",
       script = "js/tabler.min.js"
     ),
+    
+    # Tabler Icons (webfont)
+    htmltools::htmlDependency(
+      name = "tabler-icons",
+      version = "3.55.0",
+      src = c(file = system.file("tabler-icons-3.55.0", package = "tabler")),
+      stylesheet = "tabler-icons.min.css"
+    ),
 
     # Tabler Plugin Styles
     htmltools::htmlDependency(

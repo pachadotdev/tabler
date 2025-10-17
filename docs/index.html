@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>tabler documentation • tabler</title><link rel="stylesheet" href="menu.css"><link rel="stylesheet" href="content.css"><!-- MathJax Configuration --><script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)'], ['$', '$']],
+        displayMath: [['\\[', '\\]'], ['$$', '$$']],
+        processEscapes: true,
+        processEnvironments: true,
+        packages: {'[+]': ['ams', 'newcommand', 'configmacros']}
+      },
+      options: {
+        ignoreHtmlClass: 'tex2jax_ignore',
+        processHtmlClass: 'tex2jax_process'
+      }
+    };
+  </script><script id="MathJax-script" async src="js/tex-svg.js"></script></head><body>
+<div class="main-container">
+<div id="menu">
+  <div>
+    <h1 style="text-align:center;">tabler Documentation</h1>
+  </div>
+
+  <div class="search-container">
+    <input type="text" id="search-box" placeholder="Search..."></div>
+
+  <div class="search-container">
+    <button id="theme-toggle" title="Toggle dark mode" aria-label="Toggle dark mode">Toggle theme</button>
+    <button id="font-decrease" title="Decrease font size" aria-label="Decrease font size">A-</button>
+    <button id="font-increase" title="Increase font size" aria-label="Increase font size">A+</button>
+  </div>
+
+  <div class="submenu">
+    <label style="border-bottom: 0;"><a style="padding-left: 0;" href="index.html">Home 🏠</a></label>
+  </div>
+
+  <div class="submenu">
+    <label>Functions</label>
+    <a href="reference/tablerCard.html">tablerCard</a>
+    <a href="reference/tablerValueBox.html">tablerValueBox</a>
+    <a href="reference/tablerIcon.html">tablerIcon</a>
+    <a href="reference/tablerAlert.html">tablerAlert</a>
+    <a href="reference/tablerButton.html">tablerButton</a>
+    <a href="reference/tablerPage.html">tablerPage</a>
+    <a href="reference/tablerBody.html">tablerBody</a>
+    <a href="reference/tablerPageHeader.html">tablerPageHeader</a>
+    <a href="reference/tablerNavbar.html">tablerNavbar</a>
+    <a href="reference/tablerFooter.html">tablerFooter</a>
+    <a href="reference/tablerSidebar.html">tablerSidebar</a>
+    <a href="reference/sidebarMenu.html">sidebarMenu</a>
+    <a href="reference/horizontalMenu.html">horizontalMenu</a>
+    <a href="reference/menuItem.html">menuItem</a>
+    <a href="reference/tablerTabItems.html">tablerTabItems</a>
+    <a href="reference/tablerTabItem.html">tablerTabItem</a>
+    <a href="reference/check_deps.html">check_deps</a>
+  </div>
+
+
+</div>
+<div id="content">
+<div class="content-wrapper">
+<div class="content-main">
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+<!-- badges: start -->
+
+<a href="https://github.com/pachadotdev/tabler/actions/workflows/R-CMD-check.yaml"><img src="https://github.com/pachadotdev/tabler/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a>
+<!-- badges: end -->
+
+<h1>Tabler Dashboard for Shiny</h1>
+
+<p>A modern dashboard framework for R Shiny using the beautiful Tabler
+Bootstrap theme.</p>
+
+<video src="https://raw.githubusercontent.com/pachadotdev/tabler/main/examples/tablerdemo.mp4" controls width="640"></video><h2>Installation</h2>
+
+<pre><code># using the R-Universe
+install.packages("tabler", repos = "https://pachadotdev.r-universe.dev")
+
+# or using the remotes package
+remotes::install_github("pachadotdev/tabler")</code></pre>
+
+<h2>Quick Start</h2>
+
+<p>Please see the documentation: <a href="https://pacha.dev/tabler/">https://pacha.dev/tabler/</a></p>
+
+<p>Here’s a simple example using the Palmer Penguins dataset:</p>
+
+<pre><code>library(shiny)
+library(tabler)
+library(highcharter)
+library(palmerpenguins)
+
+ui &lt;- tablerPage(
+  title = "Palmer Penguins Dashboard",
+  navbar = tablerNavbar(title = "Penguin Analytics"),
+  body = tablerBody(
+    tablerPageHeader(
+      title = "Dashboard Overview",
+      subtitle = "Explore penguin data with interactive visualizations"
+    ),
+    fluidRow(
+      tablerValueBox(
+        value = "344",
+        title = "Total Penguins",
+        icon = "users",
+        color = "primary",
+        width = 3
+      ),
+      tablerValueBox(
+        value = "3",
+        title = "Species",
+        icon = "star",
+        color = "success",
+        width = 3
+      )
+    ),
+    fluidRow(
+      column(
+        12,
+        tablerCard(
+          title = "Body Mass Distribution",
+          highchartOutput("mass_plot"),
+          status = "primary"
+        )
+      )
+    )
+  ),
+  footer = tablerFooter(
+    left = "© 2025 Pacha",
+    right = "Built with Tabler"
+  )
+)
+
+server &lt;- function(input, output, session) {
+  output$mass_plot &lt;- renderHighchart({
+    penguins_clean &lt;- na.omit(palmerpenguins::penguins)
+
+    d &lt;- data_to_boxplot(penguins_clean, body_mass_g, species)
+
+    highchart() %&gt;%
+      hc_add_series_list(d) %&gt;%
+      hc_xAxis(type = "category") %&gt;%
+      hc_yAxis(title = list(text = "Body Mass (g)"))
+  })
+}
+
+shinyApp(ui, server)</code></pre>
+
+<h2>Examples</h2>
+
+<p>See the examples directory in the GitHub repository for more complete
+examples:</p>
+
+<ul><li>Shiny app for all layouts: <a href="https://github.com/pachadotdev/tabler/tree/main/examples/examples_app.R">https://github.com/pachadotdev/tabler/tree/main/examples/examples_app.R</a></li>
+<li>Shiny app for all layouts using Golem: <a href="https://github.com/pachadotdev/tabler/tree/main/examples/tablerdemo">https://github.com/pachadotdev/tabler/tree/main/examples/tablerdemo</a></li>
+</ul><h2>Available Layouts</h2>
+
+<p>All examples use the same basic structure from the Quick Start example
+above. Here are the key differences for each layout:</p>
+
+<h3>Boxed Layout (Default)</h3>
+
+<p>Basic dashboard with top navbar and constrained width content area. This
+is the default layout shown in the Quick Start example.</p>
+
+<pre><code>ui &lt;- tablerPage(
+  title = "Boxed Layout",
+  layout = "boxed",  # This is the default
+  navbar = tablerNavbar(title = "Palmer Penguins"),
+  body = tablerBody(...),
+  footer = tablerFooter(...)
+)</code></pre>
+
+<h3>Combo Layout</h3>
+
+<p>Combines vertical sidebar navigation with top header. Uses a list with
+<code>top</code> and <code>side</code> components.</p>
+
+<pre><code>ui &lt;- tablerPage(
+  title = "Combo Layout",
+  layout = "combo",
+  navbar = list(
+    top = tablerNavbar(title = "Palmer Penguins"),
+    side = tablerSidebar(
+      title = "Navigation",
+      sidebarMenu(
+        menuItem("Overview", tabName = "overview", icon = "home"),
+        menuItem("Species", tabName = "species", icon = "star")
+      ),
+      theme = "dark"
+    )
+  ),
+  body = tablerBody(...),
+  footer = tablerFooter(...)
+)</code></pre>
+
+<h3>Condensed Layout</h3>
+
+<p>Compact layout with reduced spacing - no body class applied.</p>
+
+<pre><code>ui &lt;- tablerPage(
+  title = "Condensed Layout",
+  layout = "condensed",  # Only change needed
+  navbar = tablerNavbar(title = "Palmer Penguins"),
+  body = tablerBody(...),
+  footer = tablerFooter(...)
+)</code></pre>
+
+<h3>Fluid Layout</h3>
+
+<p>Full-width layout without container constraints.</p>
+
+<pre><code>ui &lt;- tablerPage(
+  title = "Fluid Layout",
+  layout = "fluid",  # Content expands to full browser width
+  navbar = tablerNavbar(title = "Palmer Penguins"),
+  body = tablerBody(...),
+  footer = tablerFooter(...)
+)</code></pre>
+
+<h3>Fluid Vertical Layout</h3>
+
+<p>Full-width layout with vertical sidebar.</p>
+
+<pre><code>ui &lt;- tablerPage(
+  title = "Fluid Vertical Layout",
+  layout = "fluid-vertical",
+  navbar = tablerSidebar(  # Sidebar instead of navbar
+    title = "My Dashboard",
+    sidebarMenu(
+      menuItem("Dashboard", icon = "home"),
+      menuItem("Analysis", icon = "chart-bar")
+    ),
+    theme = "dark"
+  ),
+  body = tablerBody(...),
+  footer = tablerFooter(...)
+)</code></pre>
+
+<h3>Horizontal Layout</h3>
+
+<p>Layout with horizontal navigation menu.</p>
+
+<pre><code>ui &lt;- tablerPage(
+  title = "Horizontal Layout",
+  layout = "horizontal",
+  navbar = horizontalMenu(  # Horizontal menu instead of navbar
+    menuItem("Overview", icon = "home"),
+    menuItem("Species", icon = "star"),
+    menuItem("Analysis", icon = "chart-bar")
+  ),
+  body = tablerBody(...),
+  footer = tablerFooter(...)
+)</code></pre>
+
+<h3>Navbar Dark Layout</h3>
+
+<p>Layout with dark navbar theme.</p>
+
+<pre><code>ui &lt;- tablerPage(
+  title = "Dark Navbar Layout",
+  layout = "navbar-dark",  # Dark-themed navbar
+  navbar = tablerNavbar(title = "Palmer Penguins"),
+  body = tablerBody(...),
+  footer = tablerFooter(...)
+)</code></pre>
+
+<h3>Navbar Overlap Layout</h3>
+
+<p>Layout where content overlaps with navbar for a modern look.</p>
+
+<pre><code># using the R-Universe
+install.packages("tabler", repos = "https://pachadotdev.r-universe.dev")
+
+# or using the remotes package
+remotes::install_github("pachadotdev/tabler")</code></pre>000
+
+<h3>Navbar Sticky Layout</h3>
+
+<p>Layout with sticky/fixed navbar that stays at the top when scrolling.</p>
+
+<pre><code># using the R-Universe
+install.packages("tabler", repos = "https://pachadotdev.r-universe.dev")
+
+# or using the remotes package
+remotes::install_github("pachadotdev/tabler")</code></pre>111
+
+<h3>RTL Layout</h3>
+
+<p>Right-to-left layout for Arabic/Hebrew languages.</p>
+
+<pre><code># using the R-Universe
+install.packages("tabler", repos = "https://pachadotdev.r-universe.dev")
+
+# or using the remotes package
+remotes::install_github("pachadotdev/tabler")</code></pre>222
+
+<h3>Vertical Layout</h3>
+
+<p>Pure vertical sidebar layout without top navbar.</p>
+
+<pre><code># using the R-Universe
+install.packages("tabler", repos = "https://pachadotdev.r-universe.dev")
+
+# or using the remotes package
+remotes::install_github("pachadotdev/tabler")</code></pre>333
+
+<h3>Vertical Right Layout</h3>
+
+<p>Vertical sidebar positioned on the right side.</p>
+
+<pre><code># using the R-Universe
+install.packages("tabler", repos = "https://pachadotdev.r-universe.dev")
+
+# or using the remotes package
+remotes::install_github("pachadotdev/tabler")</code></pre>444
+
+<h3>Vertical Transparent Layout</h3>
+
+<p>Vertical layout with transparent/semi-transparent sidebar.</p>
+
+<pre><code># using the R-Universe
+install.packages("tabler", repos = "https://pachadotdev.r-universe.dev")
+
+# or using the remotes package
+remotes::install_github("pachadotdev/tabler")</code></pre>555
+
+<h2>Navigation Components</h2>
+
+<h3>Sidebar</h3>
+
+<p>The sidebar can be used in vertical layouts and combo layouts:</p>
+
+<pre><code># using the R-Universe
+install.packages("tabler", repos = "https://pachadotdev.r-universe.dev")
+
+# or using the remotes package
+remotes::install_github("pachadotdev/tabler")</code></pre>666
+
+<h3>Horizontal Menu</h3>
+
+<p>For horizontal layouts, use <code>horizontalMenu()</code>:</p>
+
+<pre><code># using the R-Universe
+install.packages("tabler", repos = "https://pachadotdev.r-universe.dev")
+
+# or using the remotes package
+remotes::install_github("pachadotdev/tabler")</code></pre>777
+
+<h3>Navigation Items</h3>
+
+<pre><code># using the R-Universe
+install.packages("tabler", repos = "https://pachadotdev.r-universe.dev")
+
+# or using the remotes package
+remotes::install_github("pachadotdev/tabler")</code></pre>888
+
+<h2>Layout Structure</h2>
+
+<p>The package automatically handles the HTML structure for each layout
+type using a smart <code>navbar</code> parameter that accepts different component
+types:</p>
+
+<ul><li><strong>Boxed/Condensed/Fluid</strong>: Pass <code>tablerNavbar()</code> to navbar parameter</li>
+<li><strong>Vertical layouts</strong>: Pass <code>tablerSidebar()</code> to navbar parameter  </li>
+<li><strong>Combo</strong>: Pass <code>list(top = tablerNavbar(...), side = tablerSidebar(...))</code> to navbar</li>
+<li><strong>Horizontal</strong>: Pass <code>horizontalMenu()</code> to navbar parameter</li>
+</ul>
+The system automatically detects the component type by its HTML tag: -
+<code><aside></aside></code> tag → sidebar component - <code><header></header></code> tag → top navbar
+component - <code><ul></ul></code> tag → horizontal menu component
+
+<h2>CSS Classes Applied</h2>
+
+<p>Different layouts apply specific CSS classes to the body element:</p>
+
+<ul><li><code>layout-boxed</code>: Boxed layout with constrained width</li>
+<li><code>top</code>0: Fluid layout (full width), also used by fluid-vertical</li>
+<li><code>top</code>1: Navbar overlap layout</li>
+<li><code>top</code>2: Sticky navbar layout</li>
+<li><code>top</code>3: Transparent vertical sidebar</li>
+<li><code>top</code>4: Applied to navbar/sidebar for dark theme</li>
+</ul><h2>API Design</h2>
+
+<p>The simplified API uses a single <code>top</code>5 parameter:</p>
+
+<pre><code># using the R-Universe
+install.packages("tabler", repos = "https://pachadotdev.r-universe.dev")
+
+# or using the remotes package
+remotes::install_github("pachadotdev/tabler")</code></pre>999
+
+<h2>License</h2>
+
+<p>Apache License (\&gt;= 2)</p>
+</div>
+<footer><p id="last-updated">Loading...</p>
+</footer><script src="js/footer.js"></script><script src="js/theme.js"></script><script src="js/search.js"></script><script src="js/fontsize.js"></script></div>
+</div>
+</div>
+</body></html>
+

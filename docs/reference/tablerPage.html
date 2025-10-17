@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>tablerPage • tabler</title><link rel="stylesheet" href="../menu.css"><link rel="stylesheet" href="../content.css"><!-- MathJax Configuration --><script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)'], ['$', '$']],
+        displayMath: [['\\[', '\\]'], ['$$', '$$']],
+        processEscapes: true,
+        processEnvironments: true,
+        packages: {'[+]': ['ams', 'newcommand', 'configmacros']}
+      },
+      options: {
+        ignoreHtmlClass: 'tex2jax_ignore',
+        processHtmlClass: 'tex2jax_process'
+      }
+    };
+  </script><script id="MathJax-script" async src="../js/tex-svg.js"></script></head><body>
+<div class="main-container">
+<div id="menu">
+  <div>
+    <h1 style="text-align:center;">tabler Documentation</h1>
+  </div>
+
+  <div class="search-container">
+    <input type="text" id="search-box" placeholder="Search..."></div>
+
+  <div class="search-container">
+    <button id="theme-toggle" title="Toggle dark mode" aria-label="Toggle dark mode">Toggle theme</button>
+    <button id="font-decrease" title="Decrease font size" aria-label="Decrease font size">A-</button>
+    <button id="font-increase" title="Increase font size" aria-label="Increase font size">A+</button>
+  </div>
+
+  <div class="submenu">
+    <label style="border-bottom: 0;"><a style="padding-left: 0;" href="../index.html">Home 🏠</a></label>
+  </div>
+
+  <div class="submenu">
+    <label>Functions</label>
+    <a href="../reference/tablerCard.html">tablerCard</a>
+    <a href="../reference/tablerValueBox.html">tablerValueBox</a>
+    <a href="../reference/tablerIcon.html">tablerIcon</a>
+    <a href="../reference/tablerAlert.html">tablerAlert</a>
+    <a href="../reference/tablerButton.html">tablerButton</a>
+    <a href="../reference/tablerPage.html">tablerPage</a>
+    <a href="../reference/tablerBody.html">tablerBody</a>
+    <a href="../reference/tablerPageHeader.html">tablerPageHeader</a>
+    <a href="../reference/tablerNavbar.html">tablerNavbar</a>
+    <a href="../reference/tablerFooter.html">tablerFooter</a>
+    <a href="../reference/tablerSidebar.html">tablerSidebar</a>
+    <a href="../reference/sidebarMenu.html">sidebarMenu</a>
+    <a href="../reference/horizontalMenu.html">horizontalMenu</a>
+    <a href="../reference/menuItem.html">menuItem</a>
+    <a href="../reference/tablerTabItems.html">tablerTabItems</a>
+    <a href="../reference/tablerTabItem.html">tablerTabItem</a>
+    <a href="../reference/check_deps.html">check_deps</a>
+  </div>
+
+
+</div>
+<div id="content">
+<div class="content-wrapper">
+<div class="content-main">
+<h1>Create a Tabler Dashboard Page  Main function to create a complete dashboard page with Tabler theme </h1>
+<h2>Arguments</h2>
+<table class="ref-arguments"><tbody><tr><td><strong>title</strong></td><td>App title</td></tr><tr><td><strong>navbar</strong></td><td>Dashboard navbar/menu. Can be: - <code>tablerNavbar()</code> for top navigation bar (most layouts) - <code>tablerSidebar()</code> for vertical sidebar (vertical layouts) - <code>horizontalMenu()</code> for horizontal menu (horizontal layout only)</td></tr><tr><td><strong>body</strong></td><td>Dashboard body content</td></tr><tr><td><strong>footer</strong></td><td>Dashboard footer (optional)</td></tr><tr><td><strong>layout</strong></td><td>Layout type: "boxed", "combo", "condensed", "fluid", "fluid-vertical", "horizontal", "navbar-dark", "navbar-overlap", "navbar-sticky", "rtl", "vertical", "vertical-right", "vertical-transparent"</td></tr></tbody></table><h2>Examples</h2>
+<div class="sourceCode"><pre><code>if (interactive()) {
+library(shiny)
+library(tabler)</code></pre></div>
+<div class="error"><pre><code>## Error: <text>:4:0: unexpected end of input
+2: library(shiny)
+3: library(tabler)
+  ^</text></code></pre></div>
+<div class="sourceCode"><pre><code># Boxed layout (default)
+ui1 &lt;- tablerPage(
+title = "My Dashboard",
+body = tablerBody(
+h1("Welcome to Tabler!")
+)
+)</code></pre></div>
+<div class="error"><pre><code>## Error: could not find function "h1"</code></pre></div>
+<div class="sourceCode"><pre><code># Boxed layout with navbar
+ui2 &lt;- tablerPage(
+title = "Boxed Dashboard",
+layout = "boxed",
+navbar = tablerNavbar(title = "My App"),
+body = tablerBody(
+h1("Boxed Layout!")
+)
+)</code></pre></div>
+<div class="error"><pre><code>## Error: could not find function "h1"</code></pre></div>
+<div class="sourceCode"><pre><code># Vertical layout with sidebar
+ui3 &lt;- tablerPage(
+title = "Vertical Dashboard",
+layout = "vertical",
+navbar = tablerSidebar(
+sidebarMenu(
+menuItem("Dashboard", icon = "home"),
+menuItem("Users", icon = "users")
+)
+),
+body = tablerBody(h1("Vertical Layout!"))
+)</code></pre></div>
+<div class="error"><pre><code>## Error: could not find function "h1"</code></pre></div>
+<div class="sourceCode"><pre><code># Horizontal layout with menu
+ui4 &lt;- tablerPage(
+title = "Horizontal Dashboard",
+layout = "horizontal",
+navbar = horizontalMenu(
+menuItem("Home", icon = "home"),
+menuItem("Analytics", icon = "chart-bar")
+),
+body = tablerBody(h1("Horizontal Layout!"))
+)</code></pre></div>
+<div class="error"><pre><code>## Error: could not find function "h1"</code></pre></div>
+<div class="sourceCode"><pre><code># Combo layout with both navbar and sidebar
+ui5 &lt;- tablerPage(
+title = "Combo Dashboard",
+layout = "combo",
+navbar = list(
+top = tablerNavbar(title = "My App"),
+side = tablerSidebar(
+sidebarMenu(
+menuItem("Dashboard", icon = "home")
+)
+)
+),
+body = tablerBody(h1("Combo Layout!"))
+)</code></pre></div>
+<div class="error"><pre><code>## Error: could not find function "h1"</code></pre></div>
+<div class="sourceCode"><pre><code>server &lt;- function(input, output, session) {}</code></pre></div>
+<div class="output"><pre><code>## function(input, output, session) {}
+## <environment: 0x55ad32d15e00></environment:></code></pre></div>
+<div class="sourceCode"><pre><code>shinyApp(ui1, server)
+}</code></pre></div>
+<div class="error"><pre><code>## Error: <text>:2:1: unexpected '}'
+1: shinyApp(ui1, server)
+2: }
+   ^</text></code></pre></div>
+</div>
+<footer><p id="last-updated">Loading...</p>
+</footer><script src="../js/footer.js"></script><script src="../js/theme.js"></script><script src="../js/search.js"></script><script src="../js/fontsize.js"></script></div>
+</div>
+</div>
+</body></html>
+

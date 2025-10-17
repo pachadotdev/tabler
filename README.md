@@ -8,22 +8,26 @@
 
 # Tabler Dashboard for Shiny
 
-# NOT READY FOR GENERAL USE
-
 A modern dashboard framework for R Shiny using the beautiful Tabler
 Bootstrap theme.
 
-## Overview
+<video src="https://raw.githubusercontent.com/pachadotdev/tabler/main/examples/tablerdemo.mp4" controls width="640">
 
-Uses Shiny
+</video>
 
 ## Installation
 
 ``` r
-pak::pak("pachadotdev/tabler")
+# using the R-Universe
+install.packages("tabler", repos = "https://pachadotdev.r-universe.dev")
+
+# or using the remotes package
+remotes::install_github("pachadotdev/tabler")
 ```
 
 ## Quick Start
+
+Please see the documentation: <https://pacha.dev/tabler/>
 
 Here’s a simple example using the Palmer Penguins dataset:
 
@@ -89,6 +93,16 @@ server <- function(input, output, session) {
 
 shinyApp(ui, server)
 ```
+
+## Examples
+
+See the examples directory in the GitHub repository for more complete
+examples:
+
+- Shiny app for all layouts:
+  <https://github.com/pachadotdev/tabler/tree/main/examples/examples_app.R>
+- Shiny app for all layouts using Golem:
+  <https://github.com/pachadotdev/tabler/tree/main/examples/tablerdemo>
 
 ## Available Layouts
 
