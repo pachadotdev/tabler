@@ -3,7 +3,12 @@
 
 <!-- badges: start -->
 
+[![Lifecycle:
+stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 [![R-CMD-check](https://github.com/pachadotdev/tabler/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/pachadotdev/tabler/actions/workflows/R-CMD-check.yaml)
+[![CRAN
+status](https://www.r-pkg.org/badges/version/cpp4r)](https://CRAN.R-project.org/package=cpp4r)
+[![BuyMeACoffee](https://raw.githubusercontent.com/pachadotdev/buymeacoffee-badges/main/bmc-yellow.svg)](https://buymeacoffee.com/pacha)
 <!-- badges: end -->
 
 # Tabler Dashboard for Shiny
@@ -28,6 +33,14 @@ remotes::install_github("pachadotdev/tabler")
 ## Quick Start
 
 Please see the documentation: <https://pacha.dev/tabler/>
+
+See the examples directory in the GitHub repository for more complete
+examples:
+
+- Shiny app for all layouts:
+  <https://github.com/pachadotdev/tabler/blob/main/examples/example_app.R>
+- Shiny app for all layouts using Golem:
+  <https://github.com/pachadotdev/tabler/tree/main/examples/tablerdemo>
 
 Here’s a simple example using the Palmer Penguins dataset:
 
@@ -93,16 +106,6 @@ server <- function(input, output, session) {
 
 shinyApp(ui, server)
 ```
-
-## Examples
-
-See the examples directory in the GitHub repository for more complete
-examples:
-
-- Shiny app for all layouts:
-  <https://github.com/pachadotdev/tabler/tree/main/examples/examples_app.R>
-- Shiny app for all layouts using Golem:
-  <https://github.com/pachadotdev/tabler/tree/main/examples/tablerdemo>
 
 ## Available Layouts
 
@@ -418,9 +421,11 @@ types:
   `list(top = tablerNavbar(...), side = tablerSidebar(...))` to navbar
 - **Horizontal**: Pass `horizontalMenu()` to navbar parameter
 
-The system automatically detects the component type by its HTML tag: -
-`<aside>` tag → sidebar component - `<header>` tag → top navbar
-component - `<ul>` tag → horizontal menu component
+The system automatically detects the component type by its HTML tag:
+
+- `<aside>` tag - sidebar component
+- `<header>` tag - top navbar component
+- `<ul>` tag - horizontal menu component
 
 ## CSS Classes Applied
 

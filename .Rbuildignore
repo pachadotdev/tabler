@@ -10,3 +10,7 @@
 ^dev$
 ^examples$
 ^README\.Rmd$
+^CRAN-SUBMISSION$
+^cran-comments\.md$
+^docs$
+^README\.html$

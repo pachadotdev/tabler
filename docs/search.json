@@ -94,11 +94,5 @@
     "url": "reference/tablerTabItem.html",
     "content": "tablerTabItem Create a Tab Item tablerTabItem(tabName, ...) tabNameUnique identifier for the tab (must match menuItem tabName) ... Content for this tab Individual tab panel content",
     "type": "function"
-  },
-  {
-    "title": "check_deps",
-    "url": "reference/check_deps.html",
-    "content": "check_deps Check if Tabler package dependencies are available check_deps() TRUE if all required dependencies are available Check if Tabler package dependencies are available",
-    "type": "function"
   }
 ]

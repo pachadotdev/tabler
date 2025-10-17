@@ -207,6 +207,41 @@ tr {
   vertical-align: top;
 }
 
+/* General table styling for documentation */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 1em 0;
+}
+
+table td {
+  padding: 0.75em 1em 0.75em 0;
+  vertical-align: top;
+  border: none;
+  line-height: 1.4;
+}
+
+/* Remove margin from paragraphs inside table cells to prevent vertical misalignment */
+table td p {
+  margin: 0;
+  padding: 0;
+}
+
+/* Arguments/parameters tables - first column should be narrow and bold */
+table[role="presentation"] td:first-child,
+table.ref-arguments td:first-child {
+  white-space: nowrap;
+  width: 1%;
+  padding-right: 1.5em;
+  font-weight: normal; /* Code tags will be bold enough */
+}
+
+table[role="presentation"] td:last-child,
+table.ref-arguments td:last-child {
+  width: auto;
+}
+
+/* Specific styling for custom ref-arguments class */
 table.ref-arguments {
   border-collapse: collapse;
   width: 100%;
@@ -214,23 +249,10 @@ table.ref-arguments {
   table-layout: auto; /* Allow auto-sizing based on content */
 }
 
-table.ref-arguments td {
-  padding: 0.75em 1em 0.75em 0;
-  vertical-align: top;
-  border: none;
-  line-height: 1.4;
-}
-
 table.ref-arguments td:first-child {
-  white-space: nowrap; /* Keep parameter names on one line */
-  width: 1%; /* Let it shrink to content size */
-  padding-right: 1.5em;
   font-weight: bold;
 }
 
-table.ref-arguments td:last-child {
-  width: auto; /* Take up remaining space */
-}
 
 /* Code */
 

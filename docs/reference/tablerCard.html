@@ -17,8 +17,7 @@
 <div class="main-container">
 <div id="menu">
   <div>
-    <h1 style="text-align:center;">tabler Documentation</h1>
-  </div>
+    <img src="../man/figures/logo.svg" align="center" height="139" alt="tabler logo"></div>
 
   <div class="search-container">
     <input type="text" id="search-box" placeholder="Search..."></div>
@@ -51,65 +50,74 @@
     <a href="../reference/menuItem.html">menuItem</a>
     <a href="../reference/tablerTabItems.html">tablerTabItems</a>
     <a href="../reference/tablerTabItem.html">tablerTabItem</a>
-    <a href="../reference/check_deps.html">check_deps</a>
   </div>
 
 
 </div>
 <div id="content">
 <div class="content-wrapper">
-<div class="content-main">
-<h1>Create a Tabler Card  Build a modern card component with optional header, body, and footer </h1>
-<h2>Arguments</h2>
-<table class="ref-arguments"><tbody><tr><td><strong>...</strong></td><td>Card body content</td></tr><tr><td><strong>title</strong></td><td>Card title (optional)</td></tr><tr><td><strong>footer</strong></td><td>Card footer content (optional)</td></tr><tr><td><strong>status</strong></td><td>Card color status: "primary", "secondary", "success", "warning", "danger", etc.</td></tr><tr><td><strong>class</strong></td><td>Additional CSS classes</td></tr></tbody></table><h2>Examples</h2>
-<div class="sourceCode"><pre><code>if (interactive()) {
-library(shiny)
-library(tabler)</code></pre></div>
-<div class="error"><pre><code>## Error: <text>:4:0: unexpected end of input
-2: library(shiny)
-3: library(tabler)
-  ^</text></code></pre></div>
-<div class="sourceCode"><pre><code>ui &lt;- tablerPage(
-title = "Card Demo",
-body = tablerBody(
-tablerCard(
-title = "Sample Card",
-"This is card content",
-footer = "Card footer",
-status = "primary"
-)
-)
-)</code></pre></div>
-<div class="output"><pre><code>## 
-##   
-##     <div class="page">
-##       <div class="page-wrapper">
-##         <div class="page-body">
-##           <div class="container-xl ">
-##             <div class="card card-status-primary ">
-##               <div class="card-header">
-##                 <h3 class="card-title">Sample Card</h3>
-##               </div>
-##               <div class="card-body">This is card content</div>
-##               <div class="card-footer">Card footer</div>
-##             </div>
-##           </div>
-##         </div>
-##       </div>
-##     </div>
-##   
-## </code></pre></div>
-<div class="sourceCode"><pre><code>server &lt;- function(input, output, session) {}
-shinyApp(ui, server)
-}</code></pre></div>
-<div class="error"><pre><code>## Error: <text>:3:1: unexpected '}'
-2: shinyApp(ui, server)
-3: }
-   ^</text></code></pre></div>
+        <div class="content-main">
+
+<table style="width: 100%;"><tr><td>tablerCard {tabler}</td><td style="text-align: right;">R Documentation</td></tr></table><h2>Create a Tabler Card</h2>
+
+<h3>Description</h3>
+
+<p>Build a modern card component with optional header, body, and footer
+</p>
+
+
+<h3>Usage</h3>
+
+<pre><code class="language-R">tablerCard(..., title = NULL, footer = NULL, status = NULL, class = NULL)
+</code></pre>
+
+
+<h3>Arguments</h3>
+
+<table role="presentation"><tr><td><code id="...">...</code></td>
+<td>
+Card body content
+</td></tr><tr><td><code id="title">title</code></td>
+<td>
+Card title (optional)
+</td></tr><tr><td><code id="footer">footer</code></td>
+<td>
+Card footer content (optional)
+</td></tr><tr><td><code id="status">status</code></td>
+<td>
+Card color status: "primary", "secondary", "success", "warning", "danger", etc.
+</td></tr><tr><td><code id="class">class</code></td>
+<td>
+Additional CSS classes
+</td></tr></table><h3>Examples</h3>
+
+<pre><code class="language-R">if (interactive()) {
+  library(shiny)
+  library(tabler)
+
+  ui &lt;- tablerPage(
+    title = "Card Demo",
+    body = tablerBody(
+      tablerCard(
+        title = "Sample Card",
+        "This is card content",
+        footer = "Card footer",
+        status = "primary"
+      )
+    )
+  )
+
+  server &lt;- function(input, output, session) {}
+  shinyApp(ui, server)
+}
+</code></pre>
+
+
 </div>
-<footer><p id="last-updated">Loading...</p>
+        </div>
+        <footer><p id="last-updated">Loading...</p>
 </footer><script src="../js/footer.js"></script><script src="../js/theme.js"></script><script src="../js/search.js"></script><script src="../js/fontsize.js"></script></div>
 </div>
-</div>
+
 </body></html>
 

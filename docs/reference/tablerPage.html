@@ -17,8 +17,7 @@
 <div class="main-container">
 <div id="menu">
   <div>
-    <h1 style="text-align:center;">tabler Documentation</h1>
-  </div>
+    <img src="../man/figures/logo.svg" align="center" height="139" alt="tabler logo"></div>
 
   <div class="search-container">
     <input type="text" id="search-box" placeholder="Search..."></div>
@@ -51,94 +50,131 @@
     <a href="../reference/menuItem.html">menuItem</a>
     <a href="../reference/tablerTabItems.html">tablerTabItems</a>
     <a href="../reference/tablerTabItem.html">tablerTabItem</a>
-    <a href="../reference/check_deps.html">check_deps</a>
   </div>
 
 
 </div>
 <div id="content">
 <div class="content-wrapper">
-<div class="content-main">
-<h1>Create a Tabler Dashboard Page  Main function to create a complete dashboard page with Tabler theme </h1>
-<h2>Arguments</h2>
-<table class="ref-arguments"><tbody><tr><td><strong>title</strong></td><td>App title</td></tr><tr><td><strong>navbar</strong></td><td>Dashboard navbar/menu. Can be: - <code>tablerNavbar()</code> for top navigation bar (most layouts) - <code>tablerSidebar()</code> for vertical sidebar (vertical layouts) - <code>horizontalMenu()</code> for horizontal menu (horizontal layout only)</td></tr><tr><td><strong>body</strong></td><td>Dashboard body content</td></tr><tr><td><strong>footer</strong></td><td>Dashboard footer (optional)</td></tr><tr><td><strong>layout</strong></td><td>Layout type: "boxed", "combo", "condensed", "fluid", "fluid-vertical", "horizontal", "navbar-dark", "navbar-overlap", "navbar-sticky", "rtl", "vertical", "vertical-right", "vertical-transparent"</td></tr></tbody></table><h2>Examples</h2>
-<div class="sourceCode"><pre><code>if (interactive()) {
-library(shiny)
-library(tabler)</code></pre></div>
-<div class="error"><pre><code>## Error: <text>:4:0: unexpected end of input
-2: library(shiny)
-3: library(tabler)
-  ^</text></code></pre></div>
-<div class="sourceCode"><pre><code># Boxed layout (default)
-ui1 &lt;- tablerPage(
-title = "My Dashboard",
-body = tablerBody(
-h1("Welcome to Tabler!")
+        <div class="content-main">
+
+<table style="width: 100%;"><tr><td>tablerPage {tabler}</td><td style="text-align: right;">R Documentation</td></tr></table><h2>Create a Tabler Dashboard Page</h2>
+
+<h3>Description</h3>
+
+<p>Main function to create a complete dashboard page with Tabler theme
+</p>
+
+
+<h3>Usage</h3>
+
+<pre><code class="language-R">tablerPage(
+  title = NULL,
+  navbar = NULL,
+  body = NULL,
+  footer = NULL,
+  layout = "boxed"
 )
-)</code></pre></div>
-<div class="error"><pre><code>## Error: could not find function "h1"</code></pre></div>
-<div class="sourceCode"><pre><code># Boxed layout with navbar
-ui2 &lt;- tablerPage(
-title = "Boxed Dashboard",
-layout = "boxed",
-navbar = tablerNavbar(title = "My App"),
-body = tablerBody(
-h1("Boxed Layout!")
-)
-)</code></pre></div>
-<div class="error"><pre><code>## Error: could not find function "h1"</code></pre></div>
-<div class="sourceCode"><pre><code># Vertical layout with sidebar
-ui3 &lt;- tablerPage(
-title = "Vertical Dashboard",
-layout = "vertical",
-navbar = tablerSidebar(
-sidebarMenu(
-menuItem("Dashboard", icon = "home"),
-menuItem("Users", icon = "users")
-)
-),
-body = tablerBody(h1("Vertical Layout!"))
-)</code></pre></div>
-<div class="error"><pre><code>## Error: could not find function "h1"</code></pre></div>
-<div class="sourceCode"><pre><code># Horizontal layout with menu
-ui4 &lt;- tablerPage(
-title = "Horizontal Dashboard",
-layout = "horizontal",
-navbar = horizontalMenu(
-menuItem("Home", icon = "home"),
-menuItem("Analytics", icon = "chart-bar")
-),
-body = tablerBody(h1("Horizontal Layout!"))
-)</code></pre></div>
-<div class="error"><pre><code>## Error: could not find function "h1"</code></pre></div>
-<div class="sourceCode"><pre><code># Combo layout with both navbar and sidebar
-ui5 &lt;- tablerPage(
-title = "Combo Dashboard",
-layout = "combo",
-navbar = list(
-top = tablerNavbar(title = "My App"),
-side = tablerSidebar(
-sidebarMenu(
-menuItem("Dashboard", icon = "home")
-)
-)
-),
-body = tablerBody(h1("Combo Layout!"))
-)</code></pre></div>
-<div class="error"><pre><code>## Error: could not find function "h1"</code></pre></div>
-<div class="sourceCode"><pre><code>server &lt;- function(input, output, session) {}</code></pre></div>
-<div class="output"><pre><code>## function(input, output, session) {}
-## <environment: 0x55ad30657870></environment:></code></pre></div>
-<div class="sourceCode"><pre><code>shinyApp(ui1, server)
-}</code></pre></div>
-<div class="error"><pre><code>## Error: <text>:2:1: unexpected '}'
-1: shinyApp(ui1, server)
-2: }
-   ^</text></code></pre></div>
+</code></pre>
+
+
+<h3>Arguments</h3>
+
+<table role="presentation"><tr><td><code id="title">title</code></td>
+<td>
+App title
+</td></tr><tr><td><code id="navbar">navbar</code></td>
+<td>
+Dashboard navbar/menu. Can be:
+- 'tablerNavbar()' for top navigation bar (most layouts)
+- 'tablerSidebar()' for vertical sidebar (vertical layouts)
+- 'horizontalMenu()' for horizontal menu (horizontal layout only)
+</td></tr><tr><td><code id="body">body</code></td>
+<td>
+Dashboard body content
+</td></tr><tr><td><code id="footer">footer</code></td>
+<td>
+Dashboard footer (optional)
+</td></tr><tr><td><code id="layout">layout</code></td>
+<td>
+Layout type: "boxed", "combo", "condensed", "fluid",
+"fluid-vertical", "horizontal", "navbar-dark", "navbar-overlap",
+"navbar-sticky", "rtl", "vertical", "vertical-right", "vertical-transparent"
+</td></tr></table><h3>Examples</h3>
+
+<pre><code class="language-R">if (interactive()) {
+  library(shiny)
+  library(tabler)
+
+  # Boxed layout (default)
+  ui1 &lt;- tablerPage(
+    title = "My Dashboard",
+    body = tablerBody(
+      h1("Welcome to Tabler!")
+    )
+  )
+
+  # Boxed layout with navbar
+  ui2 &lt;- tablerPage(
+    title = "Boxed Dashboard",
+    layout = "boxed",
+    navbar = tablerNavbar(title = "My App"),
+    body = tablerBody(
+      h1("Boxed Layout!")
+    )
+  )
+
+  # Vertical layout with sidebar
+  ui3 &lt;- tablerPage(
+    title = "Vertical Dashboard",
+    layout = "vertical",
+    navbar = tablerSidebar(
+      sidebarMenu(
+        menuItem("Dashboard", icon = "home"),
+        menuItem("Users", icon = "users")
+      )
+    ),
+    body = tablerBody(h1("Vertical Layout!"))
+  )
+
+  # Horizontal layout with menu
+  ui4 &lt;- tablerPage(
+    title = "Horizontal Dashboard",
+    layout = "horizontal",
+    navbar = horizontalMenu(
+      menuItem("Home", icon = "home"),
+      menuItem("Analytics", icon = "chart-bar")
+    ),
+    body = tablerBody(h1("Horizontal Layout!"))
+  )
+
+  # Combo layout with both navbar and sidebar
+  ui5 &lt;- tablerPage(
+    title = "Combo Dashboard",
+    layout = "combo",
+    navbar = list(
+      top = tablerNavbar(title = "My App"),
+      side = tablerSidebar(
+        sidebarMenu(
+          menuItem("Dashboard", icon = "home")
+        )
+      )
+    ),
+    body = tablerBody(h1("Combo Layout!"))
+  )
+
+  server &lt;- function(input, output, session) {}
+
+  shinyApp(ui1, server)
+}
+</code></pre>
+
+
 </div>
-<footer><p id="last-updated">Loading...</p>
+        </div>
+        <footer><p id="last-updated">Loading...</p>
 </footer><script src="../js/footer.js"></script><script src="../js/theme.js"></script><script src="../js/search.js"></script><script src="../js/fontsize.js"></script></div>
 </div>
-</div>
+
 </body></html>
 
