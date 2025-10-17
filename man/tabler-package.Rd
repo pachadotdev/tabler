@@ -11,7 +11,7 @@ Create beautiful dashboards using the Tabler CSS framework with Shiny. This pack
 \seealso{
 Useful links:
 \itemize{
-  \item \url{http://github.com/pachadotdev/tabler}
+  \item \url{https://github.com/pachadotdev/tabler}
   \item Report bugs at \url{https://github.com/pachadotdev/tabler/issues}
 }
 

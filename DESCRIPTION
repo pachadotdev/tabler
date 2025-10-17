@@ -8,7 +8,7 @@ Authors@R: c(
 Description: Create beautiful dashboards using the Tabler CSS framework with Shiny.
     This package provides R functions to build interactive dashboards with the modern
     Tabler Bootstrap theme, making it easy to create professional-looking web applications.
-URL: http://github.com/pachadotdev/tabler
+URL: https://github.com/pachadotdev/tabler
 BugReports: https://github.com/pachadotdev/tabler/issues
 Depends:
     R (>= 3.5.0)
