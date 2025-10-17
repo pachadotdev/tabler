@@ -11,9 +11,9 @@
 A modern dashboard framework for R Shiny using the beautiful Tabler
 Bootstrap theme.
 
-<video src="https://raw.githubusercontent.com/pachadotdev/tabler/main/examples/tablerdemo.mp4" controls width="640">
+<iframe width="560" height="315" src="https://www.youtube.com/embed/_PWVmmis-AE?si=wJYMvUQUpoZz_k3_" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen>
 
-</video>
+</iframe>
 
 ## Installation
 
