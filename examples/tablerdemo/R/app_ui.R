@@ -10,25 +10,25 @@ app_ui <- function(request) {
 	HW <- Sys.getenv("TABLER_HW", "no")
 
 	# Common content for all layouts (kept small; most content comes from example_app.R)
-	dashboardContent <- tablerBody(
-		tablerPageHeader(
+	dashboardContent <- tabler_body(
+		tabler_page_header(
 			title = "Dashboard Overview",
 			subtitle = "Explore penguin and car datasets with interactive visualizations"
 		),
-		tablerTabItems(
-			tablerTabItem(
-				tabName = "penguins",
+		tabler_tab_items(
+			tabler_tab_item(
+				tab_name = "penguins",
 				fluidRow(
-					tablerValueBox(value = "344", title = "Total Penguins", icon = "users", color = "primary", width = 3),
-					tablerValueBox(value = "3", title = "Species", icon = "brand-github", color = "success", width = 3),
-					tablerValueBox(value = "3", title = "Islands", icon = "map-pin", color = "warning", width = 3),
-					tablerValueBox(value = "2007-2009", title = "Study Years", icon = "calendar", color = "info", width = 3)
+					tabler_value_box(value = "344", title = "Total Penguins", icon = "sum", color = "primary", width = 3),
+					tabler_value_box(value = "3", title = "Species", icon = "paw", color = "success", width = 3),
+					tabler_value_box(value = "3", title = "Islands", icon = "map-pin", color = "warning", width = 3),
+					tabler_value_box(value = "2007-2009", title = "Study Years", icon = "calendar", color = "info", width = 3)
 				),
 				fluidRow(column(12)),
 				fluidRow(
-					column(8, tablerCard(title = "Body Mass by Species", highchartOutput("mass_boxplot", height = "400px"), status = "primary")),
+					column(8, tabler_card(title = "Body Mass by Species", highchartOutput("mass_boxplot", height = "400px"), status = "primary")),
 					column(4,
-						tablerAlert(
+						tabler_alert(
 							title = "Dataset Information",
 							ifelse(HW != "yes",
 										 paste("Palmer Penguins data with", LAYOUT_TYPE, "layout."),
@@ -37,36 +37,36 @@ app_ui <- function(request) {
 							type = "info",
 							dismissible = TRUE
 						),
-						tablerCard(title = "Species Distribution", highcharter::highchartOutput("species_pie", height = "300px"))
+						tabler_card(title = "Species Distribution", highcharter::highchartOutput("species_pie", height = "300px"))
 					)
 				),
 				fluidRow(
-					column(6, tablerCard(title = "Flipper Length vs Body Mass", highchartOutput("scatter_plot", height = "400px"), status = "success")),
-					column(6, tablerCard(title = "Bill Length by Island", highchartOutput("bill_column", height = "400px"), status = "warning"))
+					column(6, tabler_card(title = "Flipper Length vs Body Mass", highchartOutput("scatter_plot", height = "400px"), status = "success")),
+					column(6, tabler_card(title = "Bill Length by Island", highchartOutput("bill_column", height = "400px"), status = "warning"))
 				),
-				fluidRow(column(12, tablerCard(title = "Penguins Count by Year and Species", highcharter::highchartOutput("year_line", height = "350px"), status = "info")))
+				fluidRow(column(12, tabler_card(title = "Penguins Count by Year and Species", highcharter::highchartOutput("year_line", height = "350px"), status = "info")))
 			),
 
-			tablerTabItem(
-				tabName = "mtcars",
+			tabler_tab_item(
+				tab_name = "mtcars",
 				fluidRow(
-					tablerValueBox(value = "32", title = "Total Cars", icon = "car", color = "blue", width = 3),
-					tablerValueBox(value = "3-8", title = "Cylinder Range", icon = "engine", color = "red", width = 3),
-					tablerValueBox(value = "10.4-33.9", title = "MPG Range", icon = "gauge", color = "green", width = 3),
-					tablerValueBox(value = "1973-74", title = "Model Years", icon = "calendar", color = "purple", width = 3)
+					tabler_value_box(value = "32", title = "Total Cars", icon = "car", color = "blue", width = 3),
+					tabler_value_box(value = "3-8", title = "Cylinder Range", icon = "engine", color = "red", width = 3),
+					tabler_value_box(value = "10.4-33.9", title = "MPG Range", icon = "gauge", color = "green", width = 3),
+					tabler_value_box(value = "1973-74", title = "Model Years", icon = "calendar", color = "purple", width = 3)
 				),
 				fluidRow(
-					column(8, tablerCard(title = "MPG Distribution by Cylinders", highchartOutput("mpg_boxplot", height = "400px"), status = "blue")),
+					column(8, tabler_card(title = "MPG Distribution by Cylinders", highchartOutput("mpg_boxplot", height = "400px"), status = "blue")),
 					column(4,
-						tablerAlert(title = "Dataset Information", "Motor Trend Car Road Tests (1974 Motor Trend magazine).", type = "info", dismissible = TRUE),
-						tablerCard(title = "Transmission Types", highcharter::highchartOutput("transmission_pie", height = "300px"))
+						tabler_alert(title = "Dataset Information", "Motor Trend Car Road Tests (1974 Motor Trend magazine).", type = "info", dismissible = TRUE),
+						tabler_card(title = "Transmission Types", highcharter::highchartOutput("transmission_pie", height = "300px"))
 					)
 				),
 				fluidRow(
-					column(6, tablerCard(title = "Weight vs MPG", highchartOutput("weight_scatter", height = "400px"), status = "green")),
-					column(6, tablerCard(title = "Horsepower by Cylinders", highchartOutput("hp_column", height = "400px"), status = "red"))
+					column(6, tabler_card(title = "Weight vs MPG", highchartOutput("weight_scatter", height = "400px"), status = "green")),
+					column(6, tabler_card(title = "Horsepower by Cylinders", highchartOutput("hp_column", height = "400px"), status = "red"))
 				),
-				fluidRow(column(12, tablerCard(title = "Average MPG by Cylinders", highcharter::highchartOutput("mpg_column", height = "350px"), status = "purple")))
+				fluidRow(column(12, tabler_card(title = "Average MPG by Cylinders", highcharter::highchartOutput("mpg_column", height = "350px"), status = "purple")))
 			)
 		)
 	)
@@ -74,21 +74,21 @@ app_ui <- function(request) {
 	# Build UI based on selected layout
 	ui <- switch(
 		LAYOUT_TYPE,
-		"boxed" = tablerPage(title = "Boxed Layout - Tabler Dashboard", layout = "boxed", navbar = tablerNavbar(title = "Boxed Layout"), body = dashboardContent, footer = tablerFooter(left = "\u00A9 2025 Pacha", right = "Built with Tabler - Boxed Layout")),
-		"combo" = tablerPage(title = "Combo Layout - Tabler Dashboard", layout = "combo", navbar = list(top = tablerNavbar(title = "Combo Layout"), side = tablerSidebar(title = "Combo Layout", sidebarMenu(menuItem("Palmer penguins", tabName = "penguins", icon = "home"), menuItem("Motor Trend Cars", tabName = "mtcars", icon = "car", badge = "New")), theme = "dark")), body = dashboardContent, footer = tablerFooter(left = "\u00A9 2025 Pacha", right = "Built with Tabler - Combo Layout")),
-		"vertical" = tablerPage(title = "Vertical Layout - Tabler Dashboard", layout = "vertical", navbar = tablerSidebar(title = "Vertical Layout", sidebarMenu(menuItem("Palmer penguins", tabName = "penguins", icon = "home"), menuItem("Motor Trend Cars", tabName = "mtcars", icon = "car")), theme = "dark"), body = dashboardContent, footer = tablerFooter(left = "\u00A9 2025 Pacha", right = "Built with Tabler - Vertical Layout")),
-		"condensed" = tablerPage(title = "Condensed Layout - Tabler Dashboard", layout = "condensed", navbar = tablerNavbar(title = "Condensed Layout"), body = dashboardContent, footer = tablerFooter(left = "\u00A9 2025 Pacha", right = "Built with Tabler - Condensed Layout")),
-		"navbar-dark" = tablerPage(title = "Dark Navbar Layout - Tabler Dashboard", layout = "navbar-dark", navbar = tablerNavbar(title = "Dark Navbar Layout"), body = dashboardContent, footer = tablerFooter(left = "\u00A9 2025 Pacha", right = "Built with Tabler - Dark Navbar Layout")),
-		"rtl" = tablerPage(title = "RTL Layout - Tabler Dashboard", layout = "rtl", navbar = tablerNavbar(title = "פריסת RTL"), body = dashboardContent, footer = tablerFooter(left = "\u00A9 2024 החברה שלי", right = "נבנה עם Tabler")),
-		"fluid" = tablerPage(title = "Fluid Layout - Tabler Dashboard", layout = "fluid", navbar = tablerNavbar(title = "Fluid Layout"), body = dashboardContent, footer = tablerFooter(left = "\u00A9 2025 Pacha", right = "Built with Tabler - Fluid Layout")),
-		"fluid-vertical" = tablerPage(title = "Fluid Vertical Layout - Tabler Dashboard", layout = "fluid-vertical", navbar = tablerSidebar(title = "Fluid Vertical Layout", sidebarMenu(menuItem("Palmer penguins", tabName = "penguins", icon = "home"), menuItem("Motor Trend Cars", tabName = "mtcars", icon = "car")), theme = "dark"), body = dashboardContent, footer = tablerFooter(left = "\u00A9 2025 Pacha", right = "Built with Tabler - Fluid Vertical Layout")),
-		"horizontal" = tablerPage(title = "Horizontal Layout - Tabler Dashboard", layout = "horizontal", navbar = horizontalMenu(menuItem("Palmer Penguins", tabName = "penguins", icon = "home"), menuItem("Motor Trend Cars", tabName = "mtcars", icon = "car")), body = dashboardContent, footer = tablerFooter(left = "\u00A9 2025 Pacha", right = "Built with Tabler - Horizontal Layout")),
-		"navbar-overlap" = tablerPage(title = "Navbar Overlap Layout - Tabler Dashboard", layout = "navbar-overlap", navbar = tablerNavbar(title = "Navbar Overlap Layout"), body = dashboardContent, footer = tablerFooter(left = "\u00A9 2025 Pacha", right = "Built with Tabler - Navbar Overlap Layout")),
-		"navbar-sticky" = tablerPage(title = "Navbar Sticky Layout - Tabler Dashboard", layout = "navbar-sticky", navbar = tablerNavbar(title = "Navbar Sticky Layout"), body = dashboardContent, footer = tablerFooter(left = "\u00A9 2025 Pacha", right = "Built with Tabler - Navbar Sticky Layout")),
-		"vertical-right" = tablerPage(title = "Vertical Right Layout - Tabler Dashboard", layout = "vertical-right", navbar = tablerSidebar(title = "Vertical Right Layout", sidebarMenu(menuItem("Palmer penguins", tabName = "penguins", icon = "home"), menuItem("Motor Trend Cars", tabName = "mtcars", icon = "car")), theme = "dark"), body = dashboardContent, footer = tablerFooter(left = "\u00A9 2025 Pacha", right = "Built with Tabler - Vertical Right Layout")),
-		"vertical-transparent" = tablerPage(title = "Vertical Transparent Layout - Tabler Dashboard", layout = "vertical-transparent", navbar = tablerSidebar(title = "Vertical Transparent Layout", sidebarMenu(menuItem("Palmer penguins", tabName = "penguins", icon = "home"), menuItem("Motor Trend Cars", tabName = "mtcars", icon = "car")), theme = "light"), body = dashboardContent, footer = tablerFooter(left = "\u00A9 2025 Pacha", right = "Built with Tabler - Vertical Transparent Layout")),
+		"boxed" = tabler_page(title = "Boxed Layout - Tabler Dashboard", layout = "boxed", navbar = tablerNavbar(title = "Boxed Layout"), body = dashboardContent, footer = tabler_footer(left = "\u00A9 2025 Pacha", right = "Built with Tabler - Boxed Layout")),
+		"combo" = tabler_page(title = "Combo Layout - Tabler Dashboard", layout = "combo", navbar = list(top = tablerNavbar(title = "Combo Layout"), side = tabler_sidebar(title = "Combo Layout", sidebar_menu(menu_item("Palmer penguins", tab_name = "penguins", icon = "home"), menu_item("Motor Trend Cars", tab_name = "mtcars", icon = "car", badge = "New")), theme = "dark")), body = dashboardContent, footer = tabler_footer(left = "\u00A9 2025 Pacha", right = "Built with Tabler - Combo Layout")),
+		"vertical" = tabler_page(title = "Vertical Layout - Tabler Dashboard", layout = "vertical", navbar = tabler_sidebar(title = "Vertical Layout", sidebar_menu(menu_item("Palmer penguins", tab_name = "penguins", icon = "home"), menu_item("Motor Trend Cars", tab_name = "mtcars", icon = "car")), theme = "dark"), body = dashboardContent, footer = tabler_footer(left = "\u00A9 2025 Pacha", right = "Built with Tabler - Vertical Layout")),
+		"condensed" = tabler_page(title = "Condensed Layout - Tabler Dashboard", layout = "condensed", navbar = tablerNavbar(title = "Condensed Layout"), body = dashboardContent, footer = tabler_footer(left = "\u00A9 2025 Pacha", right = "Built with Tabler - Condensed Layout")),
+		"navbar-dark" = tabler_page(title = "Dark Navbar Layout - Tabler Dashboard", layout = "navbar-dark", navbar = tablerNavbar(title = "Dark Navbar Layout"), body = dashboardContent, footer = tabler_footer(left = "\u00A9 2025 Pacha", right = "Built with Tabler - Dark Navbar Layout")),
+		"rtl" = tabler_page(title = "RTL Layout - Tabler Dashboard", layout = "rtl", navbar = tablerNavbar(title = "פריסת RTL"), body = dashboardContent, footer = tabler_footer(left = "\u00A9 2024 החברה שלי", right = "נבנה עם Tabler")),
+		"fluid" = tabler_page(title = "Fluid Layout - Tabler Dashboard", layout = "fluid", navbar = tablerNavbar(title = "Fluid Layout"), body = dashboardContent, footer = tabler_footer(left = "\u00A9 2025 Pacha", right = "Built with Tabler - Fluid Layout")),
+		"fluid-vertical" = tabler_page(title = "Fluid Vertical Layout - Tabler Dashboard", layout = "fluid-vertical", navbar = tabler_sidebar(title = "Fluid Vertical Layout", sidebar_menu(menu_item("Palmer penguins", tab_name = "penguins", icon = "home"), menu_item("Motor Trend Cars", tab_name = "mtcars", icon = "car")), theme = "dark"), body = dashboardContent, footer = tabler_footer(left = "\u00A9 2025 Pacha", right = "Built with Tabler - Fluid Vertical Layout")),
+		"horizontal" = tabler_page(title = "Horizontal Layout - Tabler Dashboard", layout = "horizontal", navbar = horizontalMenu(menu_item("Palmer Penguins", tab_name = "penguins", icon = "home"), menu_item("Motor Trend Cars", tab_name = "mtcars", icon = "car")), body = dashboardContent, footer = tabler_footer(left = "\u00A9 2025 Pacha", right = "Built with Tabler - Horizontal Layout")),
+		"navbar-overlap" = tabler_page(title = "Navbar Overlap Layout - Tabler Dashboard", layout = "navbar-overlap", navbar = tablerNavbar(title = "Navbar Overlap Layout"), body = dashboardContent, footer = tabler_footer(left = "\u00A9 2025 Pacha", right = "Built with Tabler - Navbar Overlap Layout")),
+		"navbar-sticky" = tabler_page(title = "Navbar Sticky Layout - Tabler Dashboard", layout = "navbar-sticky", navbar = tablerNavbar(title = "Navbar Sticky Layout"), body = dashboardContent, footer = tabler_footer(left = "\u00A9 2025 Pacha", right = "Built with Tabler - Navbar Sticky Layout")),
+		"vertical-right" = tabler_page(title = "Vertical Right Layout - Tabler Dashboard", layout = "vertical-right", navbar = tabler_sidebar(title = "Vertical Right Layout", sidebar_menu(menu_item("Palmer penguins", tab_name = "penguins", icon = "home"), menu_item("Motor Trend Cars", tab_name = "mtcars", icon = "car")), theme = "dark"), body = dashboardContent, footer = tabler_footer(left = "\u00A9 2025 Pacha", right = "Built with Tabler - Vertical Right Layout")),
+		"vertical-transparent" = tabler_page(title = "Vertical Transparent Layout - Tabler Dashboard", layout = "vertical-transparent", navbar = tabler_sidebar(title = "Vertical Transparent Layout", sidebar_menu(menu_item("Palmer penguins", tab_name = "penguins", icon = "home"), menu_item("Motor Trend Cars", tab_name = "mtcars", icon = "car")), theme = "light"), body = dashboardContent, footer = tabler_footer(left = "\u00A9 2025 Pacha", right = "Built with Tabler - Vertical Transparent Layout")),
 		# default
-		tablerPage(title = "Tabler Demo", layout = "vertical", navbar = tablerSidebar(title = "Tabler Demo", sidebarMenu(menuItem("Palmer penguins", tabName = "penguins", icon = "home"), menuItem("Motor Trend Cars", tabName = "mtcars", icon = "car")), theme = "dark"), body = dashboardContent, footer = tablerFooter(left = "\u00A9 2025 Pacha", right = "Built with Tabler"))
+		tabler_page(title = "Tabler Demo", layout = "vertical", navbar = tabler_sidebar(title = "Tabler Demo", sidebar_menu(menu_item("Palmer penguins", tab_name = "penguins", icon = "home"), menu_item("Motor Trend Cars", tab_name = "mtcars", icon = "car")), theme = "dark"), body = dashboardContent, footer = tabler_footer(left = "\u00A9 2025 Pacha", right = "Built with Tabler"))
 	)
 
 	tagList(

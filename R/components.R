@@ -1,35 +1,14 @@
-#' Create a Tabler Card
-#'
-#' Build a modern card component with optional header, body, and footer
-#'
+#' @title  Create a Tabler Card
+#' @description Build a modern card component with optional header, body, and footer
 #' @param ... Card body content
 #' @param title Card title (optional)
 #' @param footer Card footer content (optional)
 #' @param status Card color status: "primary", "secondary", "success", "warning", "danger", etc.
 #' @param class Additional CSS classes
-#'
+#' @rdname shiny-components
+#' @return A Shiny tag representing the card
 #' @export
-#' @examples
-#' if (interactive()) {
-#'   library(shiny)
-#'   library(tabler)
-#'
-#'   ui <- tablerPage(
-#'     title = "Card Demo",
-#'     body = tablerBody(
-#'       tablerCard(
-#'         title = "Sample Card",
-#'         "This is card content",
-#'         footer = "Card footer",
-#'         status = "primary"
-#'       )
-#'     )
-#'   )
-#'
-#'   server <- function(input, output, session) {}
-#'   shinyApp(ui, server)
-#' }
-tablerCard <- function(..., title = NULL, footer = NULL, status = NULL, class = NULL) {
+tabler_card <- function(..., title = NULL, footer = NULL, status = NULL, class = NULL) {
   # Build status class
   status_class <- if (!is.null(status)) paste0("card-status-", status) else NULL
 
@@ -60,20 +39,19 @@ tablerCard <- function(..., title = NULL, footer = NULL, status = NULL, class = 
   )
 }
 
-#' Create a Value Box
-#'
-#' Display a key metric or value prominently
-#'
+#' @title Create a Value Box
+#' @description Display a key metric or value prominently
 #' @param value Main value to display
 #' @param title Title/label for the value
 #' @param icon Icon name (optional)
 #' @param color Color theme
 #' @param width Column width (1-12)
-#'
+#' @rdname shiny-components
+#' @return A Shiny tag representing the value box
 #' @export
-tablerValueBox <- function(value, title, icon = NULL, color = "primary", width = 3) {
+tabler_value_box <- function(value, title, icon = NULL, color = "primary", width = 3) {
   icon_tag <- if (!is.null(icon)) {
-    tablerIcon(icon)
+    tabler_icon(icon)
   }
 
   shiny::tags$div(
@@ -110,16 +88,15 @@ tablerValueBox <- function(value, title, icon = NULL, color = "primary", width =
   )
 }
 
-#' Create an Icon
-#'
-#' Display an icon from Tabler Icons or other icon libraries
-#'
+#' @title Create an Icon
+#' @description Display an icon from Tabler Icons or other icon libraries
 #' @param name Icon name
 #' @param library Icon library: "tabler", "bootstrap", "feather"
 #' @param class Additional CSS classes
-#'
+#' @rdname shiny-components
+#' @return A Shiny tag representing the icon
 #' @export
-tablerIcon <- function(name, library = "tabler", class = NULL) {
+tabler_icon <- function(name, library = "tabler", class = NULL) {
   icon_class <- switch(library,
     "tabler" = "ti ti-",
     "bootstrap" = "bi bi-",
@@ -132,17 +109,16 @@ tablerIcon <- function(name, library = "tabler", class = NULL) {
   )
 }
 
-#' Create an Alert/Notification
-#'
-#' Display important messages to users
-#'
+#' @title Create an Alert/Notification
+#' @description Display important messages to users
 #' @param ... Alert content
 #' @param type Alert type: "info", "success", "warning", "danger"
 #' @param dismissible Whether alert can be dismissed
 #' @param title Alert title (optional)
-#'
+#' @rdname shiny-components
+#' @return A Shiny tag representing the alert
 #' @export
-tablerAlert <- function(..., type = "info", dismissible = FALSE, title = NULL) {
+tabler_alert <- function(..., type = "info", dismissible = FALSE, title = NULL) {
   dismiss_button <- if (dismissible) {
     shiny::tags$button(
       type = "button",
@@ -165,10 +141,8 @@ tablerAlert <- function(..., type = "info", dismissible = FALSE, title = NULL) {
   )
 }
 
-#' Create a Button
-#'
-#' Create interactive buttons with Tabler styling
-#'
+#' @title Create a Button
+#' @description Create interactive buttons with Tabler styling
 #' @param label Button text
 #' @param onclick JavaScript to execute on click
 #' @param color Button color theme
@@ -176,15 +150,16 @@ tablerAlert <- function(..., type = "info", dismissible = FALSE, title = NULL) {
 #' @param outline Use outline style
 #' @param icon Icon to include
 #' @param ... Additional HTML attributes
-#'
+#' @rdname shiny-components
+#' @return A Shiny tag representing the button
 #' @export
-tablerButton <- function(label, onclick = NULL, color = "primary",
+tabler_button <- function(label, onclick = NULL, color = "primary",
                          size = "md", outline = FALSE, icon = NULL, ...) {
   size_class <- if (size != "md") paste0("btn-", size) else NULL
   color_class <- paste0("btn-", if (outline) "outline-", color)
 
   icon_tag <- if (!is.null(icon)) {
-    list(tablerIcon(icon), " ")
+    list(tabler_icon(icon), " ")
   }
 
   shiny::tags$button(

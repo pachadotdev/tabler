@@ -9,7 +9,8 @@ output: github_document
 stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 [![R-CMD-check](https://github.com/pachadotdev/tabler/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/pachadotdev/tabler/actions/workflows/R-CMD-check.yaml)
 [![CRAN status](https://www.r-pkg.org/badges/version/cpp4r)](https://CRAN.R-project.org/package=cpp4r)
-[![BuyMeACoffee](https://raw.githubusercontent.com/pachadotdev/buymeacoffee-badges/main/bmc-yellow.svg)](https://buymeacoffee.com/pacha)
+[![Test coverage](https://raw.githubusercontent.com/USER/REPO/coverage/badges/coverage.svg)](https://github.com/USER/REPO/actions/workflows/test-coverage.yaml)
+[![BuyMeACoffee](https://raw.githubusercontent.com/pachadotdev/buymeacoffee-badges/main/bmc-blue.svg)](https://buymeacoffee.com/pacha)
 <!-- badges: end -->
 
 ```{r, include = FALSE}
@@ -54,23 +55,23 @@ library(tabler)
 library(highcharter)
 library(palmerpenguins)
 
-ui <- tablerPage(
+ui <- tabler_page(
   title = "Palmer Penguins Dashboard",
-  navbar = tablerNavbar(title = "Penguin Analytics"),
-  body = tablerBody(
-    tablerPageHeader(
+  navbar = tabler_navbar(title = "Penguin Analytics"),
+  body = tabler_body(
+    tabler_page_header(
       title = "Dashboard Overview",
       subtitle = "Explore penguin data with interactive visualizations"
     ),
     fluidRow(
-      tablerValueBox(
+      tabler_value_box(
         value = "344",
         title = "Total Penguins",
         icon = "users",
         color = "primary",
         width = 3
       ),
-      tablerValueBox(
+      tabler_value_box(
         value = "3",
         title = "Species",
         icon = "star",
@@ -81,7 +82,7 @@ ui <- tablerPage(
     fluidRow(
       column(
         12,
-        tablerCard(
+        tabler_card(
           title = "Body Mass Distribution",
           highchartOutput("mass_plot"),
           status = "primary"
@@ -89,7 +90,7 @@ ui <- tablerPage(
       )
     )
   ),
-  footer = tablerFooter(
+  footer = tabler_footer(
     left = "© 2025 Pacha",
     right = "Built with Tabler"
   )
@@ -120,12 +121,12 @@ All examples use the same basic structure from the Quick Start example above. He
 Basic dashboard with top navbar and constrained width content area. This is the default layout shown in the Quick Start example.
 
 ```r
-ui <- tablerPage(
+ui <- tabler_page(
   title = "Boxed Layout",
   layout = "boxed",  # This is the default
-  navbar = tablerNavbar(title = "Palmer Penguins"),
-  body = tablerBody(...),
-  footer = tablerFooter(...)
+  navbar = tabler_navbar(title = "Palmer Penguins"),
+  body = tabler_body(...),
+  footer = tabler_footer(...)
 )
 ```
 
@@ -134,22 +135,22 @@ ui <- tablerPage(
 Combines vertical sidebar navigation with top header. Uses a list with `top` and `side` components.
 
 ```r
-ui <- tablerPage(
+ui <- tabler_page(
   title = "Combo Layout",
   layout = "combo",
   navbar = list(
-    top = tablerNavbar(title = "Palmer Penguins"),
-    side = tablerSidebar(
+    top = tabler_navbar(title = "Palmer Penguins"),
+    side = tabler_sidebar(
       title = "Navigation",
-      sidebarMenu(
-        menuItem("Overview", tabName = "overview", icon = "home"),
-        menuItem("Species", tabName = "species", icon = "star")
+      sidebar_menu(
+        menu_item("Overview", tabName = "overview", icon = "home"),
+        menu_item("Species", tabName = "species", icon = "star")
       ),
       theme = "dark"
     )
   ),
-  body = tablerBody(...),
-  footer = tablerFooter(...)
+  body = tabler_body(...),
+  footer = tabler_footer(...)
 )
 ```
 
@@ -158,12 +159,12 @@ ui <- tablerPage(
 Compact layout with reduced spacing - no body class applied.
 
 ```r
-ui <- tablerPage(
+ui <- tabler_page(
   title = "Condensed Layout",
   layout = "condensed",  # Only change needed
-  navbar = tablerNavbar(title = "Palmer Penguins"),
-  body = tablerBody(...),
-  footer = tablerFooter(...)
+  navbar = tabler_navbar(title = "Palmer Penguins"),
+  body = tabler_body(...),
+  footer = tabler_footer(...)
 )
 ```
 
@@ -172,12 +173,12 @@ ui <- tablerPage(
 Full-width layout without container constraints.
 
 ```r
-ui <- tablerPage(
+ui <- tabler_page(
   title = "Fluid Layout",
   layout = "fluid",  # Content expands to full browser width
-  navbar = tablerNavbar(title = "Palmer Penguins"),
-  body = tablerBody(...),
-  footer = tablerFooter(...)
+  navbar = tabler_navbar(title = "Palmer Penguins"),
+  body = tabler_body(...),
+  footer = tabler_footer(...)
 )
 ```
 
@@ -186,19 +187,19 @@ ui <- tablerPage(
 Full-width layout with vertical sidebar.
 
 ```r
-ui <- tablerPage(
+ui <- tabler_page(
   title = "Fluid Vertical Layout",
   layout = "fluid-vertical",
-  navbar = tablerSidebar(  # Sidebar instead of navbar
+  navbar = tabler_sidebar(  # Sidebar instead of navbar
     title = "My Dashboard",
-    sidebarMenu(
-      menuItem("Dashboard", icon = "home"),
-      menuItem("Analysis", icon = "chart-bar")
+    sidebar_menu(
+      menu_item("Dashboard", icon = "home"),
+      menu_item("Analysis", icon = "chart-bar")
     ),
     theme = "dark"
   ),
-  body = tablerBody(...),
-  footer = tablerFooter(...)
+  body = tabler_body(...),
+  footer = tabler_footer(...)
 )
 ```
 
@@ -207,16 +208,16 @@ ui <- tablerPage(
 Layout with horizontal navigation menu.
 
 ```r
-ui <- tablerPage(
+ui <- tabler_page(
   title = "Horizontal Layout",
   layout = "horizontal",
-  navbar = horizontalMenu(  # Horizontal menu instead of navbar
-    menuItem("Overview", icon = "home"),
-    menuItem("Species", icon = "star"),
-    menuItem("Analysis", icon = "chart-bar")
+  navbar = horizontal_menu( # Horizontal menu instead of navbar
+    menu_item("Overview", icon = "home"),
+    menu_item("Species", icon = "star"),
+    menu_item("Analysis", icon = "chart-bar")
   ),
-  body = tablerBody(...),
-  footer = tablerFooter(...)
+  body = tabler_body(...),
+  footer = tabler_footer(...)
 )
 ```
 
@@ -225,12 +226,12 @@ ui <- tablerPage(
 Layout with dark navbar theme.
 
 ```r
-ui <- tablerPage(
+ui <- tabler_page(
   title = "Dark Navbar Layout",
   layout = "navbar-dark",  # Dark-themed navbar
-  navbar = tablerNavbar(title = "Palmer Penguins"),
-  body = tablerBody(...),
-  footer = tablerFooter(...)
+  navbar = tabler_navbar(title = "Palmer Penguins"),
+  body = tabler_body(...),
+  footer = tabler_footer(...)
 )
 ```
 
@@ -239,12 +240,12 @@ ui <- tablerPage(
 Layout where content overlaps with navbar for a modern look.
 
 ```r
-ui <- tablerPage(
+ui <- tabler_page(
   title = "Navbar Overlap Layout",
   layout = "navbar-overlap",  # Content overlaps with dark navbar
-  navbar = tablerNavbar(title = "Palmer Penguins"),
-  body = tablerBody(...),
-  footer = tablerFooter(...)
+  navbar = tabler_navbar(title = "Palmer Penguins"),
+  body = tabler_body(...),
+  footer = tabler_footer(...)
 )
 ```
 
@@ -253,12 +254,12 @@ ui <- tablerPage(
 Layout with sticky/fixed navbar that stays at the top when scrolling.
 
 ```r
-ui <- tablerPage(
+ui <- tabler_page(
   title = "Sticky Navbar Layout",
   layout = "navbar-sticky",  # Navbar stays fixed when scrolling
-  navbar = tablerNavbar(title = "Palmer Penguins"),
-  body = tablerBody(...),
-  footer = tablerFooter(...)
+  navbar = tabler_navbar(title = "Palmer Penguins"),
+  body = tabler_body(...),
+  footer = tabler_footer(...)
 )
 ```
 
@@ -267,13 +268,13 @@ ui <- tablerPage(
 Right-to-left layout for Arabic/Hebrew languages.
 
 ```r
-ui <- tablerPage(
+ui <- tabler_page(
   title = "RTL Layout",
   layout = "rtl",  # Right-to-left for Arabic/Hebrew
-  navbar = tablerNavbar(title = "פריסת RTL"),
-  body = tablerBody(...),
-  footer = tablerFooter(
-    left = "© 2024 החברה שלי",
+  navbar = tabler_navbar(title = "פריסת RTL"),
+  body = tabler_body(...),
+  footer = tabler_footer(
+    left = "© 2025 החברה שלי",
     right = "נבנה עם Tabler"
   )
 )
@@ -284,20 +285,20 @@ ui <- tablerPage(
 Pure vertical sidebar layout without top navbar.
 
 ```r
-ui <- tablerPage(
+ui <- tabler_page(
   title = "Vertical Layout",
   layout = "vertical",
-  navbar = tablerSidebar(  # Sidebar instead of navbar
+  navbar = tabler_sidebar(  # Sidebar instead of navbar
     title = "Palmer Penguins",
-    sidebarMenu(
-      menuItem("Dashboard", icon = "home"),
-      menuItem("Species", icon = "chart-bar"),
-      menuItem("Islands", icon = "map-pin")
+    sidebar_menu(
+      menu_item("Dashboard", icon = "home"),
+      menu_item("Species", icon = "chart-bar"),
+      menu_item("Islands", icon = "map-pin")
     ),
     theme = "dark"
   ),
-  body = tablerBody(...),
-  footer = tablerFooter(...)
+  body = tabler_body(...),
+  footer = tabler_footer(...)
 )
 ```
 
@@ -306,19 +307,19 @@ ui <- tablerPage(
 Vertical sidebar positioned on the right side.
 
 ```r
-ui <- tablerPage(
+ui <- tabler_page(
   title = "Vertical Right Layout",
   layout = "vertical-right",  # Sidebar on the right
-  navbar = tablerSidebar(
+  navbar = tabler_sidebar(
     title = "My Dashboard",
-    sidebarMenu(
-      menuItem("Dashboard", icon = "home"),
-      menuItem("Analysis", icon = "chart-bar")
+    sidebar_menu(
+      menu_item("Dashboard", icon = "home"),
+      menu_item("Analysis", icon = "chart-bar")
     ),
     theme = "dark"
   ),
-  body = tablerBody(...),
-  footer = tablerFooter(...)
+  body = tabler_body(...),
+  footer = tabler_footer(...)
 )
 ```
 
@@ -327,19 +328,19 @@ ui <- tablerPage(
 Vertical layout with transparent/semi-transparent sidebar.
 
 ```r
-ui <- tablerPage(
+ui <- tabler_page(
   title = "Vertical Transparent Layout",
   layout = "vertical-transparent",  # Transparent sidebar
-  navbar = tablerSidebar(
+  navbar = tabler_sidebar(
     title = "My Dashboard",
-    sidebarMenu(
-      menuItem("Dashboard", icon = "home"),
-      menuItem("Analysis", icon = "chart-bar")
+    sidebar_menu(
+      menu_item("Dashboard", icon = "home"),
+      menu_item("Analysis", icon = "chart-bar")
     ),
     theme = "light"  # Light theme for transparency
   ),
-  body = tablerBody(...),
-  footer = tablerFooter(...)
+  body = tabler_body(...),
+  footer = tabler_footer(...)
 )
 ```
 
@@ -351,57 +352,57 @@ The sidebar can be used in vertical layouts and combo layouts:
 
 ```r
 # For vertical layouts - pass to navbar parameter
-ui <- tablerPage(
+ui <- tabler_page(
   layout = "vertical",
-  navbar = tablerSidebar(
+  navbar = tabler_sidebar(
     title = "My Dashboard",
-    sidebarMenu(
-      menuItem("Overview", tabName = "overview", icon = "home"),
-      menuItem("Species", tabName = "species", icon = "star", badge = "3"),
-      menuItem("Islands", tabName = "islands", icon = "map-pin")
+    sidebar_menu(
+      menu_item("Overview", tabName = "overview", icon = "home"),
+      menu_item("Species", tabName = "species", icon = "star", badge = "3"),
+      menu_item("Islands", tabName = "islands", icon = "map-pin")
     ),
     theme = "dark"  # or "light"
   ),
-  body = tablerBody(...)
+  body = tabler_body(...)
 )
 
 # For combo layout - pass as part of list
-ui <- tablerPage(
+ui <- tabler_page(
   layout = "combo",
   navbar = list(
-    top = tablerNavbar(title = "My App"),
-    side = tablerSidebar(
+    top = tabler_navbar(title = "My App"),
+    side = tabler_sidebar(
       title = "Navigation",
-      sidebarMenu(
-        menuItem("Dashboard", icon = "home")
+      sidebar_menu(
+        menu_item("Dashboard", icon = "home")
       ),
       theme = "dark"
     )
   ),
-  body = tablerBody(...)
+  body = tabler_body(...)
 )
 ```
 
 ### Horizontal Menu
 
-For horizontal layouts, use `horizontalMenu()`:
+For horizontal layouts, use `horizontal_menu()`:
 
 ```r
-ui <- tablerPage(
+ui <- tabler_page(
   layout = "horizontal",
-  navbar = horizontalMenu(
-    menuItem("Home", icon = "home"),
-    menuItem("Analytics", icon = "chart-bar"),
-    menuItem("Settings", icon = "settings")
+  navbar = horizontal_menu(
+    menu_item("Home", icon = "home"),
+    menu_item("Analytics", icon = "chart-bar"),
+    menu_item("Settings", icon = "settings")
   ),
-  body = tablerBody(...)
+  body = tabler_body(...)
 )
 ```
 
 ### Navigation Items
 
 ```r
-menuItem(
+menu_item(
   text = "Dashboard",
   tabName = "dashboard",  # For tab switching
   icon = "home",          # Icon name (Tabler Icons)
@@ -414,10 +415,10 @@ menuItem(
 
 The package automatically handles the HTML structure for each layout type using a smart `navbar` parameter that accepts different component types:
 
-- **Boxed/Condensed/Fluid**: Pass `tablerNavbar()` to navbar parameter
-- **Vertical layouts**: Pass `tablerSidebar()` to navbar parameter  
-- **Combo**: Pass `list(top = tablerNavbar(...), side = tablerSidebar(...))` to navbar
-- **Horizontal**: Pass `horizontalMenu()` to navbar parameter
+- **Boxed/Condensed/Fluid**: Pass `tabler_navbar()` to navbar parameter
+- **Vertical layouts**: Pass `tabler_sidebar()` to navbar parameter  
+- **Combo**: Pass `list(top = tabler_navbar(...), side = tabler_sidebar(...))` to navbar
+- **Horizontal**: Pass `horizontal_menu()` to navbar parameter
 
 The system automatically detects the component type by its HTML tag:
 
@@ -442,34 +443,34 @@ The simplified API uses a single `navbar` parameter:
 
 ```r
 # Most layouts (boxed, condensed, fluid, etc.)
-tablerPage(
+tabler_page(
   layout = "boxed",
-  navbar = tablerNavbar(title = "My App"),
-  body = tablerBody(...)
+  navbar = tabler_navbar(title = "My App"),
+  body = tabler_body(...)
 )
 
 # Vertical layouts
-tablerPage(
+tabler_page(
   layout = "vertical",
-  navbar = tablerSidebar(sidebarMenu(...)),
-  body = tablerBody(...)
+  navbar = tabler_sidebar(sidebar_menu(...)),
+  body = tabler_body(...)
 )
 
 # Horizontal layout
-tablerPage(
+tabler_page(
   layout = "horizontal",
-  navbar = horizontalMenu(menuItem(...)),
-  body = tablerBody(...)
+  navbar = horizontal_menu(menu_item(...)),
+  body = tabler_body(...)
 )
 
 # Combo layout (both navbar and sidebar)
-tablerPage(
+tabler_page(
   layout = "combo",
   navbar = list(
-    top = tablerNavbar(title = "My App"),
-    side = tablerSidebar(sidebarMenu(...))
+    top = tabler_navbar(title = "My App"),
+    side = tabler_sidebar(sidebar_menu(...))
   ),
-  body = tablerBody(...)
+  body = tabler_body(...)
 )
 ```
 
