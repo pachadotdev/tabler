@@ -1,6 +1,6 @@
 test_that("build_vertical_simple_layout produces expected structure", {
   # Create a simple sidebar and body
-  sidebar <- tabler_sidebar(title = "Side")
+  sidebar <- sidebar_menu(menu_item("Side", tab_name = "side"))
   body <- tabler_body("main")
   out <- build_vertical_simple_layout(NULL, sidebar, body, NULL)
   expect_s3_class(out, "shiny.tag")
@@ -10,7 +10,7 @@ test_that("build_vertical_simple_layout produces expected structure", {
 })
 
 test_that("build_fluid_vertical_layout delegates to vertical builder", {
-  sb <- tabler_sidebar(title = "S")
+  sb <- sidebar_menu(menu_item("S", tab_name = "s"))
   b <- tabler_body("B")
   out <- build_fluid_vertical_layout(NULL, sb, b, NULL)
   expect_s3_class(out, "shiny.tag")
@@ -30,7 +30,7 @@ test_that("build_horizontal_layout includes topbar when provided", {
 })
 
 test_that("build_navbar_overlap_layout adjusts navbar attributes", {
-  nav <- tabler_navbar(title = "N")
+  nav <- topbar(title = "N")
   out <- build_navbar_overlap_layout(nav, NULL, tabler_body("X"), NULL)
   expect_s3_class(out, "shiny.tag")
   # navbar-overlap should appear and dark theme attr set
@@ -39,7 +39,7 @@ test_that("build_navbar_overlap_layout adjusts navbar attributes", {
 })
 
 test_that("build_navbar_dark_layout sets dark theme on navbar", {
-  nav <- tabler_navbar(title = "N")
+  nav <- topbar(title = "N")
   out <- build_navbar_dark_layout(nav, NULL, tabler_body("Y"), NULL)
   expect_s3_class(out, "shiny.tag")
   expect_true(grepl("data-bs-theme=\"dark\"|data-bs-theme=\\\"dark\\\"", paste0(out)))
@@ -47,7 +47,7 @@ test_that("build_navbar_dark_layout sets dark theme on navbar", {
 })
 
 test_that("build_navbar_sticky_layout wraps navbar in sticky-top", {
-  nav <- tabler_navbar(title = "Sticky")
+  nav <- topbar(title = "Sticky")
   out <- build_navbar_sticky_layout(nav, NULL, tabler_body("Z"), NULL)
   expect_s3_class(out, "shiny.tag")
   # should include sticky-top class
@@ -56,7 +56,7 @@ test_that("build_navbar_sticky_layout wraps navbar in sticky-top", {
 })
 
 test_that("build_condensed_layout places navbar directly and includes wrapper", {
-  nav <- tabler_navbar(title = "CNav")
+  nav <- topbar(title = "CNav")
   out <- build_condensed_layout(nav, NULL, tabler_body("CB"), NULL)
   expect_s3_class(out, "shiny.tag")
   # navbar should appear directly in page and page-wrapper present

@@ -142,7 +142,9 @@ ui <- tabler_page(
     top = tabler_navbar(title = "Palmer Penguins"),
     side = tabler_sidebar(
       title = "Navigation",
+      # Use sidebar_brand() helper to add a logo image and text (optional)
       sidebar_menu(
+        title = sidebar_brand(text = "My App", img = "www/logo.png"),
         menu_item("Overview", tabName = "overview", icon = "home"),
         menu_item("Species", tabName = "species", icon = "star")
       ),
@@ -190,8 +192,9 @@ Full-width layout with vertical sidebar.
 ui <- tabler_page(
   title = "Fluid Vertical Layout",
   layout = "fluid-vertical",
-  navbar = tabler_sidebar(  # Sidebar instead of navbar
+  navbar = tabler_navbar(  # Sidebar instead of navbar
     title = "My Dashboard",
+    position = "vertical",
     sidebar_menu(
       menu_item("Dashboard", icon = "home"),
       menu_item("Analysis", icon = "chart-bar")
@@ -291,6 +294,8 @@ ui <- tabler_page(
   navbar = tabler_sidebar(  # Sidebar instead of navbar
     title = "Palmer Penguins",
     sidebar_menu(
+      # show an example with a brand image
+      title = sidebar_brand(text = "Palmer Penguins", img = "www/penguin-logo.png"),
       menu_item("Dashboard", icon = "home"),
       menu_item("Species", icon = "chart-bar"),
       menu_item("Islands", icon = "map-pin")

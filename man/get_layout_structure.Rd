@@ -4,7 +4,14 @@
 \alias{get_layout_structure}
 \title{Get layout-specific page structure}
 \usage{
-get_layout_structure(layout, navbar, body, footer)
+get_layout_structure(
+  layout,
+  navbar,
+  body,
+  footer,
+  theme = "light",
+  color = NULL
+)
 }
 \arguments{
 \item{layout}{Layout type}

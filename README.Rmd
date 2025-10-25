@@ -140,7 +140,8 @@ ui <- tabler_page(
   layout = "combo",
   navbar = list(
     top = tabler_navbar(title = "Palmer Penguins"),
-    side = tabler_sidebar(
+    side = tabler_navbar(
+      position = "vertical",
       title = "Navigation",
       sidebar_menu(
         menu_item("Overview", tabName = "overview", icon = "home"),
@@ -190,8 +191,9 @@ Full-width layout with vertical sidebar.
 ui <- tabler_page(
   title = "Fluid Vertical Layout",
   layout = "fluid-vertical",
-  navbar = tabler_sidebar(  # Sidebar instead of navbar
+  navbar = tabler_navbar(  # Sidebar instead of navbar
     title = "My Dashboard",
+    position = "vertical",
     sidebar_menu(
       menu_item("Dashboard", icon = "home"),
       menu_item("Analysis", icon = "chart-bar")

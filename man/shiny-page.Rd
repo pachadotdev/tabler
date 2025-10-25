@@ -4,9 +4,8 @@
 \alias{tabler_page}
 \alias{tabler_body}
 \alias{tabler_page_header}
-\alias{tabler_navbar}
+\alias{topbar}
 \alias{tabler_footer}
-\alias{tabler_sidebar}
 \alias{sidebar_menu}
 \alias{horizontal_menu}
 \alias{menu_item}
@@ -19,20 +18,20 @@ tabler_page(
   navbar = NULL,
   body = NULL,
   footer = NULL,
-  layout = "boxed"
+  layout = "boxed",
+  theme = "light",
+  color = "blue"
 )
 
 tabler_body(..., class = NULL)
 
 tabler_page_header(title, subtitle = NULL, ...)
 
-tabler_navbar(title = NULL, brand_image = NULL, ...)
+topbar(title = NULL, brand_image = NULL, ...)
 
 tabler_footer(left = NULL, right = NULL)
 
-tabler_sidebar(..., title = NULL, brand_image = NULL, theme = "dark")
-
-sidebar_menu(...)
+sidebar_menu(..., title = NULL)
 
 horizontal_menu(...)
 
@@ -43,12 +42,13 @@ tabler_tab_items(...)
 tabler_tab_item(tab_name, ...)
 }
 \arguments{
-\item{title}{Brand title/text for sidebar header}
+\item{title}{Optional brand for the sidebar; either a string (text title) or
+a named list with elements `text` and `img` (URL/path) to render a brand
+image and title. Example: `title = list(text = "My App", img = "logo.png")`.}
 
 \item{navbar}{Dashboard navbar/menu. Can be:
-- `tablerNavbar()` for top navigation bar (most layouts)
-- `tablerSidebar()` for vertical sidebar (vertical layouts)
-- `horizontalMenu()` for horizontal menu (horizontal layout only)}
+- `sidebar_menu()` for a vertical sidebar
+- `horizontal_menu()` for a horizontal menu}
 
 \item{body}{Dashboard body content}
 
@@ -57,6 +57,11 @@ tabler_tab_item(tab_name, ...)
 \item{layout}{Layout type: "boxed", "combo", "condensed", "fluid",
 "fluid-vertical", "horizontal", "navbar-dark", "navbar-overlap",
 "navbar-sticky", "rtl", "vertical", "vertical-right", "vertical-transparent"}
+
+\item{theme}{Default theme: "light" (default) or "dark".}
+
+\item{color}{Color theme (optional): "blue" (default), "azure", "indigo", "purple", "pink",
+"red", "orange", "yellow", "lime", "green", "teal", "cyan".}
 
 \item{...}{Content for this tab}
 
@@ -69,8 +74,6 @@ tabler_tab_item(tab_name, ...)
 \item{left}{Left-aligned content}
 
 \item{right}{Right-aligned content}
-
-\item{theme}{Sidebar theme: "light" or "dark"}
 
 \item{text}{Item text/label}
 
@@ -89,11 +92,9 @@ A Shiny tag representing the body
 
 A Shiny tag representing the page header
 
-A Shiny tag representing the navbar
+A Shiny tag representing the top header
 
 A Shiny tag representing the footer
-
-A Shiny tag representing the sidebar
 
 A Shiny tag representing the sidebar menu
 
@@ -112,11 +113,10 @@ Container for dashboard content
 
 Displays a prominent title and subtitle at the top of the page
 
-Top navigation bar for the dashboard
+Helper to create a top navigation header. This replaces the
+previous top-navbar behavior when users passed a header-like component.
 
 Footer for the dashboard
-
-Vertical sidebar for navigation
 
 Container for navigation items in sidebar
 
@@ -133,12 +133,10 @@ ui <- tabler_page(
   title = "Combo Dashboard",
   layout = "combo",
   navbar = list(
-    top = tabler_navbar(title = "My App"),
-    side = tabler_sidebar(
-      sidebar_menu(
-        menu_item("Dogs", icon = "dog"),
-        menu_item("Cats", icon = "cat")
-      )
+    top = topbar(title = "My App"),
+    side = sidebar_menu(
+      menu_item("Dogs", icon = "dog"),
+      menu_item("Cats", icon = "cat")
     )
   ),
   body = tabler_body("Welcome to Tabler!")

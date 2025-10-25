@@ -5,18 +5,32 @@ library(dplyr)
 library(palmerpenguins)
 
 # either this
-library(tabler)
+# library(tabler)
 
 # or this
-# document()
-# load_all()
+document()
+load_all()
+
+# Ensure the example can serve the logo at /www/logo.svg when run interactively from the repo
+if (interactive()) {
+  # Map the examples' inst app www so the browser can request /www/logo.svg
+  shiny::addResourcePath("www", file.path("examples", "tablerdemo", "inst", "app", "www"))
+}
 
 # Choose which layout to test
 LAYOUT_TYPES <- c(
-  "boxed", "combo", "condensed",
-  "fluid", "fluid-vertical", "horizontal",
-  "navbar-dark", "navbar-overlap", "navbar-sticky",
-  "rtl", "vertical", "vertical-right",
+  "boxed",
+  "combo",
+  "condensed",
+  "fluid",
+  "fluid-vertical",
+  "horizontal",
+  "navbar-dark",
+  "navbar-overlap",
+  "navbar-sticky",
+  "rtl",
+  "vertical",
+  "vertical-right",
   "vertical-transparent"
 )
 
@@ -31,7 +45,7 @@ dashboard_content <- tabler_body(
     title = "Dashboard Overview",
     subtitle = "Explore penguin and car datasets with interactive visualizations"
   ),
-  
+
   tabler_tab_items(
     tabler_tab_item(
       tab_name = "penguins",
@@ -83,7 +97,8 @@ dashboard_content <- tabler_body(
           4,
           tabler_alert(
             title = "Dataset Information",
-            ifelse(HW != "yes",
+            ifelse(
+              HW != "yes",
               paste("Palmer Penguins data with", LAYOUT_TYPE, "layout."),
               paste("נתוני פינגווינים עם פריסת", LAYOUT_TYPE)
             ),
@@ -96,7 +111,7 @@ dashboard_content <- tabler_body(
           )
         )
       ),
-      
+
       fluidRow(
         column(
           6,
@@ -115,7 +130,7 @@ dashboard_content <- tabler_body(
           )
         )
       ),
-      
+
       fluidRow(
         column(
           12,
@@ -127,7 +142,7 @@ dashboard_content <- tabler_body(
         )
       )
     ),
-    
+
     tabler_tab_item(
       tab_name = "mtcars",
       fluidRow(
@@ -160,7 +175,7 @@ dashboard_content <- tabler_body(
           width = 3
         )
       ),
-      
+
       fluidRow(
         column(
           8,
@@ -184,7 +199,7 @@ dashboard_content <- tabler_body(
           )
         )
       ),
-      
+
       fluidRow(
         column(
           6,
@@ -203,7 +218,7 @@ dashboard_content <- tabler_body(
           )
         )
       ),
-      
+
       fluidRow(
         column(
           12,
@@ -224,7 +239,7 @@ ui <- switch(
   "boxed" = tabler_page(
     title = "Boxed Layout - Tabler Dashboard",
     layout = "boxed",
-    navbar = tabler_navbar(title = "Boxed Layout"),
+    navbar = topbar(title = "Boxed Layout"),
     body = dashboard_content,
     footer = tabler_footer(
       left = "© 2025 Pacha",
@@ -236,14 +251,16 @@ ui <- switch(
     title = "Combo Layout - Tabler Dashboard",
     layout = "combo",
     navbar = list(
-      top = tabler_navbar(title = "Combo Layout"),
-      side = tabler_sidebar(
-        title = "Combo Layout",
-        sidebar_menu(
-          menu_item("Palmer penguins", tab_name = "penguins", icon = "home"),
-          menu_item("Motor Trend Cars", tab_name = "mtcars", icon = "car", badge = "New")
-        ),
-        theme = "dark"
+      top = topbar(title = "Combo Layout"),
+      side = sidebar_menu(
+        title = "My title",
+        menu_item("Palmer penguins", tab_name = "penguins", icon = "home"),
+        menu_item(
+          "Motor Trend Cars",
+          tab_name = "mtcars",
+          icon = "car",
+          badge = "New"
+        )
       )
     ),
     body = dashboard_content,
@@ -256,13 +273,11 @@ ui <- switch(
   "vertical" = tabler_page(
     title = "Vertical Layout - Tabler Dashboard",
     layout = "vertical",
-    navbar = tabler_sidebar(
-      title = "Vertical Layout",
-      sidebar_menu(
-        menu_item("Palmer penguins", tab_name = "penguins", icon = "home"),
-        menu_item("Motor Trend Cars", tab_name = "mtcars", icon = "car")
-      ),
-      theme = "dark"
+    navbar = sidebar_menu(
+      # title = "My App",
+  title = sidebar_brand(img = "www/logo.svg", text = "Pacha"),
+      menu_item("Palmer penguins", tab_name = "penguins", icon = "home"),
+      menu_item("Motor Trend Cars", tab_name = "mtcars", icon = "car")
     ),
     body = dashboard_content,
     footer = tabler_footer(
@@ -274,7 +289,7 @@ ui <- switch(
   "condensed" = tabler_page(
     title = "Condensed Layout - Tabler Dashboard",
     layout = "condensed",
-    navbar = tabler_navbar(title = "Condensed Layout"),
+    navbar = topbar(title = "Condensed Layout"),
     body = dashboard_content,
     footer = tabler_footer(
       left = "© 2025 Pacha",
@@ -285,46 +300,42 @@ ui <- switch(
   "navbar-dark" = tabler_page(
     title = "Dark Navbar Layout - Tabler Dashboard",
     layout = "navbar-dark",
-    navbar = tabler_navbar(title = "Dark Navbar Layout"),
+    navbar = topbar(title = "Dark Navbar Layout"),
     body = dashboard_content,
     footer = tabler_footer(
       left = "© 2025 Pacha",
       right = "Built with Tabler - Dark Navbar Layout"
     )
   ),
-  
+
   "rtl" = tabler_page(
     title = "RTL Layout - Tabler Dashboard",
     layout = "rtl",
-    navbar = tabler_navbar(title = "פריסת RTL"),
+    navbar = topbar(title = "פריסת RTL"),
     body = dashboard_content,
     footer = tabler_footer(
       left = "© 2025 החברה שלי",
       right = "נבנה עם Tabler"
     )
   ),
-  
+
   "fluid" = tabler_page(
     title = "Fluid Layout - Tabler Dashboard",
     layout = "fluid",
-    navbar = tabler_navbar(title = "Fluid Layout"),
+    navbar = topbar(title = "Fluid Layout"),
     body = dashboard_content,
     footer = tabler_footer(
       left = "© 2025 Pacha",
       right = "Built with Tabler - Fluid Layout"
     )
   ),
-  
+
   "fluid-vertical" = tabler_page(
     title = "Fluid Vertical Layout - Tabler Dashboard",
     layout = "fluid-vertical",
-    navbar = tabler_sidebar(
-      title = "Fluid Vertical Layout",
-      sidebar_menu(
-        menu_item("Palmer penguins", tab_name = "penguins", icon = "home"),
-        menu_item("Motor Trend Cars", tab_name = "mtcars", icon = "car")
-      ),
-      theme = "dark"
+    navbar = sidebar_menu(
+      menu_item("Palmer penguins", tab_name = "penguins", icon = "home"),
+      menu_item("Motor Trend Cars", tab_name = "mtcars", icon = "car")
     ),
     body = dashboard_content,
     footer = tabler_footer(
@@ -332,11 +343,11 @@ ui <- switch(
       right = "Built with Tabler - Fluid Vertical Layout"
     )
   ),
-  
+
   "horizontal" = tabler_page(
     title = "Horizontal Layout - Tabler Dashboard",
     layout = "horizontal",
-    navbar = horizontalMenu(
+    navbar = horizontal_menu(
       menu_item("Palmer Penguins", tab_name = "penguins", icon = "home"),
       menu_item("Motor Trend Cars", tab_name = "mtcars", icon = "car")
     ),
@@ -346,39 +357,35 @@ ui <- switch(
       right = "Built with Tabler - Horizontal Layout"
     )
   ),
-  
+
   "navbar-overlap" = tabler_page(
     title = "Navbar Overlap Layout - Tabler Dashboard",
     layout = "navbar-overlap",
-    navbar = tabler_navbar(title = "Navbar Overlap Layout"),
+    navbar = topbar(title = "Navbar Overlap Layout"),
     body = dashboard_content,
     footer = tabler_footer(
       left = "© 2025 Pacha",
       right = "Built with Tabler - Navbar Overlap Layout"
     )
   ),
-  
+
   "navbar-sticky" = tabler_page(
     title = "Navbar Sticky Layout - Tabler Dashboard",
     layout = "navbar-sticky",
-    navbar = tabler_navbar(title = "Navbar Sticky Layout"),
+    navbar = topbar(title = "Navbar Sticky Layout"),
     body = dashboard_content,
     footer = tabler_footer(
       left = "© 2025 Pacha",
       right = "Built with Tabler - Navbar Sticky Layout"
     )
   ),
-  
+
   "vertical-right" = tabler_page(
     title = "Vertical Right Layout - Tabler Dashboard",
     layout = "vertical-right",
-    navbar = tabler_sidebar(
-      title = "Vertical Right Layout",
-      sidebar_menu(
-        menu_item("Palmer penguins", tab_name = "penguins", icon = "home"),
-        menu_item("Motor Trend Cars", tab_name = "mtcars", icon = "car")
-      ),
-      theme = "dark"
+    navbar = sidebar_menu(
+      menu_item("Palmer penguins", tab_name = "penguins", icon = "home"),
+      menu_item("Motor Trend Cars", tab_name = "mtcars", icon = "car")
     ),
     body = dashboard_content,
     footer = tabler_footer(
@@ -386,17 +393,13 @@ ui <- switch(
       right = "Built with Tabler - Vertical Right Layout"
     )
   ),
-  
+
   "vertical-transparent" = tabler_page(
     title = "Vertical Transparent Layout - Tabler Dashboard",
     layout = "vertical-transparent",
-    navbar = tabler_sidebar(
-      title = "Vertical Transparent Layout",
-      sidebar_menu(
-        menu_item("Palmer penguins", tab_name = "penguins", icon = "home"),
-        menu_item("Motor Trend Cars", tab_name = "mtcars", icon = "car")
-      ),
-      theme = "light"
+    navbar = sidebar_menu(
+      menu_item("Palmer penguins", tab_name = "penguins", icon = "home"),
+      menu_item("Motor Trend Cars", tab_name = "mtcars", icon = "car")
     ),
     body = dashboard_content,
     footer = tabler_footer(
@@ -409,7 +412,7 @@ ui <- switch(
 server <- function(input, output, session) {
   # Prepare data
   penguins_clean <- na.omit(palmerpenguins::penguins)
-  
+
   # Penguins Tab Charts
   # Boxplot: Body Mass by Species
   output$mass_boxplot <- renderHighchart({
@@ -426,12 +429,12 @@ server <- function(input, output, session) {
       hc_yAxis(title = list(text = "Body Mass (g)")) %>%
       hc_legend(enabled = FALSE)
   })
-  
+
   # Pie Chart: Species Distribution
   output$species_pie <- renderHighchart({
     species_counts <- penguins_clean %>%
       count(species)
-    
+
     highchart() %>%
       hc_chart(type = "pie") %>%
       hc_add_series(
@@ -448,7 +451,7 @@ server <- function(input, output, session) {
         )
       )
   })
-  
+
   # Scatter Plot: Flipper Length vs Body Mass
   output$scatter_plot <- renderHighchart({
     highchart() %>%
@@ -481,13 +484,13 @@ server <- function(input, output, session) {
         pointFormat = "<b>{series.name}</b><br/>Flipper: {point.x} mm<br/>Mass: {point.y} g"
       )
   })
-  
+
   # Column Chart: Bill Length by Island
   output$bill_column <- renderHighchart({
     bill_data <- penguins_clean %>%
       group_by(island, species) %>%
       summarise(avg_bill = mean(bill_length_mm, na.rm = TRUE), .groups = "drop")
-    
+
     highchart() %>%
       hc_chart(type = "column") %>%
       hc_xAxis(categories = unique(bill_data$island)) %>%
@@ -516,12 +519,12 @@ server <- function(input, output, session) {
       hc_yAxis(title = list(text = "Average Bill Length (mm)")) %>%
       hc_tooltip(pointFormat = "<b>{series.name}</b>: {point.y:.1f} mm")
   })
-  
+
   # Line Chart: Penguins Count by Year and Species
   output$year_line <- renderHighchart({
     year_data <- penguins_clean %>%
       count(year, species)
-    
+
     highchart() %>%
       hc_chart(type = "line") %>%
       hc_xAxis(categories = unique(year_data$year)) %>%
@@ -550,15 +553,15 @@ server <- function(input, output, session) {
       hc_yAxis(title = list(text = "Count")) %>%
       hc_tooltip(pointFormat = "<b>{series.name}</b>: {point.y}")
   })
-  
+
   # MTCars Tab Charts
   # Boxplot: MPG by Cylinders
   output$mpg_boxplot <- renderHighchart({
     mtcars2 <- mtcars %>%
       mutate(cyl = as.factor(cyl))
-    
+
     d <- data_to_boxplot(mtcars2, mpg, cyl)
-    
+
     highchart() %>%
       hc_add_series_list(d) %>%
       hc_title(text = NULL) %>%
@@ -567,13 +570,13 @@ server <- function(input, output, session) {
       hc_legend(enabled = FALSE) %>%
       hc_colors(c("#206bc4", "#d63939", "#f59f00"))
   })
-  
+
   # Pie Chart: Transmission Distribution
   output$transmission_pie <- renderHighchart({
     trans_counts <- mtcars %>%
       mutate(transmission = ifelse(am == 0, "Automatic", "Manual")) %>%
       count(transmission)
-    
+
     highchart() %>%
       hc_chart(type = "pie") %>%
       hc_add_series(
@@ -590,7 +593,7 @@ server <- function(input, output, session) {
         )
       )
   })
-  
+
   # Scatter Plot: Weight vs MPG
   output$weight_scatter <- renderHighchart({
     highchart() %>%
@@ -609,14 +612,14 @@ server <- function(input, output, session) {
         pointFormat = "<b>Weight:</b> {point.x:.2f}<br/><b>MPG:</b> {point.y:.1f}"
       )
   })
-  
+
   # Column Chart: Horsepower by Cylinders
   output$hp_column <- renderHighchart({
     hp_data <- mtcars %>%
       mutate(cyl = as.factor(cyl)) %>%
       group_by(cyl) %>%
       summarise(avg_hp = mean(hp, na.rm = TRUE), .groups = "drop")
-    
+
     highchart() %>%
       hc_chart(type = "column") %>%
       hc_xAxis(categories = hp_data$cyl, title = list(text = "Cylinders")) %>%
@@ -632,14 +635,14 @@ server <- function(input, output, session) {
       hc_tooltip(pointFormat = "<b>{point.y:.1f}</b> HP") %>%
       hc_legend(enabled = FALSE)
   })
-  
+
   # Column Chart: Average MPG by Cylinders
   output$mpg_column <- renderHighchart({
     mpg_data <- mtcars %>%
       mutate(cyl = as.factor(cyl)) %>%
       group_by(cyl) %>%
       summarise(avg_mpg = mean(mpg, na.rm = TRUE), .groups = "drop")
-    
+
     highchart() %>%
       hc_chart(type = "column") %>%
       hc_xAxis(categories = mpg_data$cyl, title = list(text = "Cylinders")) %>%

@@ -9,7 +9,7 @@
 #' @source \url{https://github.com/tabler/}
 #' @keywords internal
 #' @noRd
-add_deps <- function(tag, layout = "default") {
+add_deps <- function(tag, layout = "default", theme = "light", color = "minimal") {
   # Determine if RTL CSS is needed
   is_rtl <- layout == "rtl"
 

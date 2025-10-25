@@ -55,12 +55,12 @@ test_that("tabler body/header/navbar/footer/sidebar and menus", {
   # extra column class should be present when ... provided
   expect_true(grepl("col-auto ms-auto", paste0(hdr2)))
 
-  nav <- tabler_navbar(title = "Brand")
+  nav <- topbar(title = "Brand")
   expect_s3_class(nav, "shiny.tag")
   expect_true(grepl("Brand", paste0(nav)))
 
   # navbar with brand_image should include an <img> with correct attributes
-  img_nav <- tabler_navbar(brand_image = "logo.png", title = "ImgTitle")
+  img_nav <- topbar(brand_image = "logo.png", title = "ImgTitle")
   expect_s3_class(img_nav, "shiny.tag")
   expect_true(grepl("logo.png", paste0(img_nav)))
   expect_true(grepl("navbar-brand-image", paste0(img_nav)))
@@ -68,22 +68,17 @@ test_that("tabler body/header/navbar/footer/sidebar and menus", {
   expect_true(grepl("ImgTitle|Dashboard", paste0(img_nav)))
 
   # when no title provided, alt should default to 'Dashboard'
-  img_nav2 <- tabler_navbar(brand_image = "logo2.png")
+  img_nav2 <- topbar(brand_image = "logo2.png")
   expect_s3_class(img_nav2, "shiny.tag")
   expect_true(grepl("logo2.png", paste0(img_nav2)))
   expect_true(grepl("alt=\"Dashboard\"|alt=\\\"Dashboard\\\"", paste0(img_nav2)))
-  # sidebar brand image dimensions (sidebar includes explicit width/height)
-  sb <- tabler_sidebar(brand_image = "slogo.png", title = "S")
-  expect_true(grepl("slogo.png", paste0(sb)))
-  expect_true(grepl("width=\\\"110\\\"|width=\"110\"", paste0(sb)))
-  expect_true(grepl("height=\\\"32\\\"|height=\"32\"", paste0(sb)))
 
   ft <- tabler_footer(left = "L", right = "R")
   expect_s3_class(ft, "shiny.tag")
   expect_true(grepl("L", paste0(ft)))
   expect_true(grepl("R", paste0(ft)))
 
-  sidebar <- tabler_sidebar(title = "S")
+  sidebar <- sidebar_menu(menu_item("S", tab_name = "s"))
   expect_s3_class(sidebar, "shiny.tag")
   expect_true(grepl("S", paste0(sidebar)))
 
