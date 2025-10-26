@@ -31,10 +31,11 @@
 #' @rdname shiny-page
 #' @export
 tabler_page <- function(title = NULL, navbar = NULL, body = NULL, footer = NULL, layout = "boxed",
-  theme = "light", color = "blue") {
+  theme = "light", color = "blue", show_theme_button = TRUE) {
   # Validate layout
   valid_layouts <- c(
-    "boxed"
+    "boxed",
+    "combo"
   )
   if (!layout %in% valid_layouts) {
     stop("Invalid layout. Must be one of: ", paste(valid_layouts, collapse = ", "))
@@ -44,7 +45,11 @@ tabler_page <- function(title = NULL, navbar = NULL, body = NULL, footer = NULL,
   body_attrs <- get_layout_attributes(layout)
 
   # Build page structure based on layout (forward theme/color)
-  page_content <- get_layout_structure(layout, navbar, body, footer, theme = theme, color = color)
+  page_content <- switch(layout,
+    "boxed" = layout_boxed(navbar, NULL, body, footer, theme = theme, color = color, show_theme_button = show_theme_button),
+    "combo" = layout_boxed(navbar, NULL, body, footer, theme = theme, color = color, show_theme_button = show_theme_button),
+    stop("Unsupported layout: ", layout)
+  )
 
   # Build the HTML structure
   # Note: Do not build a full <html> tag here; Shiny provides that.
@@ -69,6 +74,16 @@ tabler_page <- function(title = NULL, navbar = NULL, body = NULL, footer = NULL,
     script_lines <- c(script_lines, sprintf("try{localStorage.setItem('tabler-theme-primary','%s');document.documentElement.setAttribute('data-bs-theme-primary','%s')}catch(e){}", color, color))
   } else {
     script_lines <- c(script_lines, "try{localStorage.removeItem('tabler-theme-primary');document.documentElement.removeAttribute('data-bs-theme-primary')}catch(e){}")
+  }
+  # Small click handler so clicking theme links toggles theme without a hard reload.
+  # Also optionally remove the theme buttons if show_theme_button is FALSE.
+  script_lines <- c(script_lines,
+    "(function(){try{document.addEventListener('click',function(e){var closest = e.target && e.target.closest; if(!closest) return; var a = closest.call(e.target, \"a[href^='?theme='], a[href*='?theme=']\"); if(!a) return; try{ e.preventDefault(); var href = a.getAttribute('href') || ''; var u = new URL(href, window.location.href); var t = u.searchParams.get('theme'); if(t){ localStorage.setItem('tabler-theme', t); document.documentElement.setAttribute('data-bs-theme', t); var sp = new URLSearchParams(window.location.search); sp.set('theme', t); history.replaceState(null, '', window.location.pathname + (sp.toString() ? ('?' + sp.toString()) : '') + window.location.hash); document.dispatchEvent(new Event('tabler:themechange')); } }catch(err){} }, false);}catch(e){} })()"
+  )
+
+  if (!isTRUE(show_theme_button)) {
+    # remove theme anchors if requested
+    script_lines <- c(script_lines, "try{document.querySelectorAll('a.hide-theme-dark,a.hide-theme-light').forEach(function(n){var p=n.parentElement;p&&p.classList.contains('nav-item')?p.remove():n.remove()})}catch(e){}")
   }
   script_text <- paste(script_lines, collapse = ";")
 
@@ -489,6 +504,7 @@ get_layout_attributes <- function(layout) {
 
   layout_class <- switch(layout,
     "boxed" = "layout-boxed",
+    "combo" = "layout-combo",
     NULL
   )
 
@@ -506,7 +522,7 @@ get_layout_attributes <- function(layout) {
 #' @param ... Additional nodes to include (typically `menu_item()` elements)
 #' @return A shiny tag for the header
 #' @export
-navbar_menu <- function(..., brand = NULL) {
+navbar_menu <- function(..., brand = NULL, show_theme_button = TRUE) {
   items <- list(...)
 
   # Collect only <li> elements for the main menu
@@ -533,17 +549,20 @@ navbar_menu <- function(..., brand = NULL) {
   }
 
   # Theme toggles (links only; Tabler theme script will handle visibility)
-  theme_toggles <- shiny::tags$div(
-    class = "nav-item ms-md-auto",
-    shiny::tags$a(href = "?theme=dark", class = "nav-link px-0 hide-theme-dark", title = "Enable dark mode", `data-bs-toggle` = "tooltip", `data-bs-placement` = "bottom",
-      # moon icon placeholder
-      shiny::HTML('<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-1"><path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z"/></svg>')
-    ),
-    shiny::tags$a(href = "?theme=light", class = "nav-link px-0 hide-theme-light", title = "Enable light mode", `data-bs-toggle` = "tooltip", `data-bs-placement` = "bottom",
-      # sun icon placeholder
-      shiny::HTML('<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-1"><path d="M12 12m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0"/><path d="M3 12h1m8 -9v1m8 8h1m-9 8v1m-6.4 -15.4l.7 .7m12.1 -.7l-.7 .7m0 11.4l.7 .7m-12.1 -.7l-.7 .7"/></svg>')
+  theme_toggles <- NULL
+  if (isTRUE(show_theme_button)) {
+    theme_toggles <- shiny::tags$div(
+      class = "nav-item ms-md-auto",
+      shiny::tags$a(href = "?theme=dark", class = "nav-link px-0 hide-theme-dark", title = "Enable dark mode", `data-bs-toggle` = "tooltip", `data-bs-placement` = "bottom",
+        # moon icon placeholder
+        shiny::HTML('<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-1"><path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z"/></svg>')
+      ),
+      shiny::tags$a(href = "?theme=light", class = "nav-link px-0 hide-theme-light", title = "Enable light mode", `data-bs-toggle` = "tooltip", `data-bs-placement` = "bottom",
+        # sun icon placeholder
+        shiny::HTML('<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-1"><path d="M12 12m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0"/><path d="M3 12h1m8 -9v1m8 8h1m-9 8v1m-6.4 -15.4l.7 .7m12.1 -.7l-.7 .7m0 11.4l.7 .7m-12.1 -.7l-.7 .7"/></svg>')
+      )
     )
-  )
+  }
 
   shiny::tags$header(
     class = "navbar navbar-expand-md",
@@ -569,85 +588,5 @@ navbar_menu <- function(..., brand = NULL) {
       )
     ),
     shiny::HTML("<!-- END NAVBAR  -->")
-  )
-}
-
-#' @title Get layout-specific page structure
-#' @description Build the HTML structure based on layout type
-#' @param layout Layout type
-#' @param navbar Navbar component
-#' @param body Body content
-#' @param footer Footer component
-#' @return A Shiny tag representing the page structure
-#' @keywords internal
-get_layout_structure <- function(layout, navbar, body, footer, theme = "light", color = NULL) {
-  # Parse navbar - can be a single component or a list for combo layout
-  top_nav <- NULL
-  sidebar <- NULL
-
-  if (is.list(navbar) && !inherits(navbar, "shiny.tag")) {
-    # List format for combo layout: list(top = ..., side = ...)
-    top_nav <- navbar$top
-    sidebar <- navbar$side
-  } else if (!is.null(navbar)) {
-    # Determine component type by class
-    if (inherits(navbar, "shiny.tag")) {
-      tag_name <- navbar$name
-      if (tag_name == "aside") {
-        sidebar <- navbar
-      } else if (tag_name == "header") {
-        top_nav <- navbar
-      } else if (tag_name == "ul") {
-        # `ul` can represent either a vertical sidebar (sidebar_menu)
-        # or a horizontal menu (horizontal_menu). We choose placement by
-        # layout: for horizontal layouts treat as topbar; for vertical/combo
-        # layouts treat as sidebar. The caller will pass a list for combo
-        # layouts, or a single `ul` for simple vertical/horizontal pages.
-        if (layout %in% c("horizontal")) {
-          top_nav <- navbar
-        } else {
-          sidebar <- navbar
-        }
-      }
-    }
-  }
-
-  switch(layout,
-    "boxed" = build_boxed_layout(top_nav, sidebar, body, footer),
-    NULL
-  )
-}
-
-#' @title Helper function for default/boxed/fluid layouts
-#' @description Build standard page structure
-#' @param navbar Navbar component
-#' @param sidebar Sidebar component
-#' @param body Body content
-#' @param footer Footer component
-#' @return A Shiny tag representing the page structure
-#' @keywords internal
-#' @noRd
-build_boxed_layout <- function(navbar, sidebar, body, footer, theme = "light", color = NULL) {
-  shiny::tags$div(
-    class = "page",
-    # Sidebar (if present)
-    if (!is.null(sidebar)) sidebar,
-
-    # Navbar
-    if (!is.null(navbar)) navbar,
-
-    # Main content wrapper
-    shiny::tags$div(
-      class = "page-wrapper",
-
-      # Page body
-      shiny::tags$div(
-        class = "page-body",
-        body
-      ),
-
-      # Footer
-      if (!is.null(footer)) footer
-    )
   )
 }

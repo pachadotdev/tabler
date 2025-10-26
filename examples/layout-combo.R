@@ -8,20 +8,18 @@ svg_text <- paste(readLines("./examples/tabler-logo.svg", warn = FALSE), collaps
 svg_data_uri <- paste0("data:image/svg+xml;utf8,", URLencode(svg_text, reserved = TRUE))
 
 ui <- tabler_page(
-  theme = "dark",
-  color = "teal",
-  title = "Boxed Dashboard",
-  layout = "boxed", # default
-  show_theme_button = TRUE,
+  theme = "light",
+  title = "Combo Dashboard",
+  layout = "combo",
   navbar = navbar_menu(
     brand = sidebar_brand(text = "", img = svg_data_uri, href = "./"),
     menu_item("Home", icon = "home"),
     menu_dropdown(
       "Layout",
       icon = "layout-2",
-      href = "./",
+      href = "layout-boxed.html#navbar-layout",
       items = list(
-        c("Boxed", "./"),
+        c("Boxed", "layout-boxed.html"),
         c("Combined", "./"),
         c("Condensed", "./"),
         c("Fluid", "./"),
@@ -80,9 +78,7 @@ server <- function(input, output, session) {
 
     d3po(sim) %>%
         po_scatter(daes(x = x, y = y, group = letter)) %>%
-        po_labels(title = "Weight Distribution by Type") %>%
-        po_background("transparent") %>%
-        po_theme(axis = "#fff", tooltips = "#000")
+        po_labels(title = "Weight Distribution by Type")
   })
 }
 

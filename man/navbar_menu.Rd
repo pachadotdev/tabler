@@ -4,7 +4,7 @@
 \alias{navbar_menu}
 \title{Build a standard navbar/header}
 \usage{
-navbar_menu(..., brand = NULL)
+navbar_menu(..., brand = NULL, show_theme_button = TRUE)
 }
 \arguments{
 \item{...}{Additional nodes to include (typically `menu_item()` elements)}

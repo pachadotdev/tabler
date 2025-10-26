@@ -20,7 +20,8 @@ tabler_page(
   footer = NULL,
   layout = "boxed",
   theme = "light",
-  color = "blue"
+  color = "blue",
+  show_theme_button = TRUE
 )
 
 tabler_body(..., class = NULL)
