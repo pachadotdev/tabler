@@ -9,3 +9,6 @@ dev/icons.css
 official-examples/preview.tabler.io/dist/
 official-examples/preview.tabler.io/preview/
 official-examples/preview.tabler.io/static/
+package-lock.json
+package.json
+node_modules/
