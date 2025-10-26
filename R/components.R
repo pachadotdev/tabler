@@ -32,18 +32,43 @@ tabler_card <- function(..., title = NULL, footer = NULL, status = NULL, class =
     body_content <- if (length(dots) > 0) dots else NULL
   }
 
-  # Card header (only when title explicitly provided by named arg)
+  # Card header/body rendering
   header <- NULL
   if (title_was_provided && !is.null(title)) {
-    header <- shiny::tags$div(
-      class = "card-header",
-      shiny::tags$h3(class = "card-title", title)
+    # Render boxed-style card by default: title inside card body as h3.h2,
+    # body content below it, and footer rendered as muted paragraph inside
+    # the same column. This matches the upstream boxed examples.
+    # Prepare body paragraph(s)
+    body_par <- NULL
+    if (!is.null(body_content)) {
+      if (is.character(body_content)) {
+        # character content -> normal paragraph
+        body_par <- shiny::tags$p(body_content)
+      } else if (is.list(body_content) && length(body_content) == 1 && inherits(body_content[[1]], "shiny.tag")) {
+        # single shiny.tag (e.g., p(...)) -> use as-is
+        body_par <- body_content[[1]]
+      } else {
+        # other cases: include as-is
+        body_par <- body_content
+      }
+    }
+
+    # do not render footer as muted paragraph inside body; render as card-footer later
+    body_tag <- shiny::tags$div(
+      class = "card-body",
+      shiny::tags$div(
+        class = "row gy-3",
+        shiny::tags$div(
+          class = "col-12 col-sm d-flex flex-column",
+          shiny::tags$h3(class = "h2", title),
+          body_par,
+      NULL
+        )
+      )
     )
-    # body will be the dots
-    body_tag <- shiny::tags$div(class = "card-body", body_content)
+    # keep rendering a separate card-footer below so footer is shown once
   } else if (inferred_title) {
-    # Render boxed-style card body with title and muted paragraph as in layout-boxed.html
-    # If body_content is a simple character, wrap in <p class='text-muted'>
+    # Render boxed-style card body for shorthand usage (title inferred from first arg)
     body_par <- NULL
     if (!is.null(body_content)) {
       if (is.character(body_content)) {
