@@ -1,148 +1,284 @@
-## Minimal core.R (diet): only the helpers and builders used by tests
+#' @title Create a Tabler Dashboard Page
+#' @description Main function to create a complete dashboard page with Tabler theme
+#' @param title App title
+#' @param navbar Dashboard navbar/menu. Can be:
+#'   - `sidebar_menu()` for a vertical sidebar
+#'   - `horizontal_menu()` for a horizontal menu
+#' @param body Dashboard body content
+#' @param footer Dashboard footer (optional)
+#' @param layout Layout type: "boxed"
+#' @param theme Default theme: "light" (default) or "dark".
+#' @param color Color theme (optional): "blue" (default), "azure", "indigo", "purple", "pink",
+#'   "red", "orange", "yellow", "lime", "green", "teal", "cyan".
+#' @examples
+#' ui <- tabler_page(
+#'   title = "Combo Dashboard",
+#'   layout = "combo",
+#'   navbar = list(
+#'     top = topbar(title = "My App"),
+#'     side = sidebar_menu(
+#'       menu_item("Dogs", icon = "dog"),
+#'       menu_item("Cats", icon = "cat")
+#'     )
+#'   ),
+#'   body = tabler_body("Welcome to Tabler!")
+#' )
+#'
+#' server <- function(input, output, session) {}
+#'
+#' # shiny::shinyApp(ui, server)
+#' @return HTML tag with dependencies attached
+#' @rdname shiny-page
+#' @export
+tabler_page <- function(title = NULL, navbar = NULL, body = NULL, footer = NULL, layout = "boxed",
+  theme = "light", color = "blue") {
+  # Validate layout
+  valid_layouts <- c(
+    "boxed"
+  )
+  if (!layout %in% valid_layouts) {
+    stop("Invalid layout. Must be one of: ", paste(valid_layouts, collapse = ", "))
+  }
 
-## Layout helpers moved to dedicated files:
-# see R/layout-boxed.R, R/layout-condensed.R
+  # Body classes and attributes based on layout
+  body_attrs <- get_layout_attributes(layout)
 
-#' @title Helper function for condensed layout (navbar without wrapper)
-#' @description Build condensed page structure
-#' @param navbar Navbar component
-#' @param sidebar Sidebar component
-#' @param body Body content
-#' @param footer Footer component
-#' @return A Shiny tag representing the page structure
-## Diet core: minimal helpers used by tests
+  # Build page structure based on layout (forward theme/color)
+  page_content <- get_layout_structure(layout, navbar, body, footer, theme = theme, color = color)
 
-`%||%` <- function(x, y) if (is.null(x)) y else x
+  # Build the HTML structure
+  # Note: Do not build a full <html> tag here; Shiny provides that.
 
-# add_deps: inject minimal dependencies (CSS/JS/fonts) into generated HTML
-# This is a small, safe implementation for preview generation that mirrors
-# the essential assets used by the official previews (styles + theme script).
-add_deps <- function(tag, layout = NULL, theme = NULL, color = NULL, title = NULL) {
-  # only operate on an html tag
-  if (!inherits(tag, "shiny.tag") || tag$name != "html") return(tag)
+  # Resolve theme selection and validate color
+  allowed_themes <- c("light", "dark")
+  if (!theme %in% allowed_themes) {
+    stop("Invalid theme. Must be one of: ", paste(allowed_themes, collapse = ", "))
+  }
+  allowed_colors <- c("blue", "azure", "indigo", "purple", "pink", "red", "orange", "yellow", "lime", "green", "teal", "cyan")
+  if (!is.null(color) && !color %in% allowed_colors) {
+    stop("Invalid color. Must be one of: ", paste(allowed_colors, collapse = ", "))
+  }
 
-  # Build a minimal head similar to the preview pages
-  head_children <- list(
+  # Prepare inline script to set Tabler theme keys in localStorage and
+  # set the corresponding data attributes on <html> so CSS rules apply
+  # immediately (avoid race with dependency JS).
+  script_lines <- c(
+    sprintf("try{localStorage.setItem('tabler-theme','%s');document.documentElement.setAttribute('data-bs-theme','%s')}catch(e){}", theme, theme)
+  )
+  if (!is.null(color)) {
+    script_lines <- c(script_lines, sprintf("try{localStorage.setItem('tabler-theme-primary','%s');document.documentElement.setAttribute('data-bs-theme-primary','%s')}catch(e){}", color, color))
+  } else {
+    script_lines <- c(script_lines, "try{localStorage.removeItem('tabler-theme-primary');document.documentElement.removeAttribute('data-bs-theme-primary')}catch(e){}")
+  }
+  script_text <- paste(script_lines, collapse = ";")
+
+  # Build head and body separately and return a tagList. Returning a full
+  # <html> tag would cause Shiny to nest html/body (Shiny already provides
+  # those), which breaks rendering. Attach dependencies to the returned
+  # tag list so resources are included in the final document.
+  html_head <- shiny::tags$head(
     shiny::tags$meta(charset = "utf-8"),
     shiny::tags$meta(name = "viewport", content = "width=device-width, initial-scale=1, viewport-fit=cover"),
-    # Page title from tabler_page() when provided
-    if (!is.null(title)) shiny::tags$title(title) else NULL,
-    # Basic meta used by preview pages (non-identifying)
-    shiny::tags$meta(name = "theme-color", content = "#066fd1"),
-    shiny::tags$link(rel = "icon", href = "favicon.ico", type = "image/x-icon"),
-    # Core tabler CSS (relative paths match preview/packaged assets)
-    shiny::tags$link(href = "dist/css/tabler.min.css", rel = "stylesheet"),
-    # Additional plugin/theme CSS commonly referenced in previews
-    shiny::tags$link(href = "dist/css/tabler-flags.min.css", rel = "stylesheet"),
-    shiny::tags$link(href = "dist/css/tabler-socials.min.css", rel = "stylesheet"),
-    shiny::tags$link(href = "dist/css/tabler-payments.min.css", rel = "stylesheet"),
-    shiny::tags$link(href = "dist/css/tabler-vendors.min.css", rel = "stylesheet"),
-    shiny::tags$link(href = "dist/css/tabler-marketing.min.css", rel = "stylesheet"),
-    shiny::tags$link(href = "dist/css/tabler-themes.min.css", rel = "stylesheet"),
-    # Demo CSS used on preview pages (keeps layout/look similar)
-    shiny::tags$link(href = "preview/css/demo.min.css", rel = "stylesheet"),
-    # Optional small plugin styles can be added here if needed
-    # Import the Inter font used in the official previews
-    shiny::tags$style(shiny::HTML("@import url('https://rsms.me/inter/inter.css');"))
+    shiny::tags$meta(`http-equiv` = "X-UA-Compatible", content = "ie=edge"),
+    if (!is.null(title)) shiny::tags$title(title),
+    shiny::tags$script(shiny::HTML(script_text))
   )
 
-  # Replace or populate the existing <head>
-  if (!is.null(tag$children) && length(tag$children) >= 1 && inherits(tag$children[[1]], "shiny.tag") && tag$children[[1]]$name == "head") {
-    # Merge with any existing head children but prefer our head_children ordering
-    tag$children[[1]]$children <- Filter(Negate(is.null), head_children)
-  } else {
-    # Prepend a head tag if missing (unlikely)
-    tag$children <- c(list(shiny::tags$head(Filter(Negate(is.null), head_children))), tag$children)
-  }
+  html_body <- do.call(shiny::tags$body, c(
+    body_attrs,
+    list(page_content)
+  ))
 
-  # Insert the theme script at the start of the body for parity with previews
-  theme_script <- shiny::tags$script(src = "dist/js/tabler-theme.min.js")
-  body_idx <- length(tag$children) # body is usually the last child
-  if (!is.null(tag$children[[body_idx]]) && inherits(tag$children[[body_idx]], "shiny.tag") && tag$children[[body_idx]]$name == "body") {
-    tag$children[[body_idx]]$children <- c(list(theme_script), tag$children[[body_idx]]$children)
-  }
-
-  tag
+  # Return head and body as a tag list; add_deps will attach dependencies so
+  # CSS/JS are included in the Shiny page head.
+  add_deps(shiny::tagList(html_head, html_body), layout = layout, theme = theme, color = color)
 }
 
-tabler_page <- function(title = NULL, navbar = NULL, body = NULL, footer = NULL,
-                        layout = "boxed", theme = "light", color = "blue") {
-  valid_layouts <- c("boxed", "vertical", "vertical-right", "horizontal", "fluid", "fluid-vertical", "combo", "condensed")
-  if (!layout %in% valid_layouts) stop("Invalid layout. Must be one of: ", paste(valid_layouts, collapse = ", "))
-  page_content <- get_layout_structure(layout, navbar, body, footer, theme = theme, color = color)
-  html_attrs <- if (identical(layout, "rtl")) list(dir = "rtl", lang = "en") else list(lang = "en")
-  # When using the boxed layout the official preview sets the body class to "layout-boxed"
-  # Some previews use a body class for fluid layouts; include combo
-  body_attrs <- if (identical(layout, "boxed")) list(class = "layout-boxed") else if (layout %in% c("fluid", "fluid-vertical", "condensed", "combo")) list(class = "layout-fluid") else list()
-  html_tag <- do.call(shiny::tags$html, c(html_attrs, list(shiny::tags$head(), do.call(shiny::tags$body, c(body_attrs, list(page_content))))))
-  # For boxed/combo layouts append modal and settings markup used by the
-  # official preview. The helpers are provided in R/components.R (diet versions).
-  if (layout %in% c("boxed", "combo") && exists("tabler_modal_report", mode = "function") && exists("tabler_settings", mode = "function")) {
-    body_children <- html_tag$children[[length(html_tag$children)]]$children
-    # append modal and settings to the body of the html tag (after page content)
-    body_children <- c(body_children, list(tabler_modal_report(), tabler_settings()))
-    html_tag$children[[length(html_tag$children)]]$children <- body_children
-  }
+#' @title Create a Dashboard Body
+#' @description Container for dashboard content
+#' @param ... Content to include in the body
+#' @param class Additional CSS classes
+#' @return A Shiny tag representing the body
+#' @rdname shiny-page
+#' @export
+tabler_body <- function(..., class = NULL) {
+  shiny::tags$div(
+    class = paste("container-xl", class),
+    ...
+  )
+}
 
-  # Condensed layout uses simpler modal/settings placeholders (different helpers)
-  if (identical(layout, "condensed")) {
-    # Use fluid helpers if available
-    if (exists("tabler_modal_report_fluid", mode = "function") && exists("tabler_settings_fluid", mode = "function")) {
-      body_children <- html_tag$children[[length(html_tag$children)]]$children
-      body_children <- c(body_children, list(tabler_modal_report_fluid(), tabler_settings_fluid()))
-      html_tag$children[[length(html_tag$children)]]$children <- body_children
-    } else if (exists("tabler_modal_report_condensed", mode = "function") && exists("tabler_settings_condensed", mode = "function")) {
-      body_children <- html_tag$children[[length(html_tag$children)]]$children
-      body_children <- c(body_children, list(tabler_modal_report_condensed(), tabler_settings_condensed()))
-      html_tag$children[[length(html_tag$children)]]$children <- body_children
+#' @title Create a Page Header
+#' @description Displays a prominent title and subtitle at the top of the page
+#' @param title Main page title
+#' @param subtitle Optional subtitle or description
+#' @param ... Additional header content (e.g., buttons, breadcrumbs)
+#' @return A Shiny tag representing the page header
+#' @rdname shiny-page
+#' @export
+tabler_page_header <- function(title, subtitle = NULL, ...) {
+  shiny::tags$div(
+    class = "page-header d-print-none",
+    shiny::tags$div(
+      class = "container-xl",
+      shiny::tags$div(
+        class = "row g-2 align-items-center",
+        shiny::tags$div(
+          class = "col",
+          shiny::tags$h2(class = "page-title", title),
+          if (!is.null(subtitle)) {
+            shiny::tags$div(
+              class = "text-muted mt-1",
+              subtitle
+            )
+          }
+        ),
+        if (length(list(...)) > 0) {
+          shiny::tags$div(
+            class = "col-auto ms-auto d-print-none",
+            ...
+          )
+        }
+      )
+    )
+  )
+}
+
+#' @title Create a Topbar Header
+#' @description Helper to create a top navigation header. This replaces the
+#' previous top-navbar behavior when users passed a header-like component.
+#' @param title Brand title/text
+#' @param brand_image URL or path to brand image
+#' @param ... Additional header content (e.g., nav items)
+#' @return A Shiny tag representing the top header
+#' @rdname shiny-page
+#' @export
+topbar <- function(title = NULL, brand_image = NULL, ...) {
+  extra <- list(...)
+
+  # If the caller passed menu_item() elements (li tags), wrap them into a ul.navbar-nav
+  nav_children <- NULL
+  if (length(extra) > 0) {
+    # collect li elements
+    li_items <- lapply(extra, function(x) if (inherits(x, "shiny.tag") && x$name == "li") x else NULL)
+    li_items <- Filter(Negate(is.null), li_items)
+    if (length(li_items) > 0) {
+      # Make first item active by default (add 'active' class to its anchor)
+      first_li <- li_items[[1]]
+      if (!is.null(first_li$children) && length(first_li$children) > 0) {
+        anchor <- first_li$children[[1]]
+        if (inherits(anchor, "shiny.tag") && anchor$name == "a") {
+          li_items[[1]]$children[[1]] <- shiny::tagAppendAttributes(anchor, class = "active")
+        }
+      }
+
+      nav_children <- shiny::tags$ul(class = "navbar-nav", li_items)
     }
   }
 
-  # Combo layout reuses the fluid-vertical structure and should get combo placeholders
-  if (identical(layout, "combo") && exists("tabler_modal_report_combo", mode = "function") && exists("tabler_settings_combo", mode = "function")) {
-    body_children <- html_tag$children[[length(html_tag$children)]]$children
-    body_children <- c(body_children, list(tabler_modal_report_combo(), tabler_settings_combo()))
-    html_tag$children[[length(html_tag$children)]]$children <- body_children
-  }
-
-  add_deps(html_tag, layout = layout, theme = theme, color = color, title = title)
+  shiny::tags$header(
+    class = "navbar navbar-expand-md navbar-light d-print-none",
+    shiny::tags$div(
+      class = "container-xl",
+      shiny::tags$h1(
+        class = "navbar-brand navbar-brand-autodark d-none-navbar-horizontal pe-0 pe-md-3",
+        if (!is.null(brand_image)) {
+          shiny::tags$a(href = "#", shiny::tags$img(src = brand_image, alt = title %||% "Dashboard", class = "navbar-brand-image"))
+        } else if (!is.null(title)) {
+          shiny::tags$a(href = "#", title)
+        }
+      ),
+      # place any raw passed elements (e.g., anchors, buttons) and the wrapped nav items
+      shiny::tags$div(class = "navbar-nav flex-row order-md-last",
+        lapply(extra, function(x) if (!(inherits(x, "shiny.tag") && x$name == "li")) x else NULL),
+        nav_children
+      )
+    )
+  )
 }
 
-tabler_body <- function(..., class = NULL) {
-  shiny::tags$div(class = paste("container-xl", class), ...)
-}
-
-tabler_page_header <- function(title, subtitle = NULL, ...) {
-  extra <- list(...)
-  right_col <- if (length(extra) > 0) shiny::tags$div(class = "col-auto ms-auto", extra) else NULL
-  left <- list(shiny::tags$h2(class = "page-title", title), if (!is.null(subtitle)) shiny::tags$div(class = "text-muted mt-1", subtitle) else NULL)
-  shiny::tags$div(class = "page-header d-print-none", shiny::tags$div(class = "container-xl d-flex align-items-center", shiny::tags$div(class = "col", left), right_col))
-}
-
-topbar <- function(title = NULL, brand_image = NULL, ...) {
-  brand_title <- if (!is.null(title)) title else "Dashboard"
-  img_tag <- if (!is.null(brand_image)) shiny::tags$img(src = brand_image, class = "navbar-brand-image", alt = brand_title) else NULL
-  shiny::tags$header(class = "navbar navbar-expand-md navbar-light d-print-none", shiny::tags$div(class = "container-xl d-flex align-items-center", img_tag, if (!is.null(title)) shiny::tags$h1(class = "navbar-brand", title) else NULL, list(...)))
-}
-
+#' @title Create a Dashboard Footer
+#' @description Footer for the dashboard
+#' @param left Left-aligned content
+#' @param right Right-aligned content
+#' @return A Shiny tag representing the footer
+#' @rdname shiny-page
+#' @export
 tabler_footer <- function(left = NULL, right = NULL) {
-  shiny::tags$footer(class = "footer footer-transparent d-print-none", shiny::tags$div(class = "container-xl", shiny::tags$div(class = "d-flex w-100 justify-content-between", shiny::tags$div(left), shiny::tags$div(right))))
+  shiny::tags$footer(
+    class = "footer footer-transparent d-print-none",
+    shiny::tags$div(
+      class = "container-xl",
+      shiny::tags$div(
+        class = "row text-center align-items-center flex-row-reverse",
+        if (!is.null(right)) {
+          shiny::tags$div(
+            class = "col-lg-auto ms-lg-auto",
+            right
+          )
+        },
+        if (!is.null(left)) {
+          shiny::tags$div(
+            class = "col-12 col-lg-auto mt-3 mt-lg-0",
+            left
+          )
+        }
+      )
+    )
+  )
 }
 
+
+
+#' @title Create a Navigation Menu
+#' @description Container for navigation items in sidebar
+#' @param ... Navigation items (menuItem)
+#' @param title Optional brand for the sidebar; either a string (text title) or
+#'   a named list with elements `text` and `img` (URL/path) to render a brand
+#'   image and title. Example: `title = list(text = "My App", img = "logo.png")`.
+#' @return A Shiny tag representing the sidebar menu
+#' @rdname shiny-page
+#' @export
 sidebar_menu <- function(..., title = NULL) {
   items <- list(...)
+
+  # Make first item active by default if it has a tab_name
   if (length(items) > 0) {
     first_item <- items[[1]]
-    if (inherits(first_item, "shiny.tag") && !is.null(first_item$children) && length(first_item$children) > 0) {
-      a <- first_item$children[[1]]
-      if (inherits(a, "shiny.tag") && a$name == "a") items[[1]]$children[[1]] <- shiny::tagAppendAttributes(a, class = "active", `aria-selected` = "true")
+    if (inherits(first_item, "shiny.tag")) {
+      # Find the anchor tag and add active class
+      if (!is.null(first_item$children) && length(first_item$children) > 0) {
+        anchor <- first_item$children[[1]]
+        if (inherits(anchor, "shiny.tag") && anchor$name == "a") {
+          items[[1]]$children[[1]] <- shiny::tagAppendAttributes(anchor, class = "active")
+        }
+      }
     }
   }
-  ul <- shiny::tags$ul(class = "navbar-nav pt-lg-3", items)
-  if (!is.null(title)) ul$attribs$title <- title
+
+  ul <- shiny::tags$ul(
+    class = "navbar-nav pt-lg-3",
+    items
+  )
+
+  # Attach title as attribute so layout builder can render a navbar-brand
+  if (!is.null(title)) {
+    ul$attribs$title <- title
+  }
+
   ul
 }
 
+
+#' @title Create a Sidebar Brand
+#' @description Helper to build a brand structure for `sidebar_menu(title = ...)`.
+#' @param text Brand text/label
+#' @param img Optional image URL/path for brand logo
+#' @param href Optional link URL for the brand (defaults to "#")
+#' @return A named list suitable to pass to `sidebar_menu(title = )`
+#' @examples
+#' sidebar_brand("My App", img = "logo.png")
+#' @export
 sidebar_brand <- function(text = NULL, img = NULL, href = "#") {
   res <- list()
   if (!is.null(text)) res$text <- text
@@ -151,101 +287,367 @@ sidebar_brand <- function(text = NULL, img = NULL, href = "#") {
   res
 }
 
+#' @title Create a Horizontal Navigation Menu
+#' @description Container for navigation items in horizontal layout
+#' @param ... Navigation items (menuItem)
+#' @return A Shiny tag representing the horizontal menu
+#' @rdname shiny-page
+#' @export
 horizontal_menu <- function(...) {
   items <- list(...)
+
+  # Make first item active by default if it has a tab_name
   if (length(items) > 0) {
     first_item <- items[[1]]
-    if (inherits(first_item, "shiny.tag") && !is.null(first_item$children) && length(first_item$children) > 0) {
-      anchor <- first_item$children[[1]]
-      if (inherits(anchor, "shiny.tag") && anchor$name == "a") items[[1]]$children[[1]] <- shiny::tagAppendAttributes(anchor, class = "active")
+    if (inherits(first_item, "shiny.tag")) {
+      # Find the anchor tag and add active class
+      if (!is.null(first_item$children) && length(first_item$children) > 0) {
+        anchor <- first_item$children[[1]]
+        if (inherits(anchor, "shiny.tag") && anchor$name == "a") {
+          items[[1]]$children[[1]] <- shiny::tagAppendAttributes(anchor, class = "active")
+        }
+      }
     }
   }
-  shiny::tags$ul(class = "navbar-nav", items)
+
+  shiny::tags$ul(
+    class = "navbar-nav",
+    items
+  )
 }
 
+#' @title Create a Navigation Item
+#' @description Individual navigation item for sidebar
+#' @param text Item text/label
+#' @param tab_name Tab name for routing
+#' @param icon Icon name (optional)
+#' @param href Link URL (optional, alternative to tab_name)
+#' @param badge Badge text (optional)
+#' @return A Shiny tag representing the menu item
+#' @rdname shiny-page
+#' @export
 menu_item <- function(text, tab_name = NULL, icon = NULL, href = NULL, badge = NULL) {
-  icon_el <- if (!is.null(icon)) list(shiny::tags$span(class = "nav-link-icon d-md-none d-lg-inline-block", tabler_icon(icon)), " ") else NULL
-  badge_el <- if (!is.null(badge)) shiny::tags$span(class = "badge badge-sm bg-green-lt text-uppercase ms-auto", badge) else NULL
-  link_attrs <- list(class = "nav-link", href = href %||% "#")
+  # Icon element: render the wrapper and use tabler_icon (font/webfont) inside.
+  # For static examples we include an HTML comment indicating where an SVG
+  # could be placed (keeps markup similar to upstream examples without
+  # inlining raw SVGs).
+  icon_el <- if (!is.null(icon)) {
+    list(
+      shiny::tags$span(
+        class = "nav-link-icon d-md-none d-lg-inline-block",
+        # comment placeholder for upstream SVG
+        shiny::HTML(sprintf('<!-- Download SVG icon from http://tabler.io/icons/icon/%s -->', icon)),
+        tabler_icon(icon)
+      ),
+      " "
+    )
+  }
+
+  # Badge element
+  badge_el <- if (!is.null(badge)) {
+    shiny::tags$span(
+      class = "badge badge-sm bg-green-lt text-uppercase ms-auto",
+      badge
+    )
+  }
+
+  # Link attributes
+  link_attrs <- list(
+    class = "nav-link",
+    href = href %||% "#"
+  )
+
   if (!is.null(tab_name)) {
-    link_attrs[["data-bs-toggle"]] <- "tab"
-    link_attrs[["data-bs-target"]] <- paste0("#", tab_name)
     link_attrs[["data-toggle"]] <- "tab"
     link_attrs[["data-target"]] <- paste0("#", tab_name)
-    link_attrs[["href"]] <- paste0("#", tab_name)
-    link_attrs[["id"]] <- paste0("tab-", tab_name)
-    link_attrs[["role"]] <- "tab"
-    link_attrs[["aria-controls"]] <- tab_name
-    link_attrs[["aria-selected"]] <- "false"
   }
-  shiny::tags$li(class = "nav-item", do.call(shiny::tags$a, c(link_attrs, list(icon_el, shiny::tags$span(class = "nav-link-title", text), badge_el))))
+
+  shiny::tags$li(
+    class = "nav-item",
+    do.call(shiny::tags$a, c(
+      link_attrs,
+      list(
+        icon_el,
+        shiny::tags$span(class = "nav-link-title", text),
+        badge_el
+      )
+    ))
+  )
 }
 
-# Tab helpers used by tests
+#' @title Create a Dropdown Menu Item
+#' @description Create a nav-item with a dropdown menu using columns like the example
+#' @param text Title of the dropdown
+#' @param icon Icon name (optional)
+#' @param href Link for the dropdown toggle (optional)
+#' @param items A list of character vectors or tags representing dropdown links; each element can be a character vector of length 2: c(text, href)
+#' @return A shiny tag representing the dropdown nav item
+#' @export
+menu_dropdown <- function(text, icon = NULL, href = NULL, items = list()) {
+  # build the anchor toggle
+  toggle_attrs <- list(
+    class = "nav-link dropdown-toggle",
+    href = href %||% "#",
+    `data-bs-toggle` = "dropdown",
+    `data-bs-auto-close` = "outside",
+    role = "button",
+    `aria-expanded` = "false"
+  )
+
+  anchor <- do.call(shiny::tags$a, c(toggle_attrs, list(
+    if (!is.null(icon)) {
+      shiny::tags$span(class = "nav-link-icon d-md-none d-lg-inline-block",
+        shiny::HTML(sprintf('<!-- Download SVG icon from http://tabler.io/icons/icon/%s -->', icon)),
+        tabler_icon(icon)
+      )
+    },
+    shiny::tags$span(class = "nav-link-title", text)
+  )))
+
+  # build dropdown menu columns: split items into two roughly equal columns
+  n <- length(items)
+  if (n == 0) {
+    menu_body <- shiny::tags$div(class = "dropdown-menu")
+  } else {
+    half <- ceiling(n/2)
+    col1 <- items[1:half]
+    col2 <- if (n > half) items[(half+1):n] else list()
+
+    make_links <- function(lst) {
+      lapply(lst, function(it) {
+        if (is.character(it) && length(it) >= 2) {
+          shiny::tags$a(class = "dropdown-item", href = it[2], it[1])
+        } else if (inherits(it, "shiny.tag")) {
+          it
+        } else {
+          shiny::tags$a(class = "dropdown-item", href = "#", as.character(it))
+        }
+      })
+    }
+
+    menu_body <- shiny::tags$div(
+      class = "dropdown-menu",
+      shiny::tags$div(
+        class = "dropdown-menu-columns",
+        shiny::tags$div(class = "dropdown-menu-column", make_links(col1)),
+        shiny::tags$div(class = "dropdown-menu-column", make_links(col2))
+      )
+    )
+  }
+
+  shiny::tags$li(class = "nav-item active dropdown", anchor, menu_body)
+}
+
+#' @title Create Tab Items Container
+#' @description Container for multiple tab panels in tabbed layouts
+#' @param ... Tab items created with tablerTabItem()
+#' @return A Shiny tag representing the tab items container
+#' @rdname shiny-page
+#' @export
 tabler_tab_items <- function(...) {
   items <- list(...)
-  any_active <- FALSE
-  for (it in items) {
-    if (inherits(it, "shiny.tag")) {
-      cls <- it$attribs$class %||% ""
-      if (grepl("\\b(show|active)\\b", cls)) {
-        any_active <- TRUE
-        break
-      }
-      if (!is.null(it$attribs$`data-default`) && identical(as.character(it$attribs$`data-default`), "true")) {
-        any_active <- TRUE
-        break
-      }
+
+  # Make first item active by default
+  if (length(items) > 0) {
+    first_item <- items[[1]]
+    if (inherits(first_item, "shiny.tag")) {
+      # Add 'show active' classes to first tab
+      items[[1]] <- shiny::tagAppendAttributes(first_item, class = "show active")
     }
   }
-  if (!any_active && length(items) > 0) items[[1]] <- shiny::tagAppendAttributes(items[[1]], class = "show active")
-  shiny::tags$div(class = "tab-content", items)
+
+  shiny::tags$div(
+    class = "tab-content",
+    items
+  )
 }
 
+#' @title Create a Tab Item
+#' @description Individual tab panel content
+#' @param tab_name Unique identifier for the tab (must match menuItem tab_name)
+#' @param ... Content for this tab
+#' @return A Shiny tag representing the tab item
+#' @rdname shiny-page
+#' @export
 tabler_tab_item <- function(tab_name, ...) {
-  pane_class <- "tab-pane fade pt-3"
-  shiny::tags$div(class = pane_class, id = tab_name, role = "tabpanel", `data-tab` = tab_name, `aria-labelledby` = paste0("tab-", tab_name), ...)
+  shiny::tags$div(
+    class = "tab-pane fade",
+    id = tab_name,
+    role = "tabpanel",
+    `data-tab` = tab_name,
+    ...
+  )
 }
 
+#' @title Get layout-specific body attributes
+#' @description Determine body classes and attributes based on layout
+#' @param layout Layout type
+#' @return A list of body attributes
+#' @keywords internal
 get_layout_attributes <- function(layout) {
-  list(class = "antialiased")
+  base_class <- "antialiased"
+
+  layout_class <- switch(layout,
+    "boxed" = "layout-boxed",
+    NULL
+  )
+
+  # Additional attributes for specific layouts
+  attrs <- list(class = css_class(base_class, layout_class))
+
+  attrs
 }
 
+
+#' @title Build a standard navbar/header
+#' @description Create the top header used in boxed layout. This function
+#' accepts raw `li` items (created by `menu_item`) or a `sidebar_brand()`
+#' attached as `title` attribute on a `ul`.
+#' @param ... Additional nodes to include (typically `menu_item()` elements)
+#' @return A shiny tag for the header
+#' @export
+navbar_menu <- function(..., brand = NULL) {
+  items <- list(...)
+
+  # Collect only <li> elements for the main menu
+  li_items <- lapply(items, function(x) if (inherits(x, "shiny.tag") && x$name == "li") x else NULL)
+  li_items <- Filter(Negate(is.null), li_items)
+
+  # Brand block (simple link or image)
+  brand_tag <- NULL
+  if (!is.null(brand)) {
+    if (is.character(brand)) {
+      brand_tag <- shiny::tags$div(
+        class = "navbar-brand navbar-brand-autodark",
+        shiny::tags$a(href = "./", brand)
+      )
+    } else if (is.list(brand) && !is.null(brand$text)) {
+      brand_tag <- shiny::tags$div(
+        class = "navbar-brand navbar-brand-autodark",
+        shiny::tags$a(href = brand$href %||% "./",
+          if (!is.null(brand$img)) shiny::tags$img(src = brand$img, class = "navbar-brand-image"),
+          brand$text
+        )
+      )
+    }
+  }
+
+  # Theme toggles (links only; Tabler theme script will handle visibility)
+  theme_toggles <- shiny::tags$div(
+    class = "nav-item ms-md-auto",
+    shiny::tags$a(href = "?theme=dark", class = "nav-link px-0 hide-theme-dark", title = "Enable dark mode", `data-bs-toggle` = "tooltip", `data-bs-placement` = "bottom",
+      # moon icon placeholder
+      shiny::HTML('<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-1"><path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z"/></svg>')
+    ),
+    shiny::tags$a(href = "?theme=light", class = "nav-link px-0 hide-theme-light", title = "Enable light mode", `data-bs-toggle` = "tooltip", `data-bs-placement` = "bottom",
+      # sun icon placeholder
+      shiny::HTML('<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-1"><path d="M12 12m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0"/><path d="M3 12h1m8 -9v1m8 8h1m-9 8v1m-6.4 -15.4l.7 .7m12.1 -.7l-.7 .7m0 11.4l.7 .7m-12.1 -.7l-.7 .7"/></svg>')
+    )
+  )
+
+  shiny::tags$header(
+    class = "navbar navbar-expand-md",
+    # raw HTML comment markers to mimic the example file structure
+    shiny::HTML("<!-- BEGIN NAVBAR  -->"),
+    shiny::tags$div(
+      class = "collapse navbar-collapse",
+      id = "navbar-menu",
+      shiny::tags$div(
+        class = "container-xl",
+        shiny::tags$div(
+          class = "row flex-column flex-md-row flex-fill align-items-center",
+          shiny::tags$div(
+            class = "col",
+            # Navbar menu contents
+            shiny::tags$ul(class = "navbar-nav",
+              brand_tag,
+              li_items,
+              theme_toggles
+            )
+          )
+        )
+      )
+    ),
+    shiny::HTML("<!-- END NAVBAR  -->")
+  )
+}
+
+#' @title Get layout-specific page structure
+#' @description Build the HTML structure based on layout type
+#' @param layout Layout type
+#' @param navbar Navbar component
+#' @param body Body content
+#' @param footer Footer component
+#' @return A Shiny tag representing the page structure
+#' @keywords internal
 get_layout_structure <- function(layout, navbar, body, footer, theme = "light", color = NULL) {
+  # Parse navbar - can be a single component or a list for combo layout
   top_nav <- NULL
   sidebar <- NULL
-  topbar <- NULL
+
   if (is.list(navbar) && !inherits(navbar, "shiny.tag")) {
+    # List format for combo layout: list(top = ..., side = ...)
     top_nav <- navbar$top
     sidebar <- navbar$side
-  } else if (!is.null(navbar) && inherits(navbar, "shiny.tag")) {
-    tag_name <- navbar$name
-    if (tag_name == "aside") {
-      sidebar <- navbar
-    } else if (tag_name == "header") {
-      top_nav <- navbar
-    } else if (tag_name == "ul") {
-      if (layout %in% c("horizontal")) topbar <- navbar else sidebar <- navbar
+  } else if (!is.null(navbar)) {
+    # Determine component type by class
+    if (inherits(navbar, "shiny.tag")) {
+      tag_name <- navbar$name
+      if (tag_name == "aside") {
+        sidebar <- navbar
+      } else if (tag_name == "header") {
+        top_nav <- navbar
+      } else if (tag_name == "ul") {
+        # `ul` can represent either a vertical sidebar (sidebar_menu)
+        # or a horizontal menu (horizontal_menu). We choose placement by
+        # layout: for horizontal layouts treat as topbar; for vertical/combo
+        # layouts treat as sidebar. The caller will pass a list for combo
+        # layouts, or a single `ul` for simple vertical/horizontal pages.
+        if (layout %in% c("horizontal")) {
+          top_nav <- navbar
+        } else {
+          sidebar <- navbar
+        }
+      }
     }
   }
+
   switch(layout,
-    "boxed" = build_boxed_layout(top_nav, sidebar, body, footer, theme = theme, color = color),
-    "combo" = build_combo_layout(top_nav, sidebar, body, footer, theme = theme, color = color),
-    "condensed" = build_condensed_layout(top_nav, sidebar, body, footer, theme = theme, color = color),
-    "fluid" = build_fluid_layout(top_nav, sidebar, body, footer, theme = theme, color = color),
-    "fluid-vertical" = build_fluid_vertical_layout(top_nav, sidebar, body, footer, theme = theme, color = color),
-    "horizontal" = build_horizontal_layout(top_nav, topbar, body, footer, theme = theme, color = color),
-    "navbar-dark" = build_navbar_dark_layout(top_nav, sidebar, body, footer, theme = theme, color = color),
-    "navbar-overlap" = build_navbar_overlap_layout(top_nav, sidebar, body, footer, theme = theme, color = color),
-    "navbar-sticky" = build_navbar_sticky_layout(top_nav, sidebar, body, footer, theme = theme, color = color),
-    "rtl" = build_rtl_layout(top_nav, sidebar, body, footer, theme = theme, color = color),
-    "vertical" = build_vertical_simple_layout(top_nav, sidebar, body, footer, layout = layout, theme = theme, color = color),
-    "vertical-right" = build_vertical_simple_layout(top_nav, sidebar, body, footer, side = "right", layout = layout, theme = theme, color = color),
-    "vertical-tranparent" = build_vertical_transparent_layout(top_nav, sidebar, body, footer, theme = theme, color = color),
-    stop(
-      "Invalid layout: ", layout,
-      ".\nValid layouts are: boxed, combo, condensed, fluid, fluid-vertical,",
-      "\nhorizontal, navbar-dark, navbar-overlap, navbar-sticky, vertical, vertical-right"
+    "boxed" = build_boxed_layout(top_nav, sidebar, body, footer),
+    NULL
+  )
+}
+
+#' @title Helper function for default/boxed/fluid layouts
+#' @description Build standard page structure
+#' @param navbar Navbar component
+#' @param sidebar Sidebar component
+#' @param body Body content
+#' @param footer Footer component
+#' @return A Shiny tag representing the page structure
+#' @keywords internal
+#' @noRd
+build_boxed_layout <- function(navbar, sidebar, body, footer, theme = "light", color = NULL) {
+  shiny::tags$div(
+    class = "page",
+    # Sidebar (if present)
+    if (!is.null(sidebar)) sidebar,
+
+    # Navbar
+    if (!is.null(navbar)) navbar,
+
+    # Main content wrapper
+    shiny::tags$div(
+      class = "page-wrapper",
+
+      # Page body
+      shiny::tags$div(
+        class = "page-body",
+        body
+      ),
+
+      # Footer
+      if (!is.null(footer)) footer
     )
   )
 }

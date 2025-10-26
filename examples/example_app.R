@@ -27,7 +27,7 @@ LAYOUT_TYPES <- c(
   "vertical-transparent"
 )
 
-LAYOUT_TYPE <- LAYOUT_TYPES[5]
+LAYOUT_TYPE <- LAYOUT_TYPES[1]
 
 # Shared UI pieces: two tabs only to keep the example minimal
 dashboard_body <- tabler_body(

@@ -1,129 +1,219 @@
-## Diet components: minimal implementations used by tests
-
+#' @title  Create a Tabler Card
+#' @description Build a modern card component with optional header, body, and footer
+#' @param ... Card body content
+#' @param title Card title (optional)
+#' @param footer Card footer content (optional)
+#' @param status Card color status: "primary", "secondary", "success", "warning", "danger", etc.
+#' @param class Additional CSS classes
+#' @rdname shiny-components
+#' @return A Shiny tag representing the card
+#' @export
 tabler_card <- function(..., title = NULL, footer = NULL, status = NULL, class = NULL) {
+  # Build status class
   status_class <- if (!is.null(status)) paste0("card-status-", status) else NULL
+
+  # Capture positional args to support shorthand: tabler_card("Title", "body text")
   dots <- list(...)
-  # If first unnamed arg is a single string and title not provided, treat as title
-  if (is.null(title) && length(dots) > 0 && is.character(dots[[1]]) && length(dots[[1]]) == 1) {
+  inferred_title <- FALSE
+  title_was_provided <- !missing(title)
+
+  body_content <- NULL
+  # If caller didn't supply title by name but passed a first character arg,
+  # treat it as the title and optionally a second arg as the body text.
+  if (!title_was_provided && is.null(title) && length(dots) >= 1 && is.character(dots[[1]])) {
+    inferred_title <- TRUE
     title <- dots[[1]]
-    dots <- dots[-1]
+    if (length(dots) >= 2) {
+      body_content <- dots[[2]]
+    }
+    # any remaining dots beyond first two are ignored for the shorthand
+  } else {
+    # Use remaining dots as body content
+    body_content <- if (length(dots) > 0) dots else NULL
   }
 
-  header <- if (!is.null(title)) shiny::tags$div(class = "card-header d-flex align-items-center", shiny::tags$div(class = "me-auto", if (inherits(title, "shiny.tag")) title else shiny::tags$h3(class = "card-title", title)))
-  footer_tag <- if (!is.null(footer)) shiny::tags$div(class = "card-footer", footer)
+  # Card header (only when title explicitly provided by named arg)
+  header <- NULL
+  if (title_was_provided && !is.null(title)) {
+    header <- shiny::tags$div(
+      class = "card-header",
+      shiny::tags$h3(class = "card-title", title)
+    )
+    # body will be the dots
+    body_tag <- shiny::tags$div(class = "card-body", body_content)
+  } else if (inferred_title) {
+    # Render boxed-style card body with title and muted paragraph as in layout-boxed.html
+    # If body_content is a simple character, wrap in <p class='text-muted'>
+    body_par <- NULL
+    if (!is.null(body_content)) {
+      if (is.character(body_content)) {
+        body_par <- shiny::tags$p(class = "text-muted", body_content)
+      } else {
+        body_par <- body_content
+      }
+    }
 
-  shiny::tags$div(class = paste("card", status_class, class), header, shiny::tags$div(class = "card-body", dots), footer_tag)
-}
-
-tabler_icon <- function(name, library = "tabler", class = NULL) {
-  icon_class <- switch(library,
-    "tabler" = "ti ti-",
-    "bootstrap" = "bi bi-",
-    "feather" = "fe fe-",
-    "ti ti-"
-  )
-  shiny::tags$i(class = paste(paste0(icon_class, name), class))
-}
-
-tabler_value_box <- function(value, title, icon = NULL, color = "primary", width = 3) {
-  icon_tag <- if (!is.null(icon)) tabler_icon(icon) else NULL
-  shiny::tags$div(class = paste0("col-", width), shiny::tags$div(class = "card card-sm", shiny::tags$div(class = "card-body", shiny::tags$div(class = "row align-items-center", shiny::tags$div(class = "col-auto", if (!is.null(icon_tag)) shiny::tags$span(class = paste0("bg-", color, " text-white avatar"), icon_tag)), shiny::tags$div(class = "col", shiny::tags$div(class = "font-weight-medium", value), shiny::tags$div(class = "text-secondary", title))))))
-}
-
-tabler_alert <- function(..., type = "info", dismissible = FALSE, title = NULL) {
-  dismiss_button <- if (isTRUE(dismissible)) shiny::tags$button(type = "button", class = "btn-close", `data-bs-dismiss` = "alert", `aria-label` = "Close")
-  title_tag <- if (!is.null(title)) shiny::tags$h4(class = "alert-title", title)
-  shiny::tags$div(class = paste0("alert alert-", type), role = "alert", title_tag, ..., dismiss_button)
-}
-
-tabler_button <- function(label, onclick = NULL, color = "primary", size = "md", outline = FALSE, icon = NULL, ...) {
-  size_class <- if (identical(size, "md")) NULL else paste0("btn-", size)
-  color_class <- paste0("btn-", if (isTRUE(outline)) "outline-" else "", color)
-  icon_tag <- if (!is.null(icon)) list(tabler_icon(icon), " ") else NULL
-  shiny::tags$button(type = "button", class = paste("btn", color_class, size_class), onclick = onclick, ..., icon_tag, label)
-}
-
-tabler_fix_fluid_vertical_tab_spacing <- function() {
-  shiny::tags$style(shiny::HTML(paste(
-    ".container-xl > .my-3 + .tab-content { margin-top: 0 !important; padding-top: 0 !important; }",
-    ".container-xl > .my-3 { margin-top: 0 !important; margin-bottom: 0 !important; height: 0 !important; }",
-    ".container-xl > .tab-content .tab-pane { padding-top: 1rem !important; }",
-    sep = "\n"
-  )))
-}
-
-# Minimal modal used in official boxed layout preview
-tabler_modal_report <- function(id = "modal-report") {
-  shiny::tags$div(
-    class = "modal modal-blur fade",
-    id = id,
-    tabindex = "-1",
-    role = "dialog",
-    `aria-hidden` = "true",
-    shiny::tags$div(class = "modal-dialog modal-lg", role = "document",
-      shiny::tags$div(class = "modal-content",
-        shiny::tags$div(class = "modal-header"),
-        shiny::tags$div(class = "modal-body"),
-        shiny::tags$div(class = "modal-body"),
-        shiny::tags$div(class = "modal-footer")
+    body_tag <- shiny::tags$div(
+      class = "card-body",
+      shiny::tags$div(
+        class = "row gy-3",
+        shiny::tags$div(
+          class = "col-12 col-sm d-flex flex-column",
+          shiny::tags$h3(class = "h2", title),
+          body_par
+        )
       )
     )
+  } else {
+    # No title at all; render body normally
+    body_tag <- shiny::tags$div(class = "card-body", body_content)
+  }
+
+  # Card footer
+  footer_tag <- if (!is.null(footer)) {
+    shiny::tags$div(
+      class = "card-footer",
+      footer
+    )
+  }
+
+  shiny::tags$div(
+    class = paste("card", status_class, class),
+    header,
+    body_tag,
+    footer_tag
   )
 }
 
-# Minimal settings UI (floating button + offcanvas form) used in preview
-tabler_settings <- function(offcanvas_id = "offcanvasSettings") {
-  shiny::tagList(
-    shiny::tags$div(class = "settings",
-      shiny::tags$a(href = paste0("#", offcanvas_id), class = "btn btn-floating btn-icon btn-primary", `data-bs-toggle` = "offcanvas", `data-bs-target` = paste0("#", offcanvas_id), `aria-controls` = offcanvas_id, `aria-label` = "Theme Settings",
-        # lightweight icon placeholder
-        shiny::tags$svg(class = "icon icon-1")
-      ),
-      shiny::tags$form(class = "offcanvas offcanvas-start offcanvas-narrow", tabindex = "-1", id = offcanvas_id,
-        shiny::tags$div(class = "offcanvas-header",
-          shiny::tags$h2(class = "offcanvas-title", "Theme Settings"),
-          shiny::tags$button(type = "button", class = "btn-close", `data-bs-dismiss` = "offcanvas", `aria-label` = "Close")
-        ),
-        shiny::tags$div(class = "offcanvas-body d-flex flex-column",
-          shiny::tags$div(),
-          shiny::tags$div(class = "mt-auto space-y")
+#' @title Create a Value Box
+#' @description Display a key metric or value prominently
+#' @param value Main value to display
+#' @param title Title/label for the value
+#' @param icon Icon name (optional)
+#' @param color Color theme
+#' @param width Column width (1-12)
+#' @rdname shiny-components
+#' @return A Shiny tag representing the value box
+#' @export
+tabler_value_box <- function(value, title, icon = NULL, color = "primary", width = 3) {
+  icon_tag <- if (!is.null(icon)) {
+    tabler_icon(icon)
+  }
+
+  shiny::tags$div(
+    class = paste0("col-", width),
+    shiny::tags$div(
+      class = "card card-sm",
+      shiny::tags$div(
+        class = "card-body",
+        shiny::tags$div(
+          class = "row align-items-center",
+          shiny::tags$div(
+            class = "col-auto",
+            if (!is.null(icon_tag)) {
+              shiny::tags$span(
+                class = paste0("bg-", color, " text-white avatar"),
+                icon_tag
+              )
+            }
+          ),
+          shiny::tags$div(
+            class = "col",
+            shiny::tags$div(
+              class = "font-weight-medium",
+              value
+            ),
+            shiny::tags$div(
+              class = "text-secondary",
+              title
+            )
+          )
         )
       )
     )
   )
 }
 
-# Condensed-specific modal (matches the official condensed preview minimal content)
-tabler_modal_report_condensed <- function(id = "modal-report") {
+#' @title Create an Icon
+#' @description Display an icon from Tabler Icons or other icon libraries
+#' @param name Icon name
+#' @param library Icon library: "tabler", "bootstrap", "feather"
+#' @param class Additional CSS classes
+#' @rdname shiny-components
+#' @return A Shiny tag representing the icon
+#' @export
+tabler_icon <- function(name, library = "tabler", class = NULL) {
+  icon_class <- switch(library,
+    "tabler" = "ti ti-",
+    "bootstrap" = "bi bi-",
+    "feather" = "fe fe-",
+    "ti ti-" # default to tabler
+  )
+
+  shiny::tags$i(
+    class = paste(paste0(icon_class, name), class)
+  )
+}
+
+#' @title Create an Alert/Notification
+#' @description Display important messages to users
+#' @param ... Alert content
+#' @param type Alert type: "info", "success", "warning", "danger"
+#' @param dismissible Whether alert can be dismissed
+#' @param title Alert title (optional)
+#' @rdname shiny-components
+#' @return A Shiny tag representing the alert
+#' @export
+tabler_alert <- function(..., type = "info", dismissible = FALSE, title = NULL) {
+  dismiss_button <- if (dismissible) {
+    shiny::tags$button(
+      type = "button",
+      class = "btn-close",
+      `data-bs-dismiss` = "alert",
+      `aria-label` = "Close"
+    )
+  }
+
+  title_tag <- if (!is.null(title)) {
+    shiny::tags$h4(class = "alert-title", title)
+  }
+
   shiny::tags$div(
-    class = "modal modal-blur fade",
-    id = id,
-    tabindex = "-1",
-    role = "dialog",
-    `aria-hidden` = "true",
-    shiny::tags$div(class = "modal-dialog modal-lg", role = "document",
-      shiny::tags$div(class = "modal-content")
-    )
+    class = paste("alert alert-", type),
+    role = "alert",
+    title_tag,
+    ...,
+    dismiss_button
   )
 }
 
-# Condensed-specific settings helper: empty offcanvas placeholders
-tabler_settings_condensed <- function(offcanvas_id = "offcanvasSettings") {
-  shiny::tags$div(class = "settings",
-    shiny::tags$a(href = paste0("#", offcanvas_id), class = "btn btn-floating btn-icon btn-primary", `data-bs-toggle` = "offcanvas", `data-bs-target` = paste0("#", offcanvas_id), `aria-controls` = offcanvas_id, `aria-label` = "Theme Settings",
-      shiny::tags$svg(class = "icon icon-1")
-    ),
-    shiny::tags$form(class = "offcanvas offcanvas-start offcanvas-narrow", tabindex = "-1", id = offcanvas_id,
-      shiny::tags$div(class = "offcanvas-header"),
-      shiny::tags$div(class = "offcanvas-body d-flex flex-column")
-    )
+#' @title Create a Button
+#' @description Create interactive buttons with Tabler styling
+#' @param label Button text
+#' @param onclick JavaScript to execute on click
+#' @param color Button color theme
+#' @param size Button size: "sm", "md", "lg"
+#' @param outline Use outline style
+#' @param icon Icon to include
+#' @param ... Additional HTML attributes
+#' @rdname shiny-components
+#' @return A Shiny tag representing the button
+#' @export
+tabler_button <- function(label, onclick = NULL, color = "primary",
+                         size = "md", outline = FALSE, icon = NULL, ...) {
+  size_class <- if (size != "md") paste0("btn-", size) else NULL
+  color_class <- paste0("btn-", if (outline) "outline-", color)
+
+  icon_tag <- if (!is.null(icon)) {
+    list(tabler_icon(icon), " ")
+  }
+
+  shiny::tags$button(
+    type = "button",
+    class = paste("btn", color_class, size_class),
+    onclick = onclick,
+    ...,
+    icon_tag,
+    label
   )
 }
-
-# Fluid-vertical helpers use the fuller modal/settings used in the fluid previews
-tabler_modal_report_fluid <- tabler_modal_report
-tabler_settings_fluid <- tabler_settings
-
-# Combo layout uses the same fluid placeholders in official previews
-tabler_modal_report_combo <- tabler_modal_report_fluid
-tabler_settings_combo <- tabler_settings_fluid
