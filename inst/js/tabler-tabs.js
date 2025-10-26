@@ -1,18 +1,20 @@
 // Tab switching functionality for Tabler dashboard
 $(document).ready(function() {
   // Handle menu item clicks for tab switching
-  $(document).on('click', 'a[data-toggle="tab"]', function(e) {
+  // Support both Bootstrap4-style attributes (data-toggle/data-target)
+  // and Bootstrap5-style attributes (data-bs-toggle/data-bs-target).
+  $(document).on('click', 'a[data-toggle="tab"], a[data-bs-toggle="tab"]', function(e) {
     e.preventDefault();
-    
-    var targetId = $(this).attr('data-target');
+
+    var targetId = $(this).attr('data-target') || $(this).attr('data-bs-target') || $(this).attr('href');
     
     if (!targetId) return;
     
-    // Remove active class from all nav links
-    $('a[data-toggle="tab"]').removeClass('active');
-    
-    // Add active class to clicked link
-    $(this).addClass('active');
+  // Remove active class from all nav links (both attribute styles)
+  $('a[data-toggle="tab"], a[data-bs-toggle="tab"]').removeClass('active');
+
+  // Add active class to clicked link
+  $(this).addClass('active');
     
     // Hide all tab panes
     $('.tab-pane').removeClass('show active');
@@ -45,8 +47,8 @@ $(document).ready(function() {
         var tabId = firstTab.attr('id');
         firstTab.addClass('show active');
         
-        // Activate corresponding menu item
-        $('a[data-target="#' + tabId + '"]').addClass('active');
+      // Activate corresponding menu item (support both attributes)
+      $('a[data-target="#' + tabId + '"], a[data-bs-target="#' + tabId + '"]').addClass('active');
         
         // Trigger resize for initial tab
         setTimeout(function() {
@@ -60,7 +62,7 @@ $(document).ready(function() {
   if (window.Shiny) {
     Shiny.addCustomMessageHandler('tabler-show-tab', function(message) {
       var targetId = '#' + message.tab;
-      $('a[data-target="' + targetId + '"]').trigger('click');
+      $('a[data-target="' + targetId + '"], a[data-bs-target="' + targetId + '"]').trigger('click');
     });
   }
 });
