@@ -8,18 +8,20 @@ svg_text <- paste(readLines("./examples/tabler-logo.svg", warn = FALSE), collaps
 svg_data_uri <- paste0("data:image/svg+xml;utf8,", URLencode(svg_text, reserved = TRUE))
 
 ui <- tabler_page(
-  theme = "light",
+  theme = "dark",
+  color = "teal",
   title = "Combo Dashboard",
   layout = "combo",
+  show_theme_button = TRUE,
   navbar = navbar_menu(
     brand = sidebar_brand(text = "", img = svg_data_uri, href = "./"),
     menu_item("Home", icon = "home"),
     menu_dropdown(
       "Layout",
       icon = "layout-2",
-      href = "layout-boxed.html#navbar-layout",
+      href = "./",
       items = list(
-        c("Boxed", "layout-boxed.html"),
+        c("Boxed", "./"),
         c("Combined", "./"),
         c("Condensed", "./"),
         c("Fluid", "./"),
@@ -64,7 +66,7 @@ ui_string <- substr(ui_string, body_start, nchar(ui_string))
 body_end <- regexpr("</body>", ui_string)
 ui_string <- substr(ui_string, 1, body_end + attr(body_end, "match.length") - 1)
 
-writeLines(as.character(ui_string), "examples/shiny/shiny-layout-boxed.html")
+writeLines(as.character(ui_string), "examples/shiny/shiny-layout-combo.html")
 
 server <- function(input, output, session) {
   output$plot <- render_d3po({
@@ -78,7 +80,9 @@ server <- function(input, output, session) {
 
     d3po(sim) %>%
         po_scatter(daes(x = x, y = y, group = letter)) %>%
-        po_labels(title = "Weight Distribution by Type")
+        po_labels(title = "Weight Distribution by Type") %>%
+        po_background("transparent") %>%
+        po_theme(axis = "#fff", tooltips = "#000")
   })
 }
 

@@ -1,33 +1,58 @@
-#' @title Build combo layout structure
-#' @description Build the HTML structure for the combo layout (vertical
-#' sidebar + top navbar). The sidebar should be provided as `navbar$side`
-#' or as an `aside` tag; the topbar as `navbar$top` or a `header`/`ul`.
-#' @param navbar Navbar component (or list for combo)
-#' @param sidebar Sidebar component (optional)
+#' @title Build boxed (and combo) layout structure
+#' @description Build the HTML structure for the boxed layout. This
+#' accepts either a single navbar/sidebar tag, or a named list with
+#' elements `top` and `side` for combo-style callers. The function
+#' returns the full page tag structure (including sidebar, navbar,
+#' page wrapper, body and footer).
+#' @param navbar Navbar component (or list with top/side for combo)
+#' @param sidebar Sidebar component (not typically used when passing list)
 #' @param body Body content
 #' @param footer Footer component
 #' @keywords internal
-get_layout_combo <- function(navbar, sidebar, body, footer, theme = "light", color = NULL) {
-  top_nav <- NULL
-  side_nav <- NULL
+layout_combo <- function(navbar, sidebar, body, footer, theme = "light", color = NULL, show_theme_button = TRUE) {
+	top_nav <- NULL
+	side_nav <- NULL
 
-  if (is.list(navbar) && !inherits(navbar, "shiny.tag")) {
-    top_nav <- navbar$top
-    side_nav <- navbar$side
-  } else if (!is.null(navbar)) {
-    if (inherits(navbar, "shiny.tag")) {
-      tag_name <- navbar$name
-      if (tag_name == "aside") {
-        side_nav <- navbar
-      } else if (tag_name == "header") {
-        top_nav <- navbar
-      } else if (tag_name == "ul") {
-        # prefer ul as sidebar for combo if it looks like a sidebar; fall back
-        # to sidebar presence first, otherwise treat as top nav
-        side_nav <- navbar
-      }
-    }
-  }
+	# Support both list(navbar = list(top=..., side=...)) and direct tags
+	if (is.list(navbar) && !inherits(navbar, "shiny.tag")) {
+		top_nav <- navbar$top
+		side_nav <- navbar$side
+	} else if (!is.null(navbar)) {
+		if (inherits(navbar, "shiny.tag")) {
+			tag_name <- navbar$name
+			if (tag_name == "header") {
+				top_nav <- navbar
+			} else if (tag_name == "aside") {
+				side_nav <- navbar
+			} else if (tag_name == "ul") {
+				# treat ul as sidebar for combo layout when passed directly
+				side_nav <- navbar
+			}
+		}
+	}
 
-  build_boxed_layout(top_nav, side_nav, body, footer, theme = theme, color = color)
+	# Mirror the HTML structure in layout-combo.html: page contains aside (sidebar), header (top), then page-wrapper
+	shiny::tags$div(
+		class = "page",
+
+		# Sidebar (if present)
+		if (!is.null(side_nav)) side_nav,
+
+		# Navbar (top) - show on wide viewports
+		if (!is.null(top_nav)) top_nav,
+
+		# Main content wrapper
+		shiny::tags$div(
+			class = "page-wrapper",
+
+			# Page header / pretitle/title may be part of body; just include body here
+			shiny::tags$div(
+				class = "page-body",
+				body
+			),
+
+			# Footer
+			if (!is.null(footer)) footer
+		)
+	)
 }

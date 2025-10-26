@@ -47,7 +47,7 @@ tabler_page <- function(title = NULL, navbar = NULL, body = NULL, footer = NULL,
   # Build page structure based on layout (forward theme/color)
   page_content <- switch(layout,
     "boxed" = layout_boxed(navbar, NULL, body, footer, theme = theme, color = color, show_theme_button = show_theme_button),
-    "combo" = layout_boxed(navbar, NULL, body, footer, theme = theme, color = color, show_theme_button = show_theme_button),
+    "combo" = layout_combo(navbar, NULL, body, footer, theme = theme, color = color, show_theme_button = show_theme_button),
     stop("Unsupported layout: ", layout)
   )
 
