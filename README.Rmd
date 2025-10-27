@@ -1,5 +1,17 @@
+---
+output: github_document
+---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
 
 <!-- badges: start -->
 
@@ -18,9 +30,7 @@ coverage](https://raw.githubusercontent.com/pachadotdev/tabler/coverage/badges/c
 A modern dashboard framework for R Shiny using the beautiful Tabler
 Bootstrap theme.
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/_PWVmmis-AE?si=wJYMvUQUpoZz_k3_" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen>
-
-</iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/_PWVmmis-AE?si=wJYMvUQUpoZz_k3_" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 ## Installation
 
@@ -36,12 +46,10 @@ remotes::install_github("pachadotdev/tabler")
 
 Please see the documentation: <https://pacha.dev/tabler/>
 
-Here is a complete example that I use to test all layouts with the theme
-(light/dark) and colour options:
+Here is a complete example that I use to test all layouts with the theme (light/dark) and colour options:
 <https://github.com/pachadotdev/tabler/blob/main/examples/shiny-test-layouts.R>
 
-Here’s a minimal example using the “combo” layout with sidebar and top
-navbar:
+Here’s a minimal example using the "combo" layout with sidebar and top navbar: 
 <https://github.com/pachadotdev/tabler/blob/main/examples/shiny-test-combo.R>
 
 ``` r
@@ -176,25 +184,23 @@ shinyApp(ui, server)
 
 ## Available Layouts
 
-All examples use the same basic structure from the Quick Start example
-above. Here are the key differences for each layout:
+All examples use the same basic structure from the Quick Start example above. Here are the key differences for each
+layout:
 
-- **Boxed (Default)**: Basic dashboard with top navbar and constrained
-  width content area. This is the default layout.
-- **Combo**: Combines vertical sidebar navigation with top header.
-- **Condensed**: Compact layout with reduced padding/margins.
-- **Fluid**: Full-width layout without container constraints.
-- **Fluid Vertical**: Full-width layout with vertical sidebar.
-- **Horizontal**: Layout with horizontal navigation menu.
-- **Navbar Dark**: Layout with dark navbar theme.
-- **Navbar Overlap**: Layout where content overlaps with navbar for a
-  modern look.
-- **Navbar Sticky**: Layout with sticky/fixed navbar that stays at the
-  top when scrolling.
-- **RTL**: Right-to-left layout for Hebrew/Arabic languages.
-- **Vertical**: Vertical sidebar layout without top navbar.
-- **Vertical Right**: Vertical sidebar positioned on the right side.
-- **Vertical Transparent**: Vertical layout with transparent sidebar.
+* **Boxed (Default)**: Basic dashboard with top navbar and constrained width content area. This
+is the default layout.
+* **Combo**:  Combines vertical sidebar navigation with top header.
+* **Condensed**:  Compact layout with reduced padding/margins.
+* **Fluid**:  Full-width layout without container constraints.
+* **Fluid Vertical**: Full-width layout with vertical sidebar.
+* **Horizontal**: Layout with horizontal navigation menu.
+* **Navbar Dark**: Layout with dark navbar theme.
+*  **Navbar Overlap**:  Layout where content overlaps with navbar for a modern look.
+* **Navbar Sticky**: Layout with sticky/fixed navbar that stays at the top when scrolling.
+* **RTL**: Right-to-left layout for Hebrew/Arabic languages.
+* **Vertical**: Vertical sidebar layout without top navbar.
+* **Vertical Right**: Vertical sidebar positioned on the right side.
+* **Vertical Transparent**: Vertical layout with transparent sidebar.
 
 ## License
 
