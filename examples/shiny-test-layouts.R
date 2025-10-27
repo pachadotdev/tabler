@@ -129,7 +129,7 @@ if (my_layout == "combo") {
   )
 }
 
-ui <- tabler_page(
+ui <- page(
   theme = my_theme,
   color = my_color,
   title = paste(toupper(my_layout), "Layout"),
@@ -143,24 +143,58 @@ ui <- tabler_page(
       pretitle_text = "Overview"
     ),
     # Page body content
-    shiny::tags$div(
+    div(
       class = "page-body",
-      shiny::tags$div(
+      div(
         class = "container-xl",
         column(
           6,
-          tabler_card(
+          card(
             title = "My title",
             footer = "Footer.",
             p("My text"),
             p("More text", class = "text-muted"),
             d3po_output("plot", width = "100%", height = "500px")
           )
+        ),
+        column(
+          6,
+          card(
+            title = "Buttons here",
+            footer = "Footer.",
+            # Dummy buttons for testing various variants of button()
+            
+              # Basic colors
+              button("Primary", color = "primary"),
+              button("Secondary", color = "secondary"),
+              button("Success", color = "success"),
+
+              # Outline and sizes
+              button("Outline", color = "primary", outline = TRUE),
+              button("Large", color = "primary", size = "lg"),
+              button("Small", color = "primary", size = "sm"),
+
+              # Icons
+              button("Upload", icon = "upload", color = "primary"),
+              button("Download", icon = "download", color = "success"),
+
+              # Pill and square
+              button("Pill", color = "secondary", pill = TRUE),
+              button("Square", color = "danger", square = TRUE),
+
+              # Loading and full width
+              button("Loading", color = "primary", loading = TRUE),
+              button("Full width", color = "primary", block = TRUE),
+
+              # Disabled and link
+              button("Disabled", color = "primary", disabled = TRUE),
+              button("As link", href = "#", color = "primary")
+          )
         )
       )
     )
   ),
-  footer = tabler_footer(
+  footer = footer(
     left = "Tabler",
     right = shiny::tags$span("v1.4.0")
   )

@@ -82,29 +82,29 @@ layout_navbar_sticky <- function(navbar, sidebar, body, footer, theme = "light",
     }
 
     # Build navbar-sticky layout structure
-    header_tag <- shiny::tags$div(
+    header_tag <- div(
       class = "sticky-top",
-      shiny::tags$header(
+      header(
         class = "navbar-expand-md",
-        shiny::tags$div(
+        div(
           class = "collapse navbar-collapse",
           id = "navbar-menu",
-          shiny::tags$div(
+          div(
             class = "navbar",
-            shiny::tags$div(
+            div(
               class = "container-xl",
-              shiny::tags$div(
+              div(
                 class = "row flex-column flex-md-row flex-fill align-items-center",
-                shiny::tags$div(
+                div(
                   class = "col",
-                  shiny::tags$ul(
+                  ul(
                     class = "navbar-nav",
                     nav_items
                   )
                 )
               ),
               if (length(theme_items) > 0) {
-                shiny::tags$div(
+                div(
                   class = "nav-item ms-md-auto",
                   theme_items
                 )
@@ -118,12 +118,12 @@ layout_navbar_sticky <- function(navbar, sidebar, body, footer, theme = "light",
     header_tag <- top_nav
   }
 
-  shiny::tagList(
-    shiny::tags$script(src = "dist/js/tabler-theme.min.js"),
-    shiny::tags$div(
+  tagList(
+    script(src = "dist/js/tabler-theme.min.js"),
+    div(
       class = "page",
       if (!is.null(header_tag)) header_tag,
-      shiny::tags$div(
+      div(
         class = "page-wrapper",
         body,
         if (!is.null(footer)) footer

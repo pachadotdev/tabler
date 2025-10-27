@@ -16,7 +16,7 @@ menu_dropdown(text, icon = NULL, href = NULL, items = list())
 \item{items}{A list of character vectors or tags representing dropdown links; each element can be a character vector of length 2: c(text, href)}
 }
 \value{
-A shiny tag representing the dropdown nav item
+An HTML tag representing the dropdown nav item
 }
 \description{
 Create a nav-item with a dropdown menu using columns like the example

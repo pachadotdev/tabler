@@ -88,24 +88,24 @@ layout_rtl <- function(navbar, sidebar, body, footer, theme = "light", color = N
     }
 
     # Build RTL layout structure - brand and theme buttons INSIDE ul
-    header_tag <- shiny::tags$header(
+    header_tag <- header(
       class = "navbar-expand-md",
-      shiny::tags$div(
+      div(
         class = "collapse navbar-collapse",
         id = "navbar-menu",
-        shiny::tags$div(
+        div(
           class = "navbar",
-          shiny::tags$div(
+          div(
             class = "container-xl",
-            shiny::tags$div(
+            div(
               class = "row flex-column flex-md-row flex-fill align-items-center",
-              shiny::tags$div(
+              div(
                 class = "col",
-                shiny::tags$ul(
+                ul(
                   class = "navbar-nav",
                   # Brand logo INSIDE ul (unique to RTL layout)
                   if (!is.null(brand_tag)) {
-                    shiny::tags$div(
+                    div(
                       class = "navbar-brand navbar-brand-autodark d-none-navbar-horizontal pe-0 pe-md-3",
                       brand_tag
                     )
@@ -114,7 +114,7 @@ layout_rtl <- function(navbar, sidebar, body, footer, theme = "light", color = N
                   nav_items,
                   # Theme buttons ALSO INSIDE ul (unique to RTL layout)
                   if (length(theme_items) > 0) {
-                    shiny::tags$div(
+                    div(
                       class = "nav-item ms-md-auto",
                       theme_items
                     )
@@ -130,13 +130,13 @@ layout_rtl <- function(navbar, sidebar, body, footer, theme = "light", color = N
     header_tag <- top_nav
   }
 
-  shiny::tagList(
-    shiny::tags$script(src = "dist/js/tabler-theme.min.js"),
-    shiny::tags$div(
+  tagList(
+    script(src = "dist/js/tabler-theme.min.js"),
+    div(
       class = "page",
       dir = "rtl",
       if (!is.null(header_tag)) header_tag,
-      shiny::tags$div(
+      div(
         class = "page-wrapper",
         body,
         if (!is.null(footer)) footer

@@ -93,25 +93,25 @@ layout_horizontal <- function(navbar, sidebar, body, footer, theme = "light", co
     }
 
     # Build horizontal layout header structure (same as fluid)
-    header_tag <- shiny::tags$header(
+    header_tag <- header(
       class = "navbar-expand-md",
-      shiny::tags$div(
+      div(
         class = "collapse navbar-collapse",
         id = "navbar-menu",
-        shiny::tags$div(
+        div(
           class = "navbar",
-          shiny::tags$div(
+          div(
             class = "container-xl",
-            shiny::tags$div(
+            div(
               class = "row flex-column flex-md-row flex-fill align-items-center",
-              shiny::tags$div(
+              div(
                 class = "col",
-                shiny::tags$ul(
+                ul(
                   class = "navbar-nav",
                   nav_items,
                   # Theme buttons with ms-md-auto
                   if (length(theme_items) > 0) {
-                    shiny::tags$div(
+                    div(
                       class = "nav-item ms-md-auto",
                       theme_items
                     )
@@ -127,12 +127,12 @@ layout_horizontal <- function(navbar, sidebar, body, footer, theme = "light", co
     header_tag <- top_nav
   }
 
-  shiny::tagList(
-    shiny::tags$script(src = "dist/js/tabler-theme.min.js"),
-    shiny::tags$div(
+  tagList(
+    script(src = "dist/js/tabler-theme.min.js"),
+    div(
       class = "page",
       if (!is.null(header_tag)) header_tag,
-      shiny::tags$div(
+      div(
         class = "page-wrapper",
         body,
         if (!is.null(footer)) footer

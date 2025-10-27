@@ -24,12 +24,12 @@ layout_vertical_transparent <- function(navbar, sidebar, body, footer, theme = "
       side_nav <- filter_theme_li(side_nav)
     }
   }
-  shiny::tagList(
-    shiny::tags$script(src = "dist/js/tabler-theme.min.js"),
-    shiny::tags$div(
+  tagList(
+    script(src = "dist/js/tabler-theme.min.js"),
+    div(
       class = "page",
       side_nav,
-      shiny::tags$div(
+      div(
         class = "page-wrapper",
         body,
         if (!is.null(footer)) footer

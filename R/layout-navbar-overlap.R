@@ -96,13 +96,13 @@ layout_navbar_overlap <- function(navbar, sidebar, body, footer, theme = "light"
     }
 
     # Build navbar-overlap layout header structure (like condensed but with navbar-overlap class and data-bs-theme="dark")
-    header_tag <- shiny::tags$header(
+    header_tag <- header(
       class = "navbar navbar-expand-md navbar-overlap d-print-none",
       `data-bs-theme` = "dark",
-      shiny::tags$div(
+      div(
         class = "container-xl",
         # Navbar toggler
-        shiny::tags$button(
+        button(
           class = "navbar-toggler",
           type = "button",
           `data-bs-toggle` = "collapse",
@@ -110,26 +110,26 @@ layout_navbar_overlap <- function(navbar, sidebar, body, footer, theme = "light"
           `aria-controls` = "navbar-menu",
           `aria-expanded` = "false",
           `aria-label` = "Toggle navigation",
-          shiny::tags$span(class = "navbar-toggler-icon")
+          span(class = "navbar-toggler-icon")
         ),
         # Brand logo (inside header, not outside)
         if (!is.null(brand_tag)) {
-          shiny::tags$div(
+          div(
             class = "navbar-brand navbar-brand-autodark d-none-navbar-horizontal pe-0 pe-md-3",
             brand_tag
           )
         },
         # Collapsible navbar menu
-        shiny::tags$div(
+        div(
           class = "collapse navbar-collapse",
           id = "navbar-menu",
-          shiny::tags$ul(
+          ul(
             class = "navbar-nav",
             nav_items
           ),
           # Theme buttons (outside ul, as sibling)
           if (length(theme_items) > 0) {
-            shiny::tags$div(
+            div(
               class = "nav-item ms-md-auto",
               theme_items
             )
@@ -156,12 +156,12 @@ layout_navbar_overlap <- function(navbar, sidebar, body, footer, theme = "light"
     })
   }
 
-  shiny::tagList(
-    shiny::tags$script(src = "dist/js/tabler-theme.min.js"),
-    shiny::tags$div(
+  tagList(
+    script(src = "dist/js/tabler-theme.min.js"),
+    div(
       class = "page",
       if (!is.null(header_tag)) header_tag,
-      shiny::tags$div(
+      div(
         class = "page-wrapper",
         modified_body,
         if (!is.null(footer)) footer

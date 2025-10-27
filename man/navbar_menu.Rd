@@ -16,7 +16,7 @@ navbar_menu(..., brand = NULL, show_theme_button = FALSE)
 \item{show_theme_button}{Whether to show the theme toggle buttons (default: `FALSE``).}
 }
 \value{
-A shiny tag for the header
+An HTML tag for the header
 }
 \description{
 Create the top header used in boxed layout. This function

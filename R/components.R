@@ -5,10 +5,10 @@
 #' @param footer Card footer content (optional)
 #' @param status Card color status: "primary", "secondary", "success", "warning", "danger", etc.
 #' @param class Additional CSS classes
-#' @rdname shiny-components
-#' @return A Shiny tag representing the card
+#' @rdname tabler-components
+#' @return An HTML tag representing the card
 #' @export
-tabler_card <- function(..., title = NULL, footer = NULL, status = NULL, class = NULL) {
+card <- function(..., title = NULL, footer = NULL, status = NULL, class = NULL) {
   # Build status class
   status_class <- if (!is.null(status)) paste0("card-status-", status) else NULL
 
@@ -43,7 +43,7 @@ tabler_card <- function(..., title = NULL, footer = NULL, status = NULL, class =
     if (!is.null(body_content)) {
       if (is.character(body_content)) {
         # character content -> normal paragraph
-        body_par <- shiny::tags$p(body_content)
+        body_par <- p(body_content)
       } else if (is.list(body_content) && length(body_content) == 1 && inherits(body_content[[1]], "shiny.tag")) {
         # single shiny.tag (e.g., p(...)) -> use as-is
         body_par <- body_content[[1]]
@@ -54,13 +54,13 @@ tabler_card <- function(..., title = NULL, footer = NULL, status = NULL, class =
     }
 
     # do not render footer as muted paragraph inside body; render as card-footer later
-    body_tag <- shiny::tags$div(
+    body_tag <- div(
       class = "card-body",
-      shiny::tags$div(
+      div(
         class = "row gy-3",
-        shiny::tags$div(
+        div(
           class = "col-12 col-sm d-flex flex-column",
-          shiny::tags$h3(class = "h2", title),
+          h3(class = "h2", title),
           body_par,
           NULL
         )
@@ -72,37 +72,37 @@ tabler_card <- function(..., title = NULL, footer = NULL, status = NULL, class =
     body_par <- NULL
     if (!is.null(body_content)) {
       if (is.character(body_content)) {
-        body_par <- shiny::tags$p(class = "text-muted", body_content)
+        body_par <- p(class = "text-muted", body_content)
       } else {
         body_par <- body_content
       }
     }
 
-    body_tag <- shiny::tags$div(
+    body_tag <- div(
       class = "card-body",
-      shiny::tags$div(
+      div(
         class = "row gy-3",
-        shiny::tags$div(
+        div(
           class = "col-12 col-sm d-flex flex-column",
-          shiny::tags$h3(class = "h2", title),
+          h3(class = "h2", title),
           body_par
         )
       )
     )
   } else {
     # No title at all; render body normally
-    body_tag <- shiny::tags$div(class = "card-body", body_content)
+    body_tag <- div(class = "card-body", body_content)
   }
 
   # Card footer
   footer_tag <- if (!is.null(footer)) {
-    shiny::tags$div(
+    div(
       class = "card-footer",
       footer
     )
   }
 
-  shiny::tags$div(
+  div(
     class = paste("card", status_class, class),
     header,
     body_tag,
@@ -113,19 +113,19 @@ tabler_card <- function(..., title = NULL, footer = NULL, status = NULL, class =
 #' @title Create a page pretitle
 #' @description Small helper to render the page pretitle element used by Tabler examples
 #' @param text The pretitle text to display
-#' @rdname shiny-components
+#' @rdname tabler-components
 #' @export
 pre_title <- function(text) {
-  shiny::tags$div(class = "page-pretitle", text)
+  div(class = "page-pretitle", text)
 }
 
 #' @title Create a page title
 #' @description Small helper to render the page title element used by Tabler examples
 #' @param text The title text to display
-#' @rdname shiny-components
+#' @rdname tabler-components
 #' @export
 title <- function(text) {
-  shiny::tags$h2(class = "page-title", text)
+  h2(class = "page-title", text)
 }
 
 #' @title Create a page header
@@ -133,23 +133,23 @@ title <- function(text) {
 #' @param title_text The main title text
 #' @param pretitle_text The pretitle text (optional)
 #' @param ... Additional elements to include in the header (e.g., action buttons)
-#' @rdname shiny-components
+#' @rdname tabler-components
 #' @export
 page_header <- function(title_text, pretitle_text = NULL, ...) {
-  shiny::tags$div(
+  div(
     class = "page-header d-print-none",
     `aria-label` = "Page header",
-    shiny::tags$div(
+    div(
       class = "container-xl",
-      shiny::tags$div(
+      div(
         class = "row g-2 align-items-center",
-        shiny::tags$div(
+        div(
           class = "col",
-          if (!is.null(pretitle_text)) shiny::tags$div(class = "page-pretitle", pretitle_text),
-          shiny::tags$h2(class = "page-title", title_text)
+          if (!is.null(pretitle_text)) div(class = "page-pretitle", pretitle_text),
+          h2(class = "page-title", title_text)
         ),
         if (length(list(...)) > 0) {
-          shiny::tags$div(
+          div(
             class = "col-auto ms-auto d-print-none",
             ...
           )
@@ -166,38 +166,38 @@ page_header <- function(title_text, pretitle_text = NULL, ...) {
 #' @param icon Icon name (optional)
 #' @param color Color theme
 #' @param width Column width (1-12)
-#' @rdname shiny-components
-#' @return A Shiny tag representing the value box
+#' @rdname tabler-components
+#' @return An HTML tag representing the value box
 #' @export
-tabler_value_box <- function(value, title, icon = NULL, color = "primary", width = 3) {
+value_box <- function(value, title, icon = NULL, color = "primary", width = 3) {
   icon_tag <- if (!is.null(icon)) {
-    tabler_icon(icon)
+    icon(icon)
   }
 
-  shiny::tags$div(
+  div(
     class = paste0("col-", width),
-    shiny::tags$div(
+    div(
       class = "card card-sm",
-      shiny::tags$div(
+      div(
         class = "card-body",
-        shiny::tags$div(
+        div(
           class = "row align-items-center",
-          shiny::tags$div(
+          div(
             class = "col-auto",
             if (!is.null(icon_tag)) {
-              shiny::tags$span(
+              span(
                 class = paste0("bg-", color, " text-white avatar"),
                 icon_tag
               )
             }
           ),
-          shiny::tags$div(
+          div(
             class = "col",
-            shiny::tags$div(
+            div(
               class = "font-weight-medium",
               value
             ),
-            shiny::tags$div(
+            div(
               class = "text-secondary",
               title
             )
@@ -213,10 +213,10 @@ tabler_value_box <- function(value, title, icon = NULL, color = "primary", width
 #' @param name Icon name
 #' @param library Icon library: "tabler", "bootstrap", "feather"
 #' @param class Additional CSS classes
-#' @rdname shiny-components
-#' @return A Shiny tag representing the icon
+#' @rdname tabler-components
+#' @return An HTML tag representing the icon
 #' @export
-tabler_icon <- function(name, library = "tabler", class = NULL) {
+icon <- function(name, library = "tabler", class = NULL) {
   icon_class <- switch(library,
     "tabler" = "ti ti-",
     "bootstrap" = "bi bi-",
@@ -229,7 +229,7 @@ tabler_icon <- function(name, library = "tabler", class = NULL) {
   parts <- Filter(function(x) nzchar(as.character(x)), parts)
   class_attr <- paste(parts, collapse = " ")
 
-  shiny::tags$i(
+  i(
     class = class_attr
   )
 }
@@ -240,12 +240,12 @@ tabler_icon <- function(name, library = "tabler", class = NULL) {
 #' @param type Alert type: "info", "success", "warning", "danger"
 #' @param dismissible Whether alert can be dismissed
 #' @param title Alert title (optional)
-#' @rdname shiny-components
-#' @return A Shiny tag representing the alert
+#' @rdname tabler-components
+#' @return An HTML tag representing the alert
 #' @export
-tabler_alert <- function(..., type = "info", dismissible = FALSE, title = NULL) {
+alert <- function(..., type = "info", dismissible = FALSE, title = NULL) {
   dismiss_button <- if (dismissible) {
-    shiny::tags$button(
+    button_tag(
       type = "button",
       class = "btn-close",
       `data-bs-dismiss` = "alert",
@@ -254,10 +254,10 @@ tabler_alert <- function(..., type = "info", dismissible = FALSE, title = NULL) 
   }
 
   title_tag <- if (!is.null(title)) {
-    shiny::tags$h4(class = "alert-title", title)
+    h4(class = "alert-title", title)
   }
 
-  shiny::tags$div(
+  div(
     class = paste("alert alert-", type),
     role = "alert",
     title_tag,
@@ -269,30 +269,104 @@ tabler_alert <- function(..., type = "info", dismissible = FALSE, title = NULL) 
 #' @title Create a Button
 #' @description Create interactive buttons with Tabler styling
 #' @param label Button text
+#' @param href URL to link to (creates an anchor tag instead of button)
 #' @param onclick JavaScript to execute on click
 #' @param color Button color theme
 #' @param size Button size: "sm", "md", "lg"
 #' @param outline Use outline style
 #' @param icon Icon to include
+#' @param icon_right Position icon on the right side
+#' @param disabled Whether the button is disabled
+#' @param block Make button full-width (block-level)
+#' @param pill Use pill-shaped button style
+#' @param square Use square button style
+#' @param loading Show loading spinner
+#' @param class Additional CSS classes
+#' @param type HTML button type attribute
 #' @param ... Additional HTML attributes
-#' @rdname shiny-components
-#' @return A Shiny tag representing the button
+#' @rdname tabler-components
+#' @return An HTML tag representing the button
 #' @export
-tabler_button <- function(label, onclick = NULL, color = "primary",
-                          size = "md", outline = FALSE, icon = NULL, ...) {
-  size_class <- if (size != "md") paste0("btn-", size) else NULL
-  color_class <- paste0("btn-", if (outline) "outline-", color)
+button <- function(label, href = NULL, onclick = NULL, color = "primary",
+                   size = "md", outline = FALSE, icon = NULL,
+                   icon_right = FALSE, disabled = FALSE, block = FALSE,
+                   pill = FALSE, square = FALSE, loading = FALSE,
+                   class = NULL, type = "button", ...) {
+  # Build classes
+  size_class <- if (!is.null(size) && nzchar(size) && size != "md") paste0("btn-", size) else NULL
+  color_class <- paste0("btn-", if (isTRUE(outline)) "outline-" else "", color)
+  extra_classes <- c(
+    class,
+    if (isTRUE(block)) "w-100" else NULL,
+    if (isTRUE(pill)) "btn-pill" else NULL,
+    if (isTRUE(square)) "btn-square" else NULL,
+    if (isTRUE(loading)) "btn-loading" else NULL
+  )
 
-  icon_tag <- if (!is.null(icon)) {
-    list(tabler_icon(icon), " ")
+  parts <- c("btn", color_class, size_class, extra_classes)
+  parts <- Filter(function(x) nzchar(as.character(x)), parts)
+  class_attr <- paste(parts, collapse = " ")
+
+  # Icon handling: allow passing an icon name or a full tag
+  icon_tag <- NULL
+  if (!is.null(icon)) {
+    if (inherits(icon, "shiny.tag") || inherits(icon, "html")) {
+      # Single tag element
+      icon_tag <- list(icon)
+    } else if (is.list(icon)) {
+      # Already a list
+      icon_tag <- icon
+    } else {
+      # Icon name - create the icon element only (don't render the raw name)
+      icon_tag <- list(
+        icon(icon)
+      )
+    }
   }
 
-  shiny::tags$button(
-    type = "button",
-    class = paste("btn", color_class, size_class),
-    onclick = onclick,
-    ...,
-    icon_tag,
-    label
-  )
+  # Build children list with icon positioned correctly
+  children <- list()
+  if (!is.null(icon_tag)) {
+    if (isTRUE(icon_right)) {
+      children <- c(list(label), list(" "), icon_tag)
+    } else {
+      children <- c(icon_tag, list(" "), list(label))
+    }
+  } else {
+    children <- list(label)
+  }
+
+  # Common attributes
+  attrs <- list(class = class_attr, ...)
+
+  if (!is.null(onclick)) attrs$onclick <- onclick
+  if (isTRUE(disabled)) attrs$class <- paste(attrs$class, "disabled")
+
+  # Ensure children is a flat list (but preserve tag objects which are lists
+  # with class 'shiny.tag'). This avoids nested lists that can duplicate
+  # elements when icon_tag was itself a list.
+  flatten_children <- function(x) {
+    out <- list()
+    for (el in x) {
+      if (is.list(el) && !inherits(el, "shiny.tag") && !inherits(el, "html")) {
+        out <- c(out, flatten_children(el))
+      } else {
+        out <- c(out, list(el))
+      }
+    }
+    out
+  }
+
+  children <- flatten_children(children)
+
+  # Render as <a> if href provided, else <button>
+  if (!is.null(href)) {
+    attrs$href <- href
+    # role=button when using anchor
+    attrs$role <- attrs$role %||% "button"
+  do.call(htmltools::a, c(attrs, children))
+  } else {
+    attrs$type <- type
+    do.call(button_tag, c(attrs, children))
+  }
 }

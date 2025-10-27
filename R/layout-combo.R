@@ -79,14 +79,14 @@ layout_combo <- function(navbar, sidebar, body, footer, theme = "light", color =
     }
 
     # Build horizontal navbar structure with d-none d-lg-flex
-    header_tag <- shiny::tags$header(
+    header_tag <- header(
       class = "navbar navbar-expand-md d-none d-lg-flex d-print-none",
-      shiny::tags$div(
+      div(
         class = "container-xl",
-        shiny::tags$div(
+        div(
           class = "collapse navbar-collapse",
           id = "navbar-menu",
-          shiny::tags$ul(
+          ul(
             class = "navbar-nav",
             # Regular nav items only (theme buttons never appear in top navbar for combo layout)
             regular_items
@@ -105,9 +105,9 @@ layout_combo <- function(navbar, sidebar, body, footer, theme = "light", color =
   }
 
   # Mirror the HTML structure in layout-combo.html: page contains aside (sidebar), header (top navbar), then page-wrapper
-  shiny::tagList(
-    shiny::tags$script(src = "dist/js/tabler-theme.min.js"),
-    shiny::tags$div(
+  tagList(
+    script(src = "dist/js/tabler-theme.min.js"),
+    div(
       class = "page",
 
       # Sidebar (if present)
@@ -117,7 +117,7 @@ layout_combo <- function(navbar, sidebar, body, footer, theme = "light", color =
       if (!is.null(header_tag)) header_tag,
 
       # Main content wrapper
-      shiny::tags$div(
+      div(
         class = "page-wrapper",
         # Body content (includes page-header and page-body)
         body,

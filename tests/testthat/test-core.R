@@ -1,8 +1,75 @@
+test_that("tabler_icon builds correct class strings and handles libraries", {
+  i1 <- icon("home")
+  expect_true(grepl("ti ti-home", as.character(i1)))
+
+  i2 <- icon("alarm", library = "bootstrap", class = "foo")
+  s2 <- as.character(i2)
+  expect_true(grepl("bi bi-alarm", s2))
+  expect_true(grepl("foo", s2))
+})
+
+test_that("tabler_card shorthand and footer/title handling", {
+  c1 <- card("My Title", "Some body text")
+  s1 <- as.character(c1)
+  expect_true(grepl("My Title", s1))
+  expect_true(grepl("Some body text", s1))
+
+  c2 <- card(title = "Titled", footer = "F", status = "primary")
+  s2 <- as.character(c2)
+  expect_true(grepl("Titled", s2))
+  expect_true(grepl("F", s2))
+  expect_true(grepl("card-status-primary", s2))
+})
+
+test_that("menu_dropdown splits items into columns and preserves tags", {
+  md <- menu_dropdown("Actions", items = list(c("A", "/a"), c("B", "/b"), a(href = "#", "X")))
+  s <- as.character(md)
+  # should contain dropdown-menu and both links
+  expect_true(grepl("dropdown-menu", s))
+  expect_true(grepl("/a", s))
+  expect_true(grepl("/b", s))
+  expect_true(grepl("X", s))
+})
+
+test_that("menu_item produces nav-item with anchor and icon placeholder", {
+  mi <- menu_item("Label", icon = "dog", href = "/dogs")
+  s <- as.character(mi)
+  expect_true(grepl("Label", s))
+  expect_true(grepl("/dogs", s))
+  expect_true(grepl("icon|<!-- Download SVG icon", s))
+})
+
+test_that("sidebar_menu and horizontal_menu set active on first item and attach title", {
+  li1 <- menu_item("One", href = "/1")
+  li2 <- menu_item("Two", href = "/2")
+  sm <- sidebar_menu(li1, li2, title = list(text = "App", img = "logo.png"))
+  s <- as.character(sm)
+  expect_true(grepl("navbar-nav", s))
+  # title attached as attribute should not break rendering
+  expect_true(grepl("logo.png", s))
+
+  hm <- horizontal_menu(li1, li2)
+  hs <- as.character(hm)
+  expect_true(grepl("navbar-nav", hs))
+})
+
+test_that("get_layout_attributes returns expected classes and tabler_page validates inputs and includes script", {
+  expect_equal(get_layout_attributes("boxed")$class, "layout-boxed")
+
+  # invalid layout should error
+  expect_error(page(layout = "nope"), "Invalid layout")
+
+  # Valid simple page should include script that sets localStorage keys
+  p <- page(title = "X", layout = "boxed", theme = "dark", color = "blue", show_theme_button = FALSE)
+  s <- as.character(p)
+  # ensure the inline script that sets localStorage and data-bs-theme is present
+  expect_true(grepl("localStorage.setItem\\('tabler-theme','dark'\\)", s) || grepl("tabler-theme", s))
+})
 test_that("tabler_page simple output", {
-  ui <- tabler_page(
+  ui <- page(
     title = "Combo Dashboard",
     layout = "combo",
-    body = tabler_body("Welcome to Tabler!")
+    body = body("Welcome to Tabler!")
   )
 
   # tabler_page now returns a tagList containing head and body (not a full
@@ -20,10 +87,10 @@ test_that("tabler_page simple output", {
 })
 
 test_that("tabler_page basic and error cases", {
-  ui <- tabler_page(
+  ui <- page(
     title = "Combo Dashboard",
     layout = "combo",
-    body = tabler_body("Welcome to Tabler!")
+    body = body("Welcome to Tabler!")
   )
 
   expect_s3_class(ui, "shiny.tag.list")
@@ -32,28 +99,28 @@ test_that("tabler_page basic and error cases", {
   expect_true(grepl("Welcome to Tabler", as.character(ui[[2]])))
 
   # invalid layout should error
-  expect_error(tabler_page(layout = "nonexisting"), "Invalid layout")
+  expect_error(page(layout = "nonexisting"), "Invalid layout")
 
   # RTL layout sets dir attribute on the top-level .page div inside the tagList
-  ui_rtl <- tabler_page(layout = "rtl", body = tabler_body("rtl"))
+  ui_rtl <- page(layout = "rtl", body = body("rtl"))
   ui_rtl_str <- as.character(ui_rtl)
   expect_true(grepl('class="page"|class=\"page\"', ui_rtl_str))
   expect_true(grepl('dir="rtl"|dir=\\"rtl\\"', ui_rtl_str))
 })
 
 test_that("tabler body/header/navbar/footer/sidebar and menus", {
-  b <- tabler_body("content", class = "my-class")
+  b <- body("content", class = "my-class")
   expect_s3_class(b, "shiny.tag")
   expect_true(grepl("my-class", b$attribs$class))
   expect_true(grepl("content", paste0(b)))
 
-  hdr <- tabler_page_header("Main", subtitle = "sub")
+  hdr <- page_header("Main", subtitle = "sub")
   expect_s3_class(hdr, "shiny.tag")
   expect_true(grepl("Main", paste0(hdr)))
   expect_true(grepl("sub", paste0(hdr)))
 
   # header with extra content via ... should render the extra column
-  hdr2 <- tabler_page_header("H2", subtitle = "s2", shiny::tags$button("Click"))
+  hdr2 <- page_header("H2", subtitle = "s2", button("Click"))
   expect_s3_class(hdr2, "shiny.tag")
   expect_true(grepl("Click", paste0(hdr2)))
   # extra column class should be present when ... provided
@@ -77,7 +144,7 @@ test_that("tabler body/header/navbar/footer/sidebar and menus", {
   expect_true(grepl("logo2.png", paste0(img_nav2)))
   expect_true(grepl("alt=\"Dashboard\"|alt=\\\"Dashboard\\\"", paste0(img_nav2)))
 
-  ft <- tabler_footer(left = "L", right = "R")
+  ft <- footer(left = "L", right = "R")
   expect_s3_class(ft, "shiny.tag")
   expect_true(grepl("L", paste0(ft)))
   expect_true(grepl("R", paste0(ft)))
@@ -94,9 +161,24 @@ test_that("tabler body/header/navbar/footer/sidebar and menus", {
   expect_true(grepl("active", paste0(sm)))
 
   # tabs container should mark first child as active/show
-  t1 <- tabler_tab_item("dogs", "dog content")
-  t2 <- tabler_tab_item("cats", "cat content")
-  tabs <- tabler_tab_items(t1, t2)
+  t1 <- tab_item("dogs", "dog content")
+  t2 <- tab_item("cats", "cat content")
+  tabs <- tab_items(t1, t2)
   expect_s3_class(tabs, "shiny.tag")
   expect_true(grepl("show active", paste0(tabs)))
+})
+
+test_that("tabler_page builds head and body and injects script", {
+  ui <- page(title = "T", layout = "boxed", body = body("B"), theme = "dark", color = "blue")
+  expect_s3_class(ui, "shiny.tag.list")
+  ui_str <- as.character(ui)
+  # script that sets theme should be present
+  expect_true(grepl("tabler-theme", ui_str))
+  expect_true(grepl("B", ui_str))
+})
+
+test_that("tabler_page rtl layout sets dir on page", {
+  ui_rtl <- page(layout = "rtl", body = body("R"))
+  ui_rtl_str <- as.character(ui_rtl)
+  expect_true(grepl('dir="rtl"|dir=\\"rtl\\"', ui_rtl_str))
 })

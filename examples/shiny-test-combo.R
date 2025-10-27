@@ -61,7 +61,7 @@ top_nav <- navbar_menu(
 # Combine both for combo layout
 main_navbar <- list(side = sidebar_nav, top = top_nav)
 
-ui <- tabler_page(
+ui <- page(
   theme = "light",
   color = "teal",
   title = "Combo Layout",
@@ -81,7 +81,7 @@ ui <- tabler_page(
         class = "container-xl",
         column(
           6,
-          tabler_card(
+          card(
             title = "My title",
             footer = "Footer.",
             p("My text"),
@@ -92,7 +92,7 @@ ui <- tabler_page(
       )
     )
   ),
-  footer = tabler_footer(
+  footer = footer(
     left = "Tabler",
     right = shiny::tags$span("v1.4.0")
   )

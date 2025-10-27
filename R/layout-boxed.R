@@ -69,24 +69,24 @@ layout_boxed <- function(navbar, sidebar, body, footer, theme = "light", color =
 
     processed_items <- normalize_header_items(nav_items)
 
-    header_tag <- shiny::tags$header(
+    header_tag <- header(
       class = "navbar navbar-expand-md",
-      shiny::tags$div(
+      div(
         class = "collapse navbar-collapse",
         id = "navbar-menu",
-        shiny::tags$div(
+        div(
           class = "container-xl",
-          shiny::tags$div(
+          div(
             class = "row flex-column flex-md-row flex-fill align-items-center",
-            shiny::tags$div(
+            div(
               class = "col",
-              shiny::tags$ul(
+              ul(
                 class = "navbar-nav",
-                if (!is.null(brand_tag)) shiny::tags$div(class = "navbar-brand navbar-brand-autodark", brand_tag),
+                if (!is.null(brand_tag)) div(class = "navbar-brand navbar-brand-autodark", brand_tag),
                 processed_items$regular,
                 # Add theme buttons at the end with ms-md-auto to push to right
                 if (isTRUE(show_theme_button) && length(processed_items$theme) > 0) {
-                  shiny::tags$div(class = "nav-item ms-md-auto", processed_items$theme)
+                  div(class = "nav-item ms-md-auto", processed_items$theme)
                 }
               )
             )
@@ -98,11 +98,11 @@ layout_boxed <- function(navbar, sidebar, body, footer, theme = "light", color =
     header_tag <- top_nav
   }
 
-  page_wrapper <- shiny::tags$div(class = "page-wrapper", body, if (!is.null(footer)) footer)
+  page_wrapper <- div(class = "page-wrapper", body, if (!is.null(footer)) footer)
 
-  shiny::tagList(
-    shiny::tags$script(src = "dist/js/tabler-theme.min.js"),
-    shiny::tags$div(
+  tagList(
+    script(src = "dist/js/tabler-theme.min.js"),
+    div(
       class = "page",
       if (!is.null(side_nav)) side_nav,
       header_tag,

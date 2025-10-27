@@ -23,12 +23,12 @@ layout_vertical <- function(navbar, sidebar, body, footer, theme = "light", colo
     }
   }
 
-  shiny::tagList(
-    shiny::tags$script(src = "dist/js/tabler-theme.min.js"),
-    shiny::tags$div(
+  tagList(
+    script(src = "dist/js/tabler-theme.min.js"),
+    div(
       class = "page",
       if (!is.null(side_nav)) side_nav,
-      shiny::tags$div(
+      div(
         class = "page-wrapper",
         body,
         if (!is.null(footer)) footer

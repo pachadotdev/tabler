@@ -119,12 +119,12 @@ layout_condensed <- function(navbar, sidebar, body, footer, theme = "light", col
     }
 
     # Build header with condensed layout structure
-    header_tag <- shiny::tags$header(
+    header_tag <- header(
       class = "navbar navbar-expand-md d-print-none",
-      shiny::tags$div(
+      div(
         class = "container-xl",
         # Navbar toggler
-        shiny::tags$button(
+        button(
           class = "navbar-toggler",
           type = "button",
           `data-bs-toggle` = "collapse",
@@ -132,27 +132,27 @@ layout_condensed <- function(navbar, sidebar, body, footer, theme = "light", col
           `aria-controls` = "navbar-menu",
           `aria-expanded` = "false",
           `aria-label` = "Toggle navigation",
-          shiny::tags$span(class = "navbar-toggler-icon")
+          span(class = "navbar-toggler-icon")
         ),
         # Brand/logo
         if (!is.null(brand_tag)) {
-          shiny::tags$div(class = "navbar-brand navbar-brand-autodark", brand_tag)
+          div(class = "navbar-brand navbar-brand-autodark", brand_tag)
         },
         # Theme buttons on the right (order-md-last)
         if (length(theme_items) > 0) {
-          shiny::tags$div(
+          div(
             class = "navbar-nav flex-row order-md-last",
-            shiny::tags$div(
+            div(
               class = "d-none d-md-flex",
-              shiny::tags$div(class = "nav-item", theme_items)
+              div(class = "nav-item", theme_items)
             )
           )
         },
         # Collapsible navbar menu
-        shiny::tags$div(
+        div(
           class = "collapse navbar-collapse",
           id = "navbar-menu",
-          shiny::tags$ul(
+          ul(
             class = "navbar-nav",
             nav_items
           )
@@ -163,14 +163,14 @@ layout_condensed <- function(navbar, sidebar, body, footer, theme = "light", col
     header_tag <- top_nav
   }
 
-  shiny::tagList(
-    shiny::tags$script(src = "dist/js/tabler-theme.min.js"),
-    shiny::tags$div(
+  tagList(
+    script(src = "dist/js/tabler-theme.min.js"),
+    div(
       class = "page",
       # Top navbar
       if (!is.null(header_tag)) header_tag,
       # Page wrapper
-      shiny::tags$div(
+      div(
         class = "page-wrapper",
         body,
         if (!is.null(footer)) footer

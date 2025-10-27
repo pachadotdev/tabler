@@ -15,7 +15,7 @@ layout_vertical_right <- function(navbar, sidebar, body, footer, theme = "light"
     # Official example uses a dark-themed sidebar for the right-vertical layout
     # regardless of the overall page theme. Force the aside theme to "dark"
     # to match the canonical HTML used in examples.
-    side_nav <- shiny::tagAppendAttributes(side_nav, class = "navbar-end navbar-expand-lg", `data-bs-theme` = "dark")
+    side_nav <- tagAppendAttributes(side_nav, class = "navbar-end navbar-expand-lg", `data-bs-theme` = "dark")
 
     # Filter out theme toggle li if show_theme_button is FALSE
     if (!isTRUE(show_theme_button)) {
@@ -23,12 +23,12 @@ layout_vertical_right <- function(navbar, sidebar, body, footer, theme = "light"
     }
   }
 
-  shiny::tagList(
-    shiny::tags$script(src = "dist/js/tabler-theme.min.js"),
-    shiny::tags$div(
+  tagList(
+    script(src = "dist/js/tabler-theme.min.js"),
+    div(
       class = "page",
       if (!is.null(side_nav)) side_nav,
-      shiny::tags$div(
+      div(
         class = "page-wrapper",
         body,
         if (!is.null(footer)) footer

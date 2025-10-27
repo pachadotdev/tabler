@@ -76,3 +76,82 @@ add_deps <- function(tag, layout = "default", theme = "light", color = "minimal"
 #' icons[grepl("paw", icons$icon), ]
 #' @keywords datasets
 "icons"
+
+#' Re-Export Functions for Internal Use
+#' @keywords internal
+#' @rdname re-exports
+#' @importFrom htmltools div a img tags span p h2 h3 h4 HTML tagList tagAppendAttributes
+#' @noRd
+ul <- tags$ul
+
+#' Re-Export Functions for Internal Use
+#' @keywords internal
+#' @rdname re-exports
+#' @noRd
+li <- tags$li
+
+#' Re-Export Functions for Internal Use
+#' @keywords internal
+#' @rdname re-exports
+#' @noRd
+header <- tags$header
+
+#' Re-Export Functions for Internal Use
+#' @keywords internal
+#' @rdname re-exports
+#' @noRd
+aside <- tags$aside
+
+#' Re-Export Functions for Internal Use
+#' @keywords internal
+#' @rdname re-exports
+#' @noRd
+head <- tags$head
+
+#' Re-Export Functions for Internal Use
+#' @keywords internal
+#' @rdname re-exports
+#' @noRd
+script <- tags$script
+
+#' Re-Export Functions for Internal Use
+#' @keywords internal
+#' @rdname re-exports
+#' @noRd
+i <- tags$i
+
+#' Re-Export Functions for Internal Use
+#' @keywords internal
+#' @rdname re-exports
+#' @noRd
+meta <- tags$meta
+
+#' Re-Export Functions for Internal Use
+#' @keywords internal
+#' @rdname re-exports
+#' @noRd
+href <- tags$href
+
+#' Re-Export Functions for Internal Use
+#' @keywords internal
+#' @rdname re-exports
+#' @noRd
+nav <- tags$nav
+
+#' Re-Export Functions for Internal Use
+#' @keywords internal
+#' @rdname re-exports
+#' @noRd
+body_tag <- tags$body
+
+#' Re-Export Functions for Internal Use
+#' @keywords internal
+#' @rdname re-exports
+#' @noRd
+footer_tag <- tags$footer
+
+#' Re-Export Functions for Internal Use
+#' @keywords internal
+#' @rdname re-exports
+#' @noRd
+button_tag <- tags$button

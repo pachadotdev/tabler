@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>tab_items • tabler</title><link rel="stylesheet" href="../menu.css"><link rel="stylesheet" href="../content.css"><!-- MathJax Configuration --><script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)'], ['$', '$']],
+        displayMath: [['\\[', '\\]'], ['$$', '$$']],
+        processEscapes: true,
+        processEnvironments: true,
+        packages: {'[+]': ['ams', 'newcommand', 'configmacros']}
+      },
+      options: {
+        ignoreHtmlClass: 'tex2jax_ignore',
+        processHtmlClass: 'tex2jax_process'
+      }
+    };
+  </script><script id="MathJax-script" async src="../js/tex-svg.js"></script></head><body>
+<div class="main-container">
+<div id="menu">
+  <div>
+    <img src="../man/figures/logo.svg" align="center" height="139" alt="tabler logo"></div>
+
+  <div class="search-container">
+    <input type="text" id="search-box" placeholder="Search..."></div>
+
+  <div class="search-container">
+    <button id="theme-toggle" title="Toggle dark mode" aria-label="Toggle dark mode">Toggle theme</button>
+    <button id="font-decrease" title="Decrease font size" aria-label="Decrease font size">A-</button>
+    <button id="font-increase" title="Increase font size" aria-label="Increase font size">A+</button>
+  </div>
+
+  <div class="submenu">
+    <label style="border-bottom: 0;"><a style="padding-left: 0;" href="../index.html">Home 🏠</a></label>
+  </div>
+
+  <div class="submenu">
+    <label>Functions</label>
+    <a href="../reference/card.html">card</a>
+    <a href="../reference/pre_title.html">pre_title</a>
+    <a href="../reference/title.html">title</a>
+    <a href="../reference/page_header.html">page_header</a>
+    <a href="../reference/value_box.html">value_box</a>
+    <a href="../reference/icon.html">icon</a>
+    <a href="../reference/alert.html">alert</a>
+    <a href="../reference/button.html">button</a>
+    <a href="../reference/page.html">page</a>
+    <a href="../reference/body.html">body</a>
+    <a href="../reference/topbar.html">topbar</a>
+    <a href="../reference/footer.html">footer</a>
+    <a href="../reference/sidebar_menu.html">sidebar_menu</a>
+    <a href="../reference/sidebar_brand.html">sidebar_brand</a>
+    <a href="../reference/horizontal_menu.html">horizontal_menu</a>
+    <a href="../reference/menu_item.html">menu_item</a>
+    <a href="../reference/menu_dropdown.html">menu_dropdown</a>
+    <a href="../reference/tab_items.html">tab_items</a>
+    <a href="../reference/tab_item.html">tab_item</a>
+    <a href="../reference/navbar_menu.html">navbar_menu</a>
+  </div>
+
+
+  <div class="submenu">
+    <label>News</label>
+    <a href="../news/index.html">Changelog</a>
+  </div>
+</div>
+<div id="content">
+<div class="content-wrapper">
+        <div class="content-main">
+
+<table style="width: 100%;"><tr><td>page {tabler}</td><td style="text-align: right;">R Documentation</td></tr></table><h2>Create a Tabler Dashboard Page</h2>
+
+<h3>Description</h3>
+
+<p>Main function to create a complete dashboard page with Tabler theme
+</p>
+<p>Container for dashboard content
+</p>
+<p>Helper to create a top navigation header. This replaces the
+previous top-navbar behavior when users passed a header-like component.
+</p>
+<p>Footer for the dashboard
+</p>
+<p>Container for navigation items in sidebar
+</p>
+<p>Container for navigation items in horizontal layout
+</p>
+<p>Individual navigation item for sidebar
+</p>
+<p>Container for multiple tab panels in tabbed layouts
+</p>
+<p>Individual tab panel content
+</p>
+
+
+<h3>Usage</h3>
+
+<pre><code class="language-R">page(
+  title = NULL,
+  navbar = NULL,
+  body = NULL,
+  footer = NULL,
+  layout = "boxed",
+  theme = "light",
+  color = "blue",
+  show_theme_button = FALSE
+)
+
+body(..., class = NULL)
+
+topbar(title = NULL, brand_image = NULL, ...)
+
+footer(left = NULL, right = NULL)
+
+sidebar_menu(..., title = NULL)
+
+horizontal_menu(...)
+
+menu_item(text, tab_name = NULL, icon = NULL, href = NULL, badge = NULL)
+
+tab_items(...)
+
+tab_item(tab_name, ...)
+</code></pre>
+
+
+<h3>Arguments</h3>
+
+<table role="presentation"><tr><td><code id="title">title</code></td>
+<td>
+Optional brand for the sidebar; either a string (text title) or
+a named list with elements 'text' and 'img' (URL/path) to render a brand
+image and title. Example: 'title = list(text = "My App", img = "logo.png")'.
+</td></tr><tr><td><code id="navbar">navbar</code></td>
+<td>
+Dashboard navbar/menu. Can be:
+- 'sidebar_menu()' for a vertical sidebar
+- 'horizontal_menu()' for a horizontal menu
+</td></tr><tr><td><code id="body">body</code></td>
+<td>
+Dashboard body content
+</td></tr><tr><td><code id="footer">footer</code></td>
+<td>
+Dashboard footer (optional)
+</td></tr><tr><td><code id="layout">layout</code></td>
+<td>
+Layout type: "boxed"
+</td></tr><tr><td><code id="theme">theme</code></td>
+<td>
+Default theme: "light" (default) or "dark".
+</td></tr><tr><td><code id="color">color</code></td>
+<td>
+Color theme (optional): "blue" (default), "azure", "indigo", "purple", "pink",
+"red", "orange", "yellow", "lime", "green", "teal", "cyan".
+</td></tr><tr><td><code id="show_theme_button">show_theme_button</code></td>
+<td>
+Whether to show the theme toggle buttons (default: 'FALSE').
+</td></tr><tr><td><code id="...">...</code></td>
+<td>
+Content for this tab
+</td></tr><tr><td><code id="class">class</code></td>
+<td>
+Additional CSS classes
+</td></tr><tr><td><code id="brand_image">brand_image</code></td>
+<td>
+URL or path to brand image
+</td></tr><tr><td><code id="left">left</code></td>
+<td>
+Left-aligned content
+</td></tr><tr><td><code id="right">right</code></td>
+<td>
+Right-aligned content
+</td></tr><tr><td><code id="text">text</code></td>
+<td>
+Item text/label
+</td></tr><tr><td><code id="tab_name">tab_name</code></td>
+<td>
+Unique identifier for the tab (must match menuItem tab_name)
+</td></tr><tr><td><code id="icon">icon</code></td>
+<td>
+Icon name (optional)
+</td></tr><tr><td><code id="href">href</code></td>
+<td>
+Link URL (optional, alternative to tab_name)
+</td></tr><tr><td><code id="badge">badge</code></td>
+<td>
+Badge text (optional)
+</td></tr></table><h3>Value</h3>
+
+<p>HTML tag with dependencies attached
+</p>
+<p>An HTML tag representing the body
+</p>
+<p>An HTML tag representing the top header
+</p>
+<p>An HTML tag representing the footer
+</p>
+<p>An HTML tag representing the sidebar menu
+</p>
+<p>An HTML tag representing the horizontal menu
+</p>
+<p>An HTML tag representing the menu item
+</p>
+<p>An HTML tag representing the tab items container
+</p>
+<p>An HTML tag representing the tab item
+</p>
+
+
+<h3>Examples</h3>
+
+<pre><code class="language-R">ui &lt;- page(
+  title = "Combo Dashboard",
+  layout = "combo",
+  navbar = list(
+    top = topbar(title = "My App"),
+    side = sidebar_menu(
+      menu_item("Dogs", icon = "dog"),
+      menu_item("Cats", icon = "cat")
+    )
+  ),
+  body = body("Welcome to Tabler!")
+)
+
+server &lt;- function(input, output, session) {}
+
+# shinyApp(ui, server)
+</code></pre>
+
+
+</div>
+        </div>
+        <footer><p id="last-updated">Loading...</p>
+</footer><script src="../js/footer.js"></script><script src="../js/theme.js"></script><script src="../js/search.js"></script><script src="../js/fontsize.js"></script></div>
+</div>
+
+</body></html>
+
