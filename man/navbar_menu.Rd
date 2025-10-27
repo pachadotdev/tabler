@@ -4,10 +4,16 @@
 \alias{navbar_menu}
 \title{Build a standard navbar/header}
 \usage{
-navbar_menu(..., brand = NULL, show_theme_button = TRUE)
+navbar_menu(..., brand = NULL, show_theme_button = FALSE)
 }
 \arguments{
 \item{...}{Additional nodes to include (typically `menu_item()` elements)}
+
+\item{brand}{Optional brand for the navbar; either a string (text title),
+`sidebar_brand(...)` or a named list with elements `text` and `img`
+(URL/path).}
+
+\item{show_theme_button}{Whether to show the theme toggle buttons (default: `FALSE``).}
 }
 \value{
 A shiny tag for the header

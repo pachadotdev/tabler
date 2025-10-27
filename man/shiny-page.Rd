@@ -21,7 +21,7 @@ tabler_page(
   layout = "boxed",
   theme = "light",
   color = "blue",
-  show_theme_button = TRUE
+  show_theme_button = FALSE
 )
 
 tabler_body(..., class = NULL)
@@ -61,6 +61,8 @@ image and title. Example: `title = list(text = "My App", img = "logo.png")`.}
 
 \item{color}{Color theme (optional): "blue" (default), "azure", "indigo", "purple", "pink",
 "red", "orange", "yellow", "lime", "green", "teal", "cyan".}
+
+\item{show_theme_button}{Whether to show the theme toggle buttons (default: `FALSE`).}
 
 \item{...}{Content for this tab}
 

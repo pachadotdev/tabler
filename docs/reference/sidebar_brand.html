@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>sidebar_brand • tabler</title><link rel="stylesheet" href="../menu.css"><link rel="stylesheet" href="../content.css"><!-- MathJax Configuration --><script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)'], ['$', '$']],
+        displayMath: [['\\[', '\\]'], ['$$', '$$']],
+        processEscapes: true,
+        processEnvironments: true,
+        packages: {'[+]': ['ams', 'newcommand', 'configmacros']}
+      },
+      options: {
+        ignoreHtmlClass: 'tex2jax_ignore',
+        processHtmlClass: 'tex2jax_process'
+      }
+    };
+  </script><script id="MathJax-script" async src="../js/tex-svg.js"></script></head><body>
+<div class="main-container">
+<div id="menu">
+  <div>
+    <img src="../man/figures/logo.svg" align="center" height="139" alt="tabler logo"></div>
+
+  <div class="search-container">
+    <input type="text" id="search-box" placeholder="Search..."></div>
+
+  <div class="search-container">
+    <button id="theme-toggle" title="Toggle dark mode" aria-label="Toggle dark mode">Toggle theme</button>
+    <button id="font-decrease" title="Decrease font size" aria-label="Decrease font size">A-</button>
+    <button id="font-increase" title="Increase font size" aria-label="Increase font size">A+</button>
+  </div>
+
+  <div class="submenu">
+    <label style="border-bottom: 0;"><a style="padding-left: 0;" href="../index.html">Home 🏠</a></label>
+  </div>
+
+  <div class="submenu">
+    <label>Functions</label>
+    <a href="../reference/tabler_card.html">tabler_card</a>
+    <a href="../reference/pre_title.html">pre_title</a>
+    <a href="../reference/title.html">title</a>
+    <a href="../reference/page_header.html">page_header</a>
+    <a href="../reference/tabler_value_box.html">tabler_value_box</a>
+    <a href="../reference/tabler_icon.html">tabler_icon</a>
+    <a href="../reference/tabler_alert.html">tabler_alert</a>
+    <a href="../reference/tabler_button.html">tabler_button</a>
+    <a href="../reference/tabler_page.html">tabler_page</a>
+    <a href="../reference/tabler_body.html">tabler_body</a>
+    <a href="../reference/tabler_page_header.html">tabler_page_header</a>
+    <a href="../reference/topbar.html">topbar</a>
+    <a href="../reference/tabler_footer.html">tabler_footer</a>
+    <a href="../reference/sidebar_menu.html">sidebar_menu</a>
+    <a href="../reference/sidebar_brand.html">sidebar_brand</a>
+    <a href="../reference/horizontal_menu.html">horizontal_menu</a>
+    <a href="../reference/menu_item.html">menu_item</a>
+    <a href="../reference/menu_dropdown.html">menu_dropdown</a>
+    <a href="../reference/tabler_tab_items.html">tabler_tab_items</a>
+    <a href="../reference/tabler_tab_item.html">tabler_tab_item</a>
+    <a href="../reference/navbar_menu.html">navbar_menu</a>
+  </div>
+
+
+</div>
+<div id="content">
+<div class="content-wrapper">
+        <div class="content-main">
+
+<table style="width: 100%;"><tr><td>sidebar_brand {tabler}</td><td style="text-align: right;">R Documentation</td></tr></table><h2>Create a Sidebar Brand</h2>
+
+<h3>Description</h3>
+
+<p>Helper to build a brand structure for 'sidebar_menu(title = ...)'.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre><code class="language-R">sidebar_brand(text = NULL, img = NULL, href = "#")
+</code></pre>
+
+
+<h3>Arguments</h3>
+
+<table role="presentation"><tr><td><code id="text">text</code></td>
+<td>
+Brand text/label
+</td></tr><tr><td><code id="img">img</code></td>
+<td>
+Optional image URL/path for brand logo
+</td></tr><tr><td><code id="href">href</code></td>
+<td>
+Optional link URL for the brand (defaults to "#")
+</td></tr></table><h3>Value</h3>
+
+<p>A named list suitable to pass to 'sidebar_menu(title = )'
+</p>
+
+
+<h3>Examples</h3>
+
+<pre><code class="language-R">sidebar_brand("My App", img = "logo.png")
+</code></pre>
+
+
+</div>
+        </div>
+        <footer><p id="last-updated">Loading...</p>
+</footer><script src="../js/footer.js"></script><script src="../js/theme.js"></script><script src="../js/search.js"></script><script src="../js/fontsize.js"></script></div>
+</div>
+
+</body></html>
+

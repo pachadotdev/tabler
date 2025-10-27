@@ -10,6 +10,7 @@
 #' @param theme Default theme: "light" (default) or "dark".
 #' @param color Color theme (optional): "blue" (default), "azure", "indigo", "purple", "pink",
 #'   "red", "orange", "yellow", "lime", "green", "teal", "cyan".
+#' @param show_theme_button Whether to show the theme toggle buttons (default: `FALSE`).
 #' @examples
 #' ui <- tabler_page(
 #'   title = "Combo Dashboard",
@@ -32,7 +33,7 @@
 #' @export
 tabler_page <- function(
     title = NULL, navbar = NULL, body = NULL, footer = NULL, layout = "boxed",
-    theme = "light", color = "blue", show_theme_button = TRUE) {
+    theme = "light", color = "blue", show_theme_button = FALSE) {
   # Validate layout
   valid_layouts <- c(
     "boxed",
@@ -559,9 +560,13 @@ get_layout_attributes <- function(layout) {
 #' accepts raw `li` items (created by `menu_item`) or a `sidebar_brand()`
 #' attached as `title` attribute on a `ul`.
 #' @param ... Additional nodes to include (typically `menu_item()` elements)
+#' @param brand Optional brand for the navbar; either a string (text title),
+#'  `sidebar_brand(...)` or a named list with elements `text` and `img`
+#'  (URL/path).
+#' @param show_theme_button Whether to show the theme toggle buttons (default: `FALSE``).
 #' @return A shiny tag for the header
 #' @export
-navbar_menu <- function(..., brand = NULL, show_theme_button = TRUE) {
+navbar_menu <- function(..., brand = NULL, show_theme_button = FALSE) {
   items <- list(...)
 
   # Collect only <li> elements for the main menu

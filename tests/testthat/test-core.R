@@ -5,15 +5,18 @@ test_that("tabler_page simple output", {
     body = tabler_body("Welcome to Tabler!")
   )
 
-  expect_s3_class(ui, "shiny.tag")
+  # tabler_page now returns a tagList containing head and body (not a full
+  # <html> tag) so assert accordingly.
+  expect_s3_class(ui, "shiny.tag.list")
 
-  expect_equal(ui$name, "html")
+  # First child should be a head tag, second a body tag
+  expect_s3_class(ui[[1]], "shiny.tag")
+  expect_equal(ui[[1]]$name, "head")
+  expect_s3_class(ui[[2]], "shiny.tag")
+  expect_equal(ui[[2]]$name, "body")
 
-  expect_equal(ui$attribs$lang, "en")
-
-  expect_type(ui$children, "list")
-
-  expect_true(grepl("Welcome to Tabler", ui$children[[2]]))
+  # Body should contain our content
+  expect_true(grepl("Welcome to Tabler", as.character(ui[[2]])))
 })
 
 test_that("tabler_page basic and error cases", {
@@ -23,18 +26,19 @@ test_that("tabler_page basic and error cases", {
     body = tabler_body("Welcome to Tabler!")
   )
 
-  expect_s3_class(ui, "shiny.tag")
-  expect_equal(ui$name, "html")
-  expect_equal(ui$attribs$lang, "en")
-  expect_type(ui$children, "list")
-  expect_true(grepl("Welcome to Tabler", ui$children[[2]]))
+  expect_s3_class(ui, "shiny.tag.list")
+  expect_s3_class(ui[[2]], "shiny.tag")
+  expect_equal(ui[[2]]$name, "body")
+  expect_true(grepl("Welcome to Tabler", as.character(ui[[2]])))
 
   # invalid layout should error
   expect_error(tabler_page(layout = "nonexisting"), "Invalid layout")
 
-  # RTL layout sets dir attribute
+  # RTL layout sets dir attribute on the top-level .page div inside the tagList
   ui_rtl <- tabler_page(layout = "rtl", body = tabler_body("rtl"))
-  expect_equal(ui_rtl$attribs$dir, "rtl")
+  ui_rtl_str <- as.character(ui_rtl)
+  expect_true(grepl('class="page"|class=\"page\"', ui_rtl_str))
+  expect_true(grepl('dir="rtl"|dir=\\"rtl\\"', ui_rtl_str))
 })
 
 test_that("tabler body/header/navbar/footer/sidebar and menus", {
