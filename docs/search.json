@@ -8,13 +8,13 @@
   {
     "title": "menu_dropdown",
     "url": "reference/menu_dropdown.html",
-    "content": "menu_dropdown Create a Dropdown Menu Item menu_dropdown(text, icon = NULL, href = NULL, items = list()) textTitle of the dropdown icon Icon name (optional) href Link for the dropdown toggle (optional) items A list of character vectors or tags representing dropdown links; each element can be a character vector of length 2: c(text, href) A shiny tag representing the dropdown nav item Create a nav-item with a dropdown menu using columns like the example",
+    "content": "menu_dropdown Create a Dropdown Menu Item menu_dropdown(text, icon = NULL, href = NULL, items = list()) textTitle of the dropdown icon Icon name (optional) href Link for the dropdown toggle (optional) items A list of character vectors or tags representing dropdown links; each element can be a character vector of length 2: c(text, href) An HTML tag representing the dropdown nav item Create a nav-item with a dropdown menu using columns like the example",
     "type": "function"
   },
   {
     "title": "navbar_menu",
     "url": "reference/navbar_menu.html",
-    "content": "navbar_menu Build a standard navbar/header navbar_menu(..., brand = NULL, show_theme_button = FALSE) ...Additional nodes to include (typically `menu_item()` elements) brand Optional brand for the navbar; either a string (text title), `sidebar_brand(...)` or a named list with elements `text` and `img` (URL/path). show_theme_button Whether to show the theme toggle buttons (default: `FALSE``). A shiny tag for the header Create the top header used in boxed layout. This function accepts raw `li` items (created by `menu_item`) or a `sidebar_brand()` attached as `title` attribute on a `ul`.",
+    "content": "navbar_menu Build a standard navbar/header navbar_menu(..., brand = NULL, show_theme_button = FALSE) ...Additional nodes to include (typically `menu_item()` elements) brand Optional brand for the navbar; either a string (text title), `sidebar_brand(...)` or a named list with elements `text` and `img` (URL/path). show_theme_button Whether to show the theme toggle buttons (default: `FALSE``). An HTML tag for the header Create the top header used in boxed layout. This function accepts raw `li` items (created by `menu_item`) or a `sidebar_brand()` attached as `title` attribute on a `ul`.",
     "type": "function"
   }
 ]
