@@ -19,7 +19,6 @@ Imports:
     shiny (>= 1.0.0),
     htmltools (>= 0.3.5)
 Suggests:
-    highcharter,
     DT,
     testthat (>= 3.0.0)
 RoxygenNote: 7.3.3
