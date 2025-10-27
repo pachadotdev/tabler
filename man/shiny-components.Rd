@@ -2,6 +2,9 @@
 % Please edit documentation in R/components.R
 \name{tabler_card}
 \alias{tabler_card}
+\alias{pre_title}
+\alias{title}
+\alias{page_header}
 \alias{tabler_value_box}
 \alias{tabler_icon}
 \alias{tabler_alert}
@@ -9,6 +12,12 @@
 \title{Create a Tabler Card}
 \usage{
 tabler_card(..., title = NULL, footer = NULL, status = NULL, class = NULL)
+
+pre_title(text)
+
+title(text)
+
+page_header(title_text, pretitle_text = NULL, ...)
 
 tabler_value_box(value, title, icon = NULL, color = "primary", width = 3)
 
@@ -36,6 +45,12 @@ tabler_button(
 \item{status}{Card color status: "primary", "secondary", "success", "warning", "danger", etc.}
 
 \item{class}{Additional CSS classes}
+
+\item{text}{The title text to display}
+
+\item{title_text}{The main title text}
+
+\item{pretitle_text}{The pretitle text (optional)}
 
 \item{value}{Main value to display}
 
@@ -74,6 +89,12 @@ A Shiny tag representing the button
 }
 \description{
 Build a modern card component with optional header, body, and footer
+
+Small helper to render the page pretitle element used by Tabler examples
+
+Small helper to render the page title element used by Tabler examples
+
+Create the full page header structure with pretitle and title
 
 Display a key metric or value prominently
 

@@ -62,7 +62,7 @@ tabler_card <- function(..., title = NULL, footer = NULL, status = NULL, class =
           class = "col-12 col-sm d-flex flex-column",
           shiny::tags$h3(class = "h2", title),
           body_par,
-      NULL
+          NULL
         )
       )
     )
@@ -107,6 +107,55 @@ tabler_card <- function(..., title = NULL, footer = NULL, status = NULL, class =
     header,
     body_tag,
     footer_tag
+  )
+}
+
+#' @title Create a page pretitle
+#' @description Small helper to render the page pretitle element used by Tabler examples
+#' @param text The pretitle text to display
+#' @rdname shiny-components
+#' @export
+pre_title <- function(text) {
+  shiny::tags$div(class = "page-pretitle", text)
+}
+
+#' @title Create a page title
+#' @description Small helper to render the page title element used by Tabler examples
+#' @param text The title text to display
+#' @rdname shiny-components
+#' @export
+title <- function(text) {
+  shiny::tags$h2(class = "page-title", text)
+}
+
+#' @title Create a page header
+#' @description Create the full page header structure with pretitle and title
+#' @param title_text The main title text
+#' @param pretitle_text The pretitle text (optional)
+#' @param ... Additional elements to include in the header (e.g., action buttons)
+#' @rdname shiny-components
+#' @export
+page_header <- function(title_text, pretitle_text = NULL, ...) {
+  shiny::tags$div(
+    class = "page-header d-print-none",
+    `aria-label` = "Page header",
+    shiny::tags$div(
+      class = "container-xl",
+      shiny::tags$div(
+        class = "row g-2 align-items-center",
+        shiny::tags$div(
+          class = "col",
+          if (!is.null(pretitle_text)) shiny::tags$div(class = "page-pretitle", pretitle_text),
+          shiny::tags$h2(class = "page-title", title_text)
+        ),
+        if (length(list(...)) > 0) {
+          shiny::tags$div(
+            class = "col-auto ms-auto d-print-none",
+            ...
+          )
+        }
+      )
+    )
   )
 }
 
@@ -175,8 +224,13 @@ tabler_icon <- function(name, library = "tabler", class = NULL) {
     "ti ti-" # default to tabler
   )
 
+  # Build class string carefully so there are no trailing spaces when `class` is NULL
+  parts <- c(paste0(icon_class, name), class)
+  parts <- Filter(function(x) nzchar(as.character(x)), parts)
+  class_attr <- paste(parts, collapse = " ")
+
   shiny::tags$i(
-    class = paste(paste0(icon_class, name), class)
+    class = class_attr
   )
 }
 
@@ -225,7 +279,7 @@ tabler_alert <- function(..., type = "info", dismissible = FALSE, title = NULL) 
 #' @return A Shiny tag representing the button
 #' @export
 tabler_button <- function(label, onclick = NULL, color = "primary",
-                         size = "md", outline = FALSE, icon = NULL, ...) {
+                          size = "md", outline = FALSE, icon = NULL, ...) {
   size_class <- if (size != "md") paste0("btn-", size) else NULL
   color_class <- paste0("btn-", if (outline) "outline-", color)
 

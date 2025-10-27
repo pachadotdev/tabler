@@ -1,7 +1,7 @@
-<body class="antialiased layout-boxed">
+<body class="layout-boxed">
+  <script src="dist/js/tabler-theme.min.js"></script>
   <div class="page">
     <header class="navbar navbar-expand-md">
-      <!-- BEGIN NAVBAR  -->
       <div class="collapse navbar-collapse" id="navbar-menu">
         <div class="container-xl">
           <div class="row flex-column flex-md-row flex-fill align-items-center">
@@ -14,20 +14,20 @@
                   </a>
                 </div>
                 <li class="nav-item">
-                  <a class="nav-link" href="#">
+                  <a class="nav-link" href="./">
                     <span class="nav-link-icon d-md-none d-lg-inline-block">
                       <!-- Download SVG icon from http://tabler.io/icons/icon/home -->
-                      <i class="ti ti-home "></i>
+                      <i class="ti ti-home"></i>
                     </span>
                      
                     <span class="nav-link-title">Home</span>
                   </a>
                 </li>
                 <li class="nav-item active dropdown">
-                  <a class="nav-link dropdown-toggle" href="./" data-bs-toggle="dropdown" data-bs-auto-close="outside" role="button" aria-expanded="false">
+                  <a class="nav-link dropdown-toggle" href="./" data-bs-toggle="dropdown" data-bs-auto-close="false" role="button" aria-expanded="true">
                     <span class="nav-link-icon d-md-none d-lg-inline-block">
                       <!-- Download SVG icon from http://tabler.io/icons/icon/layout-2 -->
-                      <i class="ti ti-layout-2 "></i>
+                      <i class="ti ti-layout-2"></i>
                     </span>
                     <span class="nav-link-title">Layout</span>
                   </a>
@@ -54,19 +54,34 @@
                   </div>
                 </li>
                 <div class="nav-item ms-md-auto">
-                  <a href="?theme=dark" class="nav-link px-0 hide-theme-dark" title="Enable dark mode" data-bs-toggle="tooltip" data-bs-placement="bottom"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-1"><path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z"/></svg></a>
-                  <a href="?theme=light" class="nav-link px-0 hide-theme-light" title="Enable light mode" data-bs-toggle="tooltip" data-bs-placement="bottom"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-1"><path d="M12 12m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0"/><path d="M3 12h1m8 -9v1m8 8h1m-9 8v1m-6.4 -15.4l.7 .7m12.1 -.7l-.7 .7m0 11.4l.7 .7m-12.1 -.7l-.7 .7"/></svg></a>
+                  <a href="?theme=dark" class="nav-link hide-theme-dark" title="Enable dark mode" data-bs-toggle="tooltip" data-bs-placement="bottom" aria-label="Enable dark mode">
+                    <span class="nav-link-icon d-md-none d-lg-inline-block"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-1"><path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z"/></svg></span>
+                    <span class="nav-link-title">Dark theme</span>
+                  </a>
+                  <a href="?theme=light" class="nav-link hide-theme-light" title="Enable light mode" data-bs-toggle="tooltip" data-bs-placement="bottom" aria-label="Enable light mode">
+                    <span class="nav-link-icon d-md-none d-lg-inline-block"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-1"><path d="M12 12m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0"/><path d="M3 12h1m8 -9v1m8 8h1m-9 8v1m-6.4 -15.4l.7 .7m12.1 -.7l-.7 .7m0 11.4l.7 .7m-12.1 -.7l-.7 .7"/></svg></span>
+                    <span class="nav-link-title">Light theme</span>
+                  </a>
                 </div>
               </ul>
             </div>
           </div>
         </div>
       </div>
-      <!-- END NAVBAR  -->
     </header>
     <div class="page-wrapper">
+      <div class="page-header d-print-none" aria-label="Page header">
+        <div class="container-xl">
+          <div class="row g-2 align-items-center">
+            <div class="col">
+              <div class="page-pretitle">Overview</div>
+              <h2 class="page-title">BOXED layout</h2>
+            </div>
+          </div>
+        </div>
+      </div>
       <div class="page-body">
-        <div class="container-xl ">
+        <div class="container-xl">
           <div class="col-sm-6">
             <div class="card  ">
               <div class="card-body">

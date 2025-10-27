@@ -30,13 +30,26 @@
 #' @return HTML tag with dependencies attached
 #' @rdname shiny-page
 #' @export
-tabler_page <- function(title = NULL, navbar = NULL, body = NULL, footer = NULL, layout = "boxed",
-  theme = "light", color = "blue", show_theme_button = TRUE) {
+tabler_page <- function(
+    title = NULL, navbar = NULL, body = NULL, footer = NULL, layout = "boxed",
+    theme = "light", color = "blue", show_theme_button = TRUE) {
   # Validate layout
   valid_layouts <- c(
     "boxed",
-    "combo"
+    "combo",
+    "condensed",
+    "fluid",
+    "fluid-vertical",
+    "horizontal",
+    "navbar-dark",
+    "navbar-overlap",
+    "navbar-sticky",
+    "rtl",
+    "vertical-right",
+    "vertical-transparent",
+    "vertical"
   )
+
   if (!layout %in% valid_layouts) {
     stop("Invalid layout. Must be one of: ", paste(valid_layouts, collapse = ", "))
   }
@@ -48,6 +61,17 @@ tabler_page <- function(title = NULL, navbar = NULL, body = NULL, footer = NULL,
   page_content <- switch(layout,
     "boxed" = layout_boxed(navbar, NULL, body, footer, theme = theme, color = color, show_theme_button = show_theme_button),
     "combo" = layout_combo(navbar, NULL, body, footer, theme = theme, color = color, show_theme_button = show_theme_button),
+    "condensed" = layout_condensed(navbar, NULL, body, footer, theme = theme, color = color, show_theme_button = show_theme_button),
+    "fluid" = layout_fluid(navbar, NULL, body, footer, theme = theme, color = color, show_theme_button = show_theme_button),
+    "fluid-vertical" = layout_fluid_vertical(navbar, NULL, body, footer, theme = theme, color = color, show_theme_button = show_theme_button),
+    "horizontal" = layout_horizontal(navbar, NULL, body, footer, theme = theme, color = color, show_theme_button = show_theme_button),
+    "vertical" = layout_vertical(navbar, NULL, body, footer, theme = theme, color = color, show_theme_button = show_theme_button),
+    "vertical-right" = layout_vertical_right(navbar, NULL, body, footer, theme = theme, color = color, show_theme_button = show_theme_button),
+    "vertical-transparent" = layout_vertical_transparent(navbar, NULL, body, footer, theme = theme, color = color, show_theme_button = show_theme_button),
+    "navbar-dark" = layout_navbar_dark(navbar, NULL, body, footer, theme = theme, color = color, show_theme_button = show_theme_button),
+    "navbar-overlap" = layout_navbar_overlap(navbar, NULL, body, footer, theme = theme, color = color, show_theme_button = show_theme_button),
+    "navbar-sticky" = layout_navbar_sticky(navbar, NULL, body, footer, theme = theme, color = color, show_theme_button = show_theme_button),
+    "rtl" = layout_rtl(navbar, NULL, body, footer, theme = theme, color = color, show_theme_button = show_theme_button),
     stop("Unsupported layout: ", layout)
   )
 
@@ -77,7 +101,8 @@ tabler_page <- function(title = NULL, navbar = NULL, body = NULL, footer = NULL,
   }
   # Small click handler so clicking theme links toggles theme without a hard reload.
   # Also optionally remove the theme buttons if show_theme_button is FALSE.
-  script_lines <- c(script_lines,
+  script_lines <- c(
+    script_lines,
     "(function(){try{document.addEventListener('click',function(e){var closest = e.target && e.target.closest; if(!closest) return; var a = closest.call(e.target, \"a[href^='?theme='], a[href*='?theme=']\"); if(!a) return; try{ e.preventDefault(); var href = a.getAttribute('href') || ''; var u = new URL(href, window.location.href); var t = u.searchParams.get('theme'); if(t){ localStorage.setItem('tabler-theme', t); document.documentElement.setAttribute('data-bs-theme', t); var sp = new URLSearchParams(window.location.search); sp.set('theme', t); history.replaceState(null, '', window.location.pathname + (sp.toString() ? ('?' + sp.toString()) : '') + window.location.hash); document.dispatchEvent(new Event('tabler:themechange')); } }catch(err){} }, false);}catch(e){} })()"
   )
 
@@ -195,7 +220,7 @@ topbar <- function(title = NULL, brand_image = NULL, ...) {
     class = "navbar navbar-expand-md navbar-light d-print-none",
     shiny::tags$div(
       class = "container-xl",
-      shiny::tags$h1(
+      shiny::tags$div(
         class = "navbar-brand navbar-brand-autodark d-none-navbar-horizontal pe-0 pe-md-3",
         if (!is.null(brand_image)) {
           shiny::tags$a(href = "#", shiny::tags$img(src = brand_image, alt = title %||% "Dashboard", class = "navbar-brand-image"))
@@ -204,7 +229,8 @@ topbar <- function(title = NULL, brand_image = NULL, ...) {
         }
       ),
       # place any raw passed elements (e.g., anchors, buttons) and the wrapped nav items
-      shiny::tags$div(class = "navbar-nav flex-row order-md-last",
+      shiny::tags$div(
+        class = "navbar-nav flex-row order-md-last",
         lapply(extra, function(x) if (!(inherits(x, "shiny.tag") && x$name == "li")) x else NULL),
         nav_children
       )
@@ -351,7 +377,7 @@ menu_item <- function(text, tab_name = NULL, icon = NULL, href = NULL, badge = N
       shiny::tags$span(
         class = "nav-link-icon d-md-none d-lg-inline-block",
         # comment placeholder for upstream SVG
-        shiny::HTML(sprintf('<!-- Download SVG icon from http://tabler.io/icons/icon/%s -->', icon)),
+        shiny::HTML(sprintf("<!-- Download SVG icon from http://tabler.io/icons/icon/%s -->", icon)),
         tabler_icon(icon)
       ),
       " "
@@ -369,7 +395,7 @@ menu_item <- function(text, tab_name = NULL, icon = NULL, href = NULL, badge = N
   # Link attributes
   link_attrs <- list(
     class = "nav-link",
-    href = href %||% "#"
+    href = href %||% "./"
   )
 
   if (!is.null(tab_name)) {
@@ -404,15 +430,18 @@ menu_dropdown <- function(text, icon = NULL, href = NULL, items = list()) {
     class = "nav-link dropdown-toggle",
     href = href %||% "#",
     `data-bs-toggle` = "dropdown",
+    # default to header dropdown behavior (matches official header examples)
     `data-bs-auto-close` = "outside",
     role = "button",
+    # default not expanded for header dropdowns
     `aria-expanded` = "false"
   )
 
   anchor <- do.call(shiny::tags$a, c(toggle_attrs, list(
     if (!is.null(icon)) {
-      shiny::tags$span(class = "nav-link-icon d-md-none d-lg-inline-block",
-        shiny::HTML(sprintf('<!-- Download SVG icon from http://tabler.io/icons/icon/%s -->', icon)),
+      shiny::tags$span(
+        class = "nav-link-icon d-md-none d-lg-inline-block",
+        shiny::HTML(sprintf("<!-- Download SVG icon from http://tabler.io/icons/icon/%s -->", icon)),
         tabler_icon(icon)
       )
     },
@@ -424,9 +453,9 @@ menu_dropdown <- function(text, icon = NULL, href = NULL, items = list()) {
   if (n == 0) {
     menu_body <- shiny::tags$div(class = "dropdown-menu")
   } else {
-    half <- ceiling(n/2)
+    half <- ceiling(n / 2)
     col1 <- items[1:half]
-    col2 <- if (n > half) items[(half+1):n] else list()
+    col2 <- if (n > half) items[(half + 1):n] else list()
 
     make_links <- function(lst) {
       lapply(lst, function(it) {
@@ -500,16 +529,26 @@ tabler_tab_item <- function(tab_name, ...) {
 #' @return A list of body attributes
 #' @keywords internal
 get_layout_attributes <- function(layout) {
-  base_class <- "antialiased"
-
+  # Map layout name to the body class used in the official examples
   layout_class <- switch(layout,
     "boxed" = "layout-boxed",
     "combo" = "layout-combo",
+    "condensed" = "layout-condensed",
+    "fluid-vertical" = "layout-fluid-vertical",
+    "horizontal" = "layout-horizontal",
+    "navbar-dark" = "layout-navbar-dark",
+    "navbar-overlap" = "layout-navbar-overlap",
+    "navbar-sticky" = "layout-navbar-sticky",
+    "rtl" = "layout-rtl",
+    "vertical" = "layout-vertical",
+    "vertical-right" = "layout-vertical-right",
+    "vertical-transparent" = "layout-vertical-transparent",
+    "fluid" = "layout-fluid",
     NULL
   )
 
-  # Additional attributes for specific layouts
-  attrs <- list(class = css_class(base_class, layout_class))
+  attrs <- list()
+  if (!is.null(layout_class)) attrs$class <- layout_class
 
   attrs
 }
@@ -529,64 +568,158 @@ navbar_menu <- function(..., brand = NULL, show_theme_button = TRUE) {
   li_items <- lapply(items, function(x) if (inherits(x, "shiny.tag") && x$name == "li") x else NULL)
   li_items <- Filter(Negate(is.null), li_items)
 
-  # Brand block (simple link or image)
+  # Brand block (simple link or image). Keep as a node to be included in the menu
   brand_tag <- NULL
   if (!is.null(brand)) {
     if (is.character(brand)) {
-      brand_tag <- shiny::tags$div(
-        class = "navbar-brand navbar-brand-autodark",
-        shiny::tags$a(href = "./", brand)
-      )
+      brand_tag <- shiny::tags$a(href = "./", brand)
     } else if (is.list(brand) && !is.null(brand$text)) {
-      brand_tag <- shiny::tags$div(
-        class = "navbar-brand navbar-brand-autodark",
-        shiny::tags$a(href = brand$href %||% "./",
-          if (!is.null(brand$img)) shiny::tags$img(src = brand$img, class = "navbar-brand-image"),
-          brand$text
-        )
+      brand_tag <- shiny::tags$a(
+        href = brand$href %||% "./",
+        if (!is.null(brand$img)) shiny::tags$img(src = brand$img, class = "navbar-brand-image"),
+        brand$text
       )
     }
   }
 
-  # Theme toggles (links only; Tabler theme script will handle visibility)
+  # Theme toggles (anchors only; the caller wraps them into the proper li)
   theme_toggles <- NULL
   if (isTRUE(show_theme_button)) {
-    theme_toggles <- shiny::tags$div(
-      class = "nav-item ms-md-auto",
-      shiny::tags$a(href = "?theme=dark", class = "nav-link px-0 hide-theme-dark", title = "Enable dark mode", `data-bs-toggle` = "tooltip", `data-bs-placement` = "bottom",
-        # moon icon placeholder
+    theme_toggles <- list(
+      shiny::tags$a(
+        href = "?theme=dark", class = "nav-link px-0 hide-theme-dark", title = "Enable dark mode", `data-bs-toggle` = "tooltip", `data-bs-placement` = "bottom",
         shiny::HTML('<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-1"><path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z"/></svg>')
       ),
-      shiny::tags$a(href = "?theme=light", class = "nav-link px-0 hide-theme-light", title = "Enable light mode", `data-bs-toggle` = "tooltip", `data-bs-placement` = "bottom",
-        # sun icon placeholder
+      shiny::tags$a(
+        href = "?theme=light", class = "nav-link px-0 hide-theme-light", title = "Enable light mode", `data-bs-toggle` = "tooltip", `data-bs-placement` = "bottom",
         shiny::HTML('<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-1"><path d="M12 12m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0"/><path d="M3 12h1m8 -9v1m8 8h1m-9 8v1m-6.4 -15.4l.7 .7m12.1 -.7l-.7 .7m0 11.4l.7 .7m-12.1 -.7l-.7 .7"/></svg>')
       )
     )
   }
 
-  shiny::tags$header(
-    class = "navbar navbar-expand-md",
-    # raw HTML comment markers to mimic the example file structure
-    shiny::HTML("<!-- BEGIN NAVBAR  -->"),
-    shiny::tags$div(
-      class = "collapse navbar-collapse",
-      id = "navbar-menu",
+  # If brand is a sidebar_brand-like list, render an <aside> suitable for
+  # vertical layouts (sidebar). Otherwise render a standard header navbar.
+  if (is.list(brand) && (!is.null(brand$img) || !is.null(brand$text))) {
+    # For sidebar, modify theme toggles to have text labels and no px-0 class
+    if (!is.null(theme_toggles)) {
+      theme_toggles <- list(
+        shiny::tags$a(
+          href = "?theme=dark", class = "nav-link hide-theme-dark", title = "Enable dark mode", `data-bs-toggle` = "tooltip", `data-bs-placement` = "bottom", `aria-label` = "Enable dark mode",
+          shiny::tags$span(
+            class = "nav-link-icon d-md-none d-lg-inline-block",
+            shiny::HTML('<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-1"><path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z"/></svg>')
+          ),
+          shiny::tags$span(class = "nav-link-title", "Dark theme")
+        ),
+        shiny::tags$a(
+          href = "?theme=light", class = "nav-link hide-theme-light", title = "Enable light mode", `data-bs-toggle` = "tooltip", `data-bs-placement` = "bottom", `aria-label` = "Enable light mode",
+          shiny::tags$span(
+            class = "nav-link-icon d-md-none d-lg-inline-block",
+            shiny::HTML('<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-1"><path d="M12 12m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0"/><path d="M3 12h1m8 -9v1m8 8h1m-9 8v1m-6.4 -15.4l.7 .7m12.1 -.7l-.7 .7m0 11.4l.7 .7m-12.1 -.7l-.7 .7"/></svg>')
+          ),
+          shiny::tags$span(class = "nav-link-title", "Light theme")
+        )
+      )
+    }
+
+    # build collapse body for sidebar
+    # For sidebar context, ensure dropdown anchors use sidebar behavior
+    li_items <- lapply(li_items, function(li) {
+      if (inherits(li, "shiny.tag") && li$name == "li" && length(li$children) > 0) {
+        anchor <- li$children[[1]]
+        if (inherits(anchor, "shiny.tag") && !is.null(anchor$attribs[["data-bs-toggle"]]) && anchor$attribs[["data-bs-toggle"]] == "dropdown") {
+          # Overwrite dropdown attributes for sidebar context instead of appending
+          # (tagAppendAttributes concatenates values, producing "outside false" etc.)
+          anchor$attribs[["data-bs-auto-close"]] <- "false"
+          anchor$attribs[["aria-expanded"]] <- "true"
+          li$children[[1]] <- anchor
+        }
+      }
+      li
+    })
+
+    shiny::tags$aside(
+      class = "navbar navbar-vertical",
+      shiny::HTML("<!-- BEGIN SIDEBAR -->"),
       shiny::tags$div(
-        class = "container-xl",
+        class = "container-fluid",
+        # toggler
+        shiny::tags$button(
+          class = "navbar-toggler",
+          type = "button",
+          `data-bs-toggle` = "collapse",
+          `data-bs-target` = "#sidebar-menu",
+          `aria-controls` = "sidebar-menu",
+          `aria-expanded` = "false",
+          `aria-label` = "Toggle navigation",
+          shiny::tags$span(class = "navbar-toggler-icon")
+        ),
+        # brand block
         shiny::tags$div(
-          class = "row flex-column flex-md-row flex-fill align-items-center",
+          class = "navbar-brand navbar-brand-autodark",
+          shiny::tags$a(
+            href = brand$href %||% "./",
+            if (!is.null(brand$img)) shiny::tags$img(src = brand$img, class = "navbar-brand-image"),
+            brand$text %||% ""
+          )
+        ),
+        # collapsible menu
+        shiny::tags$div(
+          class = "collapse navbar-collapse", id = "sidebar-menu",
+          shiny::tags$ul(
+            class = "navbar-nav pt-lg-3",
+            li_items,
+            # theme toggles appended as nav-item(s) - wrap plain anchors into li
+            if (!is.null(theme_toggles)) shiny::tags$li(class = "nav-item mt-auto", lapply(theme_toggles, function(x) x))
+          )
+        )
+      ),
+      shiny::HTML("<!-- END SIDEBAR -->")
+    )
+  } else {
+    # standard header
+    shiny::tags$header(
+      class = "navbar navbar-expand-md",
+      shiny::HTML("<!-- BEGIN NAVBAR  -->"),
+      shiny::tags$div(
+        class = "collapse navbar-collapse",
+        id = "navbar-menu",
+        shiny::tags$div(
+          class = "container-xl",
           shiny::tags$div(
-            class = "col",
-            # Navbar menu contents
-            shiny::tags$ul(class = "navbar-nav",
-              brand_tag,
-              li_items,
-              theme_toggles
+            class = "row flex-column flex-md-row flex-fill align-items-center",
+            shiny::tags$div(
+              class = "col",
+              shiny::tags$ul(
+                class = "navbar-nav",
+                if (!is.null(brand_tag)) shiny::tags$li(class = "nav-item", brand_tag),
+                # ensure li_items dropdown anchors are normalized for header context
+                lapply(li_items, function(it) {
+                  if (inherits(it, "shiny.tag") && it$name == "li" && length(it$children) > 0) {
+                    a <- it$children[[1]]
+                    if (inherits(a, "shiny.tag") && !is.null(a$attribs[["data-bs-toggle"]]) && a$attribs[["data-bs-toggle"]] == "dropdown") {
+                      a$attribs[["aria-expanded"]] <- "false"
+                      it$children[[1]] <- a
+                    }
+                  }
+                  it
+                }),
+                if (!is.null(theme_toggles)) {
+                  # Render header theme toggles as a single nav-item with two anchors
+                  shiny::tags$li(
+                    class = "nav-item ms-md-auto",
+                    lapply(theme_toggles, function(a) {
+                      # theme_toggles are anchor tags; ensure they keep their attributes
+                      a
+                    })
+                  )
+                }
+              )
             )
           )
         )
-      )
-    ),
-    shiny::HTML("<!-- END NAVBAR  -->")
-  )
+      ),
+      shiny::HTML("<!-- END NAVBAR  -->")
+    )
+  }
 }

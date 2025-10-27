@@ -1,6 +1,3 @@
-
-<!-- README.md is generated from README.Rmd. Please edit that file -->
-
 <!-- badges: start -->
 
 [![Lifecycle:
@@ -18,9 +15,7 @@ coverage](https://raw.githubusercontent.com/USER/REPO/coverage/badges/coverage.s
 A modern dashboard framework for R Shiny using the beautiful Tabler
 Bootstrap theme.
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/_PWVmmis-AE?si=wJYMvUQUpoZz_k3_" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen>
-
-</iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/_PWVmmis-AE?si=wJYMvUQUpoZz_k3_" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 ## Installation
 
@@ -36,73 +31,136 @@ remotes::install_github("pachadotdev/tabler")
 
 Please see the documentation: <https://pacha.dev/tabler/>
 
-See the examples directory in the GitHub repository for more complete
-examples:
+Here is a complete example that I use to test all layouts with the theme (light/dark) and colour options:
+<https://github.com/pachadotdev/tabler/blob/main/examples/shiny-test-layouts.R>
 
-- Shiny app for all layouts:
-  <https://github.com/pachadotdev/tabler/blob/main/examples/example_app.R>
-- Shiny app for all layouts using Golem:
-  <https://github.com/pachadotdev/tabler/tree/main/examples/tablerdemo>
-
-Here’s a simple example using the Palmer Penguins dataset:
+Here’s a minimal example using the "combo" layout with sidebar and top navbar: 
+<https://github.com/pachadotdev/tabler/blob/main/examples/shiny-test-combo.R>
 
 ``` r
+if (!require("d3po")) {
+  install.packages("d3po", repos = "https://pachadotdev.r-universe.dev")
+}
+
 library(shiny)
-library(tabler)
-library(highcharter)
-library(palmerpenguins)
+
+# library(tabler)
+load_all()
+
+library(d3po)
+
+svg_text <- paste(
+  readLines("./examples/tabler-logo.svg", warn = FALSE),
+  collapse = "\n"
+)
+
+svg_data_uri <- paste0(
+  "data:image/svg+xml;utf8,",
+  URLencode(svg_text, reserved = TRUE)
+)
+
+# Full menu for the sidebar
+sidebar_nav <- navbar_menu(
+  brand = sidebar_brand(text = "", img = svg_data_uri, href = "./"),
+  menu_item("Home", icon = "home"),
+  menu_dropdown(
+    "Layout",
+    icon = "layout-2",
+    href = "./",
+    items = list(
+      c("Boxed", "./"),
+      c("Combined", "./"),
+      c("Condensed", "./"),
+      c("Fluid", "./"),
+      c("Fluid vertical", "./"),
+      c("Horizontal", "./"),
+      c("Navbar dark", "./"),
+      c("Navbar overlap", "./"),
+      c("Navbar sticky", "./"),
+      c("Right vertical", "./"),
+      c("RTL mode", "./"),
+      c("Vertical", "./"),
+      c("Vertical transparent", "./")
+    )
+  )
+)
+
+# Simplified menu for the top navbar (just labels, no icons for simplicity)
+top_nav <- navbar_menu(
+  menu_item("Button 1", icon = NULL),
+  menu_dropdown(
+    "Button 2",
+    icon = "layout-2",
+    href = "./",
+    items = list(
+      c("Button 3", "./")
+    )
+  )
+)
+
+# Combine both for combo layout
+main_navbar <- list(side = sidebar_nav, top = top_nav)
 
 ui <- tabler_page(
-  title = "Palmer Penguins Dashboard",
-  navbar = tabler_navbar(title = "Penguin Analytics"),
-  body = tabler_body(
-    tabler_page_header(
-      title = "Dashboard Overview",
-      subtitle = "Explore penguin data with interactive visualizations"
+  theme = "light",
+  color = "teal",
+  title = "Combo Layout",
+  layout = "combo",
+  show_theme_button = FALSE,
+  navbar = main_navbar,
+  body = list(
+    # Page header
+    page_header(
+      title_text = "Combo Layout",
+      pretitle_text = "Overview"
     ),
-    fluidRow(
-      tabler_value_box(
-        value = "344",
-        title = "Total Penguins",
-        icon = "users",
-        color = "primary",
-        width = 3
-      ),
-      tabler_value_box(
-        value = "3",
-        title = "Species",
-        icon = "star",
-        color = "success",
-        width = 3
-      )
-    ),
-    fluidRow(
-      column(
-        12,
-        tabler_card(
-          title = "Body Mass Distribution",
-          highchartOutput("mass_plot"),
-          status = "primary"
+    # Page body content
+    shiny::tags$div(
+      class = "page-body",
+      shiny::tags$div(
+        class = "container-xl",
+        column(
+          6,
+          tabler_card(
+            title = "My title",
+            footer = "Footer.",
+            p("My text"),
+            p("More text", class = "text-muted"),
+            d3po_output("plot", width = "100%", height = "500px")
+          )
         )
       )
     )
   ),
   footer = tabler_footer(
-    left = "© 2025 Pacha",
-    right = "Built with Tabler"
+    left = "Tabler",
+    right = shiny::tags$span("v1.4.0")
   )
 )
 
 server <- function(input, output, session) {
-  output$mass_plot <- renderHighchart({
-    penguins_clean <- na.omit(palmerpenguins::penguins)
-    
-    d <- data_to_boxplot(penguins_clean, body_mass_g, species)
-    
-    highchart() %>%
-      hc_add_series_list(d) %>%
-      hc_xAxis(type = "category") %>%
-      hc_yAxis(title = list(text = "Body Mass (g)"))
+  output$plot <- render_d3po({
+    set.seed(123)
+
+    sim <- data.frame(
+      x = rnorm(100),
+      y = rnorm(100),
+      letter = sample(letters[1:3], 100, replace = TRUE)
+    )
+
+    # for light theme
+    axis_color <- "#000"
+    tooltip_color <- "#fff"
+
+    # for dark theme
+    axis_color <- "#fff"
+    tooltip_color <- "#000"
+
+    d3po(sim) %>%
+      po_scatter(daes(x = x, y = y, group = letter)) %>%
+      po_labels(title = "Weight Distribution by Type") %>%
+      po_background("transparent") %>%
+      po_theme(axis = axis_color, tooltips = tooltip_color)
   })
 }
 
@@ -111,376 +169,23 @@ shinyApp(ui, server)
 
 ## Available Layouts
 
-All examples use the same basic structure from the Quick Start example
-above. Here are the key differences for each layout:
+All examples use the same basic structure from the Quick Start example above. Here are the key differences for each
+layout:
 
-### Boxed Layout (Default)
-
-Basic dashboard with top navbar and constrained width content area. This
-is the default layout shown in the Quick Start example.
-
-``` r
-ui <- tabler_page(
-  title = "Boxed Layout",
-  layout = "boxed",  # This is the default
-  navbar = tabler_navbar(title = "Palmer Penguins"),
-  body = tabler_body(...),
-  footer = tabler_footer(...)
-)
-```
-
-### Combo Layout
-
-Combines vertical sidebar navigation with top header. Uses a list with
-`top` and `side` components.
-
-``` r
-ui <- tabler_page(
-  title = "Combo Layout",
-  layout = "combo",
-  navbar = list(
-    top = tabler_navbar(title = "Palmer Penguins"),
-    side = tabler_sidebar(
-      title = "Navigation",
-      # Use sidebar_brand() helper to add a logo image and text (optional)
-      sidebar_menu(
-        title = sidebar_brand(text = "My App", img = "www/logo.png"),
-        menu_item("Overview", tabName = "overview", icon = "home"),
-        menu_item("Species", tabName = "species", icon = "star")
-      ),
-      theme = "dark"
-    )
-  ),
-  body = tabler_body(...),
-  footer = tabler_footer(...)
-)
-```
-
-### Condensed Layout
-
-Compact layout with reduced spacing - no body class applied.
-
-``` r
-ui <- tabler_page(
-  title = "Condensed Layout",
-  layout = "condensed",  # Only change needed
-  navbar = tabler_navbar(title = "Palmer Penguins"),
-  body = tabler_body(...),
-  footer = tabler_footer(...)
-)
-```
-
-### Fluid Layout
-
-Full-width layout without container constraints.
-
-``` r
-ui <- tabler_page(
-  title = "Fluid Layout",
-  layout = "fluid",  # Content expands to full browser width
-  navbar = tabler_navbar(title = "Palmer Penguins"),
-  body = tabler_body(...),
-  footer = tabler_footer(...)
-)
-```
-
-### Fluid Vertical Layout
-
-Full-width layout with vertical sidebar.
-
-``` r
-ui <- tabler_page(
-  title = "Fluid Vertical Layout",
-  layout = "fluid-vertical",
-  navbar = tabler_navbar(  # Sidebar instead of navbar
-    title = "My Dashboard",
-    position = "vertical",
-    sidebar_menu(
-      menu_item("Dashboard", icon = "home"),
-      menu_item("Analysis", icon = "chart-bar")
-    ),
-    theme = "dark"
-  ),
-  body = tabler_body(...),
-  footer = tabler_footer(...)
-)
-```
-
-### Horizontal Layout
-
-Layout with horizontal navigation menu.
-
-``` r
-ui <- tabler_page(
-  title = "Horizontal Layout",
-  layout = "horizontal",
-  navbar = horizontal_menu( # Horizontal menu instead of navbar
-    menu_item("Overview", icon = "home"),
-    menu_item("Species", icon = "star"),
-    menu_item("Analysis", icon = "chart-bar")
-  ),
-  body = tabler_body(...),
-  footer = tabler_footer(...)
-)
-```
-
-### Navbar Dark Layout
-
-Layout with dark navbar theme.
-
-``` r
-ui <- tabler_page(
-  title = "Dark Navbar Layout",
-  layout = "navbar-dark",  # Dark-themed navbar
-  navbar = tabler_navbar(title = "Palmer Penguins"),
-  body = tabler_body(...),
-  footer = tabler_footer(...)
-)
-```
-
-### Navbar Overlap Layout
-
-Layout where content overlaps with navbar for a modern look.
-
-``` r
-ui <- tabler_page(
-  title = "Navbar Overlap Layout",
-  layout = "navbar-overlap",  # Content overlaps with dark navbar
-  navbar = tabler_navbar(title = "Palmer Penguins"),
-  body = tabler_body(...),
-  footer = tabler_footer(...)
-)
-```
-
-### Navbar Sticky Layout
-
-Layout with sticky/fixed navbar that stays at the top when scrolling.
-
-``` r
-ui <- tabler_page(
-  title = "Sticky Navbar Layout",
-  layout = "navbar-sticky",  # Navbar stays fixed when scrolling
-  navbar = tabler_navbar(title = "Palmer Penguins"),
-  body = tabler_body(...),
-  footer = tabler_footer(...)
-)
-```
-
-### RTL Layout
-
-Right-to-left layout for Arabic/Hebrew languages.
-
-``` r
-ui <- tabler_page(
-  title = "RTL Layout",
-  layout = "rtl",  # Right-to-left for Arabic/Hebrew
-  navbar = tabler_navbar(title = "פריסת RTL"),
-  body = tabler_body(...),
-  footer = tabler_footer(
-    left = "© 2025 החברה שלי",
-    right = "נבנה עם Tabler"
-  )
-)
-```
-
-### Vertical Layout
-
-Pure vertical sidebar layout without top navbar.
-
-``` r
-ui <- tabler_page(
-  title = "Vertical Layout",
-  layout = "vertical",
-  navbar = tabler_sidebar(  # Sidebar instead of navbar
-    title = "Palmer Penguins",
-    sidebar_menu(
-      # show an example with a brand image
-      title = sidebar_brand(text = "Palmer Penguins", img = "www/penguin-logo.png"),
-      menu_item("Dashboard", icon = "home"),
-      menu_item("Species", icon = "chart-bar"),
-      menu_item("Islands", icon = "map-pin")
-    ),
-    theme = "dark"
-  ),
-  body = tabler_body(...),
-  footer = tabler_footer(...)
-)
-```
-
-### Vertical Right Layout
-
-Vertical sidebar positioned on the right side.
-
-``` r
-ui <- tabler_page(
-  title = "Vertical Right Layout",
-  layout = "vertical-right",  # Sidebar on the right
-  navbar = tabler_sidebar(
-    title = "My Dashboard",
-    sidebar_menu(
-      menu_item("Dashboard", icon = "home"),
-      menu_item("Analysis", icon = "chart-bar")
-    ),
-    theme = "dark"
-  ),
-  body = tabler_body(...),
-  footer = tabler_footer(...)
-)
-```
-
-### Vertical Transparent Layout
-
-Vertical layout with transparent/semi-transparent sidebar.
-
-``` r
-ui <- tabler_page(
-  title = "Vertical Transparent Layout",
-  layout = "vertical-transparent",  # Transparent sidebar
-  navbar = tabler_sidebar(
-    title = "My Dashboard",
-    sidebar_menu(
-      menu_item("Dashboard", icon = "home"),
-      menu_item("Analysis", icon = "chart-bar")
-    ),
-    theme = "light"  # Light theme for transparency
-  ),
-  body = tabler_body(...),
-  footer = tabler_footer(...)
-)
-```
-
-## Navigation Components
-
-### Sidebar
-
-The sidebar can be used in vertical layouts and combo layouts:
-
-``` r
-# For vertical layouts - pass to navbar parameter
-ui <- tabler_page(
-  layout = "vertical",
-  navbar = tabler_sidebar(
-    title = "My Dashboard",
-    sidebar_menu(
-      menu_item("Overview", tabName = "overview", icon = "home"),
-      menu_item("Species", tabName = "species", icon = "star", badge = "3"),
-      menu_item("Islands", tabName = "islands", icon = "map-pin")
-    ),
-    theme = "dark"  # or "light"
-  ),
-  body = tabler_body(...)
-)
-
-# For combo layout - pass as part of list
-ui <- tabler_page(
-  layout = "combo",
-  navbar = list(
-    top = tabler_navbar(title = "My App"),
-    side = tabler_sidebar(
-      title = "Navigation",
-      sidebar_menu(
-        menu_item("Dashboard", icon = "home")
-      ),
-      theme = "dark"
-    )
-  ),
-  body = tabler_body(...)
-)
-```
-
-### Horizontal Menu
-
-For horizontal layouts, use `horizontal_menu()`:
-
-``` r
-ui <- tabler_page(
-  layout = "horizontal",
-  navbar = horizontal_menu(
-    menu_item("Home", icon = "home"),
-    menu_item("Analytics", icon = "chart-bar"),
-    menu_item("Settings", icon = "settings")
-  ),
-  body = tabler_body(...)
-)
-```
-
-### Navigation Items
-
-``` r
-menu_item(
-  text = "Dashboard",
-  tabName = "dashboard",  # For tab switching
-  icon = "home",          # Icon name (Tabler Icons)
-  href = "/dashboard",    # Alternative to tabName  
-  badge = "New"           # Optional badge text
-)
-```
-
-## Layout Structure
-
-The package automatically handles the HTML structure for each layout
-type using a smart `navbar` parameter that accepts different component
-types:
-
-- **Boxed/Condensed/Fluid**: Pass `tabler_navbar()` to navbar parameter
-- **Vertical layouts**: Pass `tabler_sidebar()` to navbar parameter  
-- **Combo**: Pass
-  `list(top = tabler_navbar(...), side = tabler_sidebar(...))` to navbar
-- **Horizontal**: Pass `horizontal_menu()` to navbar parameter
-
-The system automatically detects the component type by its HTML tag:
-
-- `<aside>` tag - sidebar component
-- `<header>` tag - top navbar component
-- `<ul>` tag - horizontal menu component
-
-## CSS Classes Applied
-
-Different layouts apply specific CSS classes to the body element:
-
-- `layout-boxed`: Boxed layout with constrained width
-- `layout-fluid`: Fluid layout (full width), also used by fluid-vertical
-- `layout-navbar-overlap`: Navbar overlap layout
-- `layout-navbar-sticky`: Sticky navbar layout
-- `layout-vertical-transparent`: Transparent vertical sidebar
-- `data-bs-theme="dark"`: Applied to navbar/sidebar for dark theme
-
-## API Design
-
-The simplified API uses a single `navbar` parameter:
-
-``` r
-# Most layouts (boxed, condensed, fluid, etc.)
-tabler_page(
-  layout = "boxed",
-  navbar = tabler_navbar(title = "My App"),
-  body = tabler_body(...)
-)
-
-# Vertical layouts
-tabler_page(
-  layout = "vertical",
-  navbar = tabler_sidebar(sidebar_menu(...)),
-  body = tabler_body(...)
-)
-
-# Horizontal layout
-tabler_page(
-  layout = "horizontal",
-  navbar = horizontal_menu(menu_item(...)),
-  body = tabler_body(...)
-)
-
-# Combo layout (both navbar and sidebar)
-tabler_page(
-  layout = "combo",
-  navbar = list(
-    top = tabler_navbar(title = "My App"),
-    side = tabler_sidebar(sidebar_menu(...))
-  ),
-  body = tabler_body(...)
-)
-```
+* **Boxed (Default)**: Basic dashboard with top navbar and constrained width content area. This
+is the default layout.
+* **Combo**:  Combines vertical sidebar navigation with top header.
+* **Condensed**:  Compact layout with reduced padding/margins.
+* **Fluid**:  Full-width layout without container constraints.
+* **Fluid Vertical**: Full-width layout with vertical sidebar.
+* **Horizontal**: Layout with horizontal navigation menu.
+* **Navbar Dark**: Layout with dark navbar theme.
+*  **Navbar Overlap**:  Layout where content overlaps with navbar for a modern look.
+* **Navbar Sticky**: Layout with sticky/fixed navbar that stays at the top when scrolling.
+* **RTL**: Right-to-left layout for Hebrew/Arabic languages.
+* **Vertical**: Vertical sidebar layout without top navbar.
+* **Vertical Right**: Vertical sidebar positioned on the right side.
+* **Vertical Transparent**: Vertical layout with transparent sidebar.
 
 ## License
 

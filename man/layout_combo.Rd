@@ -2,7 +2,7 @@
 % Please edit documentation in R/layout-combo.R
 \name{layout_combo}
 \alias{layout_combo}
-\title{Build boxed (and combo) layout structure}
+\title{Build combo layout structure}
 \usage{
 layout_combo(
   navbar,
@@ -24,10 +24,7 @@ layout_combo(
 \item{footer}{Footer component}
 }
 \description{
-Build the HTML structure for the boxed layout. This
-accepts either a single navbar/sidebar tag, or a named list with
-elements `top` and `side` for combo-style callers. The function
-returns the full page tag structure (including sidebar, navbar,
-page wrapper, body and footer).
+Build the HTML structure for the combo layout. This layout
+has BOTH a sidebar (vertical navbar with dark theme) AND a top navbar.
 }
 \keyword{internal}

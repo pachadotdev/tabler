@@ -55,3 +55,55 @@ validate_tab_name <- function(name) {
     stop("tab_name must not have a '.' in it.")
   }
 }
+
+#' @title Filter theme toggle buttons from navbar tag
+#' @param nav_tag Navbar shiny.tag (aside or header)
+#' @return Modified navbar tag without theme toggle li
+#' @keywords internal
+#' @noRd
+filter_theme_li <- function(nav_tag) {
+  if (is.null(nav_tag) || !inherits(nav_tag, "shiny.tag")) {
+    return(nav_tag)
+  }
+
+  # Recursively filter children
+  nav_tag$children <- lapply(nav_tag$children, function(child) {
+    if (inherits(child, "shiny.tag")) {
+      # Check if this is a theme toggle li (has mt-auto or ms-md-auto class)
+      if (child$name == "li" && (grepl("mt-auto", child$attribs$class %||% "") ||
+        grepl("ms-md-auto", child$attribs$class %||% ""))) {
+        # Check if any child contains hide-theme class
+        has_theme <- FALSE
+        check_children <- function(items) {
+          for (item in items) {
+            if (is.list(item) && !inherits(item, "shiny.tag")) {
+              if (check_children(item)) {
+                return(TRUE)
+              }
+            } else if (inherits(item, "shiny.tag")) {
+              if (item$name == "a" && (grepl("hide-theme-dark", item$attribs$class %||% "") ||
+                grepl("hide-theme-light", item$attribs$class %||% ""))) {
+                return(TRUE)
+              }
+              if (check_children(item$children)) {
+                return(TRUE)
+              }
+            }
+          }
+          FALSE
+        }
+        has_theme <- check_children(child$children)
+        if (has_theme) {
+          return(NULL)
+        } # Filter out this li
+      }
+      # Recursively process children
+      child <- filter_theme_li(child)
+    }
+    child
+  })
+
+  # Remove NULLs
+  nav_tag$children <- Filter(Negate(is.null), nav_tag$children)
+  nav_tag
+}

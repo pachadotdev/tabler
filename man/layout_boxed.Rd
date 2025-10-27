@@ -2,7 +2,7 @@
 % Please edit documentation in R/layout-boxed.R
 \name{layout_boxed}
 \alias{layout_boxed}
-\title{Build boxed (and combo) layout structure}
+\title{Build boxed layout structure}
 \usage{
 layout_boxed(
   navbar,
@@ -24,10 +24,7 @@ layout_boxed(
 \item{footer}{Footer component}
 }
 \description{
-Build the HTML structure for the boxed layout. This
-accepts either a single navbar/sidebar tag, or a named list with
-elements `top` and `side` for combo-style callers. The function
-returns the full page tag structure (including sidebar, navbar,
-page wrapper, body and footer).
+Build the HTML structure for the boxed layout. This layout
+has a top navbar.
 }
 \keyword{internal}
