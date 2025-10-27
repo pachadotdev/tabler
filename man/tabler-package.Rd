@@ -6,7 +6,7 @@
 \alias{tabler-package}
 \title{tabler: Create Dashboards with 'Tabler' and 'Shiny'}
 \description{
-Provides functions to build interactive dashboards combining the 'Tabler UI Kit' with 'Shiny', making it easy to create professional-looking web applications. 'Tabler' is fully responsive and compatible with all modern browsers. Offers customizable layouts and components built with 'HTML5' and 'CSS3'. The underlying 'Tabler' (<https:github.com/tabler/tabler>) and 'Tabler Icons' (<https:github.com/tabler/tabler-icons>) were pre-built from source to eliminate the need for 'Node.js' and 'NPM' on package installation.
+Provides functions to build interactive dashboards combining the 'Tabler UI Kit' with 'Shiny', making it easy to create professional-looking web applications. 'Tabler' is fully responsive and compatible with all modern browsers. Offers customizable layouts and components built with 'HTML5' and 'CSS3'. The underlying 'Tabler' (\url{https://github.com/tabler/tabler}) and 'Tabler Icons' (\url{https://github.com/tabler/tabler-icons}) were pre-built from source to eliminate the need for 'Node.js' and 'NPM' on package installation.
 }
 \seealso{
 Useful links:

@@ -8,7 +8,7 @@ Authors@R: c(
 Description: Provides functions to build interactive dashboards combining the 'Tabler UI Kit' with 'Shiny', making it
     easy to create professional-looking web applications. 'Tabler' is fully responsive and compatible with all modern
     browsers. Offers customizable layouts and components built with 'HTML5' and 'CSS3'. The underlying 'Tabler'
-    (<https:github.com/tabler/tabler>) and 'Tabler Icons' (<https:github.com/tabler/tabler-icons>)
+    (<https://github.com/tabler/tabler>) and 'Tabler Icons' (<https://github.com/tabler/tabler-icons>)
     were pre-built from source to eliminate the need for 'Node.js' and 'NPM' on package installation.
 URL: https://github.com/pachadotdev/tabler
 BugReports: https://github.com/pachadotdev/tabler/issues
