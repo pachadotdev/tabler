@@ -1,5 +1,5 @@
 # change layout index
-i <- 8
+i <- 10
 show_theme_button <- T
 
 document()
@@ -23,10 +23,13 @@ layouts <- c(
   "condensed",
   "fluid-vertical",
   "fluid",
+
   "horizontal",
   "navbar-dark",
   "navbar-overlap",
   "navbar-sticky",
+  "navbar-sticky-dark",
+
   "rtl",
   "vertical-right",
   "vertical-transparent",
