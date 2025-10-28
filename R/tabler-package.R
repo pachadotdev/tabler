@@ -49,6 +49,14 @@ add_deps <- function(tag, layout = "default", theme = "light", color = "minimal"
         "css/tabler-socials.min.css",
         "css/tabler-themes.min.css"
       )
+    ),
+
+    # Tabler Tabs Script (for tab switching)
+    htmltools::htmlDependency(
+      name = "tabler-tabs",
+      version = "1.0.0",
+      src = c(file = system.file(package = "tabler")),
+      script = "js/tabler-tabs.js"
     )
   )
 
