@@ -24,6 +24,14 @@ add_deps <- function(tag, layout = "default", theme = "light", color = "minimal"
       script = "js/tabler.min.js"
     ),
 
+    # Tabler Theme Script
+    htmltools::htmlDependency(
+      name = "tabler-theme",
+      version = "1.4.0",
+      src = c(file = system.file("tabler-1.4.0", package = "tabler")),
+      script = "js/tabler-theme.min.js"
+    ),
+
     # Tabler Icons (webfont)
     htmltools::htmlDependency(
       name = "tabler-icons",
@@ -41,22 +49,6 @@ add_deps <- function(tag, layout = "default", theme = "light", color = "minimal"
         "css/tabler-socials.min.css",
         "css/tabler-themes.min.css"
       )
-    ),
-
-    # Tabler Theme Script
-    htmltools::htmlDependency(
-      name = "tabler-theme",
-      version = "1.4.0",
-      src = c(file = system.file("tabler-1.4.0", package = "tabler")),
-      script = "js/tabler-theme.min.js"
-    ),
-
-    # Tabler Tabs Script (for tab switching)
-    htmltools::htmlDependency(
-      name = "tabler-tabs",
-      version = "1.0.0",
-      src = c(file = system.file(package = "tabler")),
-      script = "js/tabler-tabs.js"
     )
   )
 

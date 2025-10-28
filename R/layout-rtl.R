@@ -131,7 +131,6 @@ layout_rtl <- function(navbar, sidebar, body, footer, theme = "light", color = N
   }
 
   tagList(
-    script(src = "dist/js/tabler-theme.min.js"),
     div(
       class = "page",
       dir = "rtl",

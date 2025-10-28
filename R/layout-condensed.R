@@ -164,7 +164,6 @@ layout_condensed <- function(navbar, sidebar, body, footer, theme = "light", col
   }
 
   tagList(
-    script(src = "dist/js/tabler-theme.min.js"),
     div(
       class = "page",
       # Top navbar

@@ -46,7 +46,7 @@ page <- function(
     "navbar-dark",
     "navbar-overlap",
     "navbar-sticky",
-  "navbar-sticky-dark",
+    "navbar-sticky-dark",
     "rtl",
     "vertical-right",
     "vertical-transparent",
@@ -74,7 +74,7 @@ page <- function(
     "navbar-dark" = layout_navbar_dark(navbar, NULL, body, footer, theme = theme, color = color, show_theme_button = show_theme_button),
     "navbar-overlap" = layout_navbar_overlap(navbar, NULL, body, footer, theme = theme, color = color, show_theme_button = show_theme_button),
     "navbar-sticky" = layout_navbar_sticky(navbar, NULL, body, footer, theme = theme, color = color, show_theme_button = show_theme_button),
-  "navbar-sticky-dark" = layout_navbar_sticky_dark(navbar, NULL, body, footer, color = color, show_theme_button = show_theme_button),
+    "navbar-sticky-dark" = layout_navbar_sticky_dark(navbar, NULL, body, footer, color = color, show_theme_button = show_theme_button),
     "rtl" = layout_rtl(navbar, NULL, body, footer, theme = theme, color = color, show_theme_button = show_theme_button),
     stop("Unsupported layout: ", layout)
   )
@@ -511,7 +511,7 @@ get_layout_attributes <- function(layout) {
     "navbar-dark" = "layout-navbar-dark",
     "navbar-overlap" = "layout-navbar-overlap",
     "navbar-sticky" = "layout-navbar-sticky",
-  "navbar-sticky-dark" = "layout-navbar-sticky",
+    "navbar-sticky-dark" = "layout-navbar-sticky",
     "rtl" = "layout-rtl",
     "vertical" = "layout-vertical",
     "vertical-right" = "layout-vertical-right",

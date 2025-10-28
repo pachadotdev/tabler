@@ -364,7 +364,7 @@ button <- function(label, href = NULL, onclick = NULL, color = "primary",
     attrs$href <- href
     # role=button when using anchor
     attrs$role <- attrs$role %||% "button"
-  do.call(htmltools::a, c(attrs, children))
+    do.call(htmltools::a, c(attrs, children))
   } else {
     attrs$type <- type
     do.call(button_tag, c(attrs, children))

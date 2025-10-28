@@ -111,14 +111,12 @@ layout_navbar_sticky_dark <- function(navbar, sidebar, body, footer, color = NUL
         )
       )
     )
-
   } else if (!is.null(top_nav)) {
     # If the provided top_nav is already a tag, try to set data-bs-theme on it
     header_tag <- tagAppendAttributes(top_nav, `data-bs-theme` = "dark")
   }
 
   tagList(
-    script(src = "dist/js/tabler-theme.min.js"),
     div(
       class = "page",
       if (!is.null(header_tag)) header_tag,

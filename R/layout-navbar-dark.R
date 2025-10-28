@@ -122,7 +122,6 @@ layout_navbar_dark <- function(navbar, sidebar, body, footer, theme = "light", c
   }
 
   tagList(
-    script(src = "dist/js/tabler-theme.min.js"),
     div(
       class = "page",
       if (!is.null(header_tag)) header_tag,

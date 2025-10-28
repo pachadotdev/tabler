@@ -25,7 +25,6 @@ layout_vertical_transparent <- function(navbar, sidebar, body, footer, theme = "
     }
   }
   tagList(
-    script(src = "dist/js/tabler-theme.min.js"),
     div(
       class = "page",
       side_nav,

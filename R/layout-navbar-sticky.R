@@ -119,7 +119,6 @@ layout_navbar_sticky <- function(navbar, sidebar, body, footer, theme = "light",
   }
 
   tagList(
-    script(src = "dist/js/tabler-theme.min.js"),
     div(
       class = "page",
       if (!is.null(header_tag)) header_tag,

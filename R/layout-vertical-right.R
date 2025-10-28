@@ -24,7 +24,6 @@ layout_vertical_right <- function(navbar, sidebar, body, footer, theme = "light"
   }
 
   tagList(
-    script(src = "dist/js/tabler-theme.min.js"),
     div(
       class = "page",
       if (!is.null(side_nav)) side_nav,
