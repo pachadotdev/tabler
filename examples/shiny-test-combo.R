@@ -75,19 +75,15 @@ ui <- page(
       pretitle_text = "Overview"
     ),
     # Page body content
-    shiny::tags$div(
-      class = "page-body",
-      shiny::tags$div(
-        class = "container-xl",
-        column(
-          6,
-          card(
-            title = "My title",
-            footer = "Footer.",
-            p("My text"),
-            p("More text", class = "text-muted"),
-            d3po_output("plot", width = "100%", height = "500px")
-          )
+    page_body(
+      column(
+        6,
+        card(
+          title = "My title",
+          footer = "Footer.",
+          p("My text"),
+          p("More text", class = "text-muted"),
+          d3po_output("plot", width = "100%", height = "500px")
         )
       )
     )

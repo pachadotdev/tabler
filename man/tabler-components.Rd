@@ -5,6 +5,7 @@
 \alias{pre_title}
 \alias{title}
 \alias{page_header}
+\alias{page_body}
 \alias{value_box}
 \alias{icon}
 \alias{alert}
@@ -18,6 +19,8 @@ pre_title(text)
 title(text)
 
 page_header(title_text, pretitle_text = NULL, ...)
+
+page_body(...)
 
 value_box(value, title, icon = NULL, color = "primary", width = 3)
 
@@ -118,6 +121,8 @@ Small helper to render the page pretitle element used by Tabler examples
 Small helper to render the page title element used by Tabler examples
 
 Create the full page header structure with pretitle and title
+
+Create the full page body structure
 
 Display a key metric or value prominently
 

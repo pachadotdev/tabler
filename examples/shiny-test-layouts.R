@@ -1,5 +1,5 @@
 # change layout index
-i <- 10
+i <- 4
 show_theme_button <- T
 
 document()
@@ -23,13 +23,11 @@ layouts <- c(
   "condensed",
   "fluid-vertical",
   "fluid",
-
   "horizontal",
   "navbar-dark",
   "navbar-overlap",
   "navbar-sticky",
   "navbar-sticky-dark",
-
   "rtl",
   "vertical-right",
   "vertical-transparent",
@@ -146,53 +144,49 @@ ui <- page(
       pretitle_text = "Overview"
     ),
     # Page body content
-    div(
-      class = "page-body",
-      div(
-        class = "container-xl",
-        column(
-          6,
-          card(
-            title = "My title",
-            footer = "Footer.",
-            p("My text"),
-            p("More text", class = "text-muted"),
-            d3po_output("plot", width = "100%", height = "500px")
-          )
-        ),
-        column(
-          6,
-          card(
-            title = "Buttons here",
-            footer = "Footer.",
-            # Dummy buttons for testing various variants of button()
-            
-              # Basic colors
-              button("Primary", color = "primary"),
-              button("Secondary", color = "secondary"),
-              button("Success", color = "success"),
+    page_body(
+      column(
+        6,
+        card(
+          title = "My title",
+          footer = "Footer.",
+          p("My text"),
+          p("More text", class = "text-muted"),
+          d3po_output("plot", width = "100%", height = "500px")
+        )
+      ),
+      column(
+        6,
+        card(
+          title = "Buttons here",
+          footer = "Footer.",
+          # Dummy buttons for testing various variants of button()
 
-              # Outline and sizes
-              button("Outline", color = "primary", outline = TRUE),
-              button("Large", color = "primary", size = "lg"),
-              button("Small", color = "primary", size = "sm"),
+          # Basic colors
+          button("Primary", color = "primary"),
+          button("Secondary", color = "secondary"),
+          button("Success", color = "success"),
 
-              # Icons
-              button("Upload", icon = "upload", color = "primary"),
-              button("Download", icon = "download", color = "success"),
+          # Outline and sizes
+          button("Outline", color = "primary", outline = TRUE),
+          button("Large", color = "primary", size = "lg"),
+          button("Small", color = "primary", size = "sm"),
 
-              # Pill and square
-              button("Pill", color = "secondary", pill = TRUE),
-              button("Square", color = "danger", square = TRUE),
+          # Icons
+          button("Upload", icon = "upload", color = "primary"),
+          button("Download", icon = "download", color = "success"),
 
-              # Loading and full width
-              button("Loading", color = "primary", loading = TRUE),
-              button("Full width", color = "primary", block = TRUE),
+          # Pill and square
+          button("Pill", color = "secondary", pill = TRUE),
+          button("Square", color = "danger", square = TRUE),
 
-              # Disabled and link
-              button("Disabled", color = "primary", disabled = TRUE),
-              button("As link", href = "#", color = "primary")
-          )
+          # Loading and full width
+          button("Loading", color = "primary", loading = TRUE),
+          button("Full width", color = "primary", block = TRUE),
+
+          # Disabled and link
+          button("Disabled", color = "primary", disabled = TRUE),
+          button("As link", href = "#", color = "primary")
         )
       )
     )

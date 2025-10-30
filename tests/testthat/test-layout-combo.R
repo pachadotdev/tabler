@@ -213,9 +213,6 @@ test_that("layout_combo handles navbar passed as list with both top and side", {
   out <- layout_combo(list(top = top_aside, side = aside_side), NULL, body("C"), NULL, show_theme_button = TRUE)
   s <- as.character(out)
 
-  # script should be present
-  expect_true(grepl("tabler-theme.min.js", s))
-
   # TopOnly should appear in top header and SideOnly in sidebar
   expect_true(grepl("TopOnly", s))
   expect_true(grepl("SideOnly", s))

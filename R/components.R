@@ -159,6 +159,24 @@ page_header <- function(title_text, pretitle_text = NULL, ...) {
   )
 }
 
+#' @title Create a page body
+#' @description Create the full page body structure
+#' @param ... Additional elements to include in the body (e.g., cards, plots, tables, etc.)
+#' @rdname tabler-components
+#' @export
+page_body <- function(...) {
+  div(
+    class = "page-body",
+    div(
+      class = "container-xl",
+      div(
+        class = "row row-deck row-cards",
+        ...
+      )
+    )
+  )
+}
+
 #' @title Create a Value Box
 #' @description Display a key metric or value prominently
 #' @param value Main value to display
