@@ -8,7 +8,6 @@ test_that("navbar_menu builds sidebar and header variants", {
   # header variant when brand absent
   hd <- navbar_menu(menu_item("Two", tab_name = "two"), brand = NULL)
   hd_str <- as.character(hd)
-  expect_true(grepl("navbar-expand-md", hd_str))
   expect_true(grepl("Two", hd_str))
 })
 

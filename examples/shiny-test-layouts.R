@@ -139,12 +139,12 @@ ui <- page(
   navbar = main_navbar,
   body = list(
     # Page header
-    page_header(
+    header(
       title_text = paste(toupper(my_layout), "layout"),
       pretitle_text = "Overview"
     ),
     # Page body content
-    page_body(
+    body(
       column(
         6,
         card(

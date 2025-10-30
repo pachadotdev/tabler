@@ -141,21 +141,6 @@ page <- function(
   add_deps(tagList(html_head, html_body), layout = layout, theme = theme, color = color)
 }
 
-#' @title Create a Dashboard Body
-#' @title Create Dashboard Body
-#' @description Container for dashboard content
-#' @param ... Content to include in the body
-#' @param class Additional CSS classes
-#' @return An HTML tag representing the body
-#' @rdname tabler-page
-#' @export
-body <- function(..., class = NULL) {
-  div(
-    class = paste("container-xl", class),
-    ...
-  )
-}
-
 #' @title Create a Topbar Header
 #' @description Helper to create a top navigation header. This replaces the
 #' previous top-navbar behavior when users passed a header-like component.
@@ -240,8 +225,6 @@ footer <- function(left = NULL, right = NULL) {
     )
   )
 }
-
-
 
 #' @title Create a Navigation Menu
 #' @description Container for navigation items in sidebar
@@ -525,7 +508,6 @@ get_layout_attributes <- function(layout) {
 
   attrs
 }
-
 
 #' @title Build a standard navbar/header
 #' @description Create the top header used in boxed layout. This function

@@ -109,22 +109,10 @@ test_that("tabler_page basic and error cases", {
 })
 
 test_that("tabler body/header/navbar/footer/sidebar and menus", {
-  b <- body("content", class = "my-class")
+  b <- body("content")
   expect_s3_class(b, "shiny.tag")
-  expect_true(grepl("my-class", b$attribs$class))
+  expect_true(grepl("page-body", b$attribs$class))
   expect_true(grepl("content", paste0(b)))
-
-  hdr <- page_header("Main", subtitle = "sub")
-  expect_s3_class(hdr, "shiny.tag")
-  expect_true(grepl("Main", paste0(hdr)))
-  expect_true(grepl("sub", paste0(hdr)))
-
-  # header with extra content via ... should render the extra column
-  hdr2 <- page_header("H2", subtitle = "s2", button("Click"))
-  expect_s3_class(hdr2, "shiny.tag")
-  expect_true(grepl("Click", paste0(hdr2)))
-  # extra column class should be present when ... provided
-  expect_true(grepl("col-auto ms-auto", paste0(hdr2)))
 
   nav <- topbar(title = "Brand")
   expect_s3_class(nav, "shiny.tag")

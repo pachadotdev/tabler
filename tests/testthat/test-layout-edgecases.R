@@ -11,7 +11,7 @@ test_that("layout_condensed extracts brand and items from aside", {
 })
 
 test_that("layout_navbar_overlap adds text-white to page headers when present", {
-  hdr <- page_header("H", subtitle = "S")
+  hdr <- header("H", subtitle = "S")
   nav <- navbar_menu(menu_item("N", tab_name = "n"), brand = sidebar_brand(text = "B"))
   out <- layout_navbar_overlap(nav, NULL, list(hdr), NULL)
   out_str <- as.character(out)

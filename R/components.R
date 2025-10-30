@@ -128,44 +128,43 @@ title <- function(text) {
   h2(class = "page-title", text)
 }
 
-#' @title Create a page header
-#' @description Create the full page header structure with pretitle and title
-#' @param title_text The main title text
-#' @param pretitle_text The pretitle text (optional)
-#' @param ... Additional elements to include in the header (e.g., action buttons)
+#' @title Create a page body
+#' @description Create the full page body structure with optional header
+#' @param ... Additional elements to include in the body (e.g., cards, plots, tables, etc.)
+#' @param title_text The main page title text (optional)
+#' @param pretitle_text The page pretitle text (optional)
+#' @param header_actions Additional elements to include in the header (e.g., action buttons)
 #' @rdname tabler-components
 #' @export
-page_header <- function(title_text, pretitle_text = NULL, ...) {
-  div(
-    class = "page-header d-print-none",
-    `aria-label` = "Page header",
-    div(
-      class = "container-xl",
+body <- function(..., title_text = NULL, pretitle_text = NULL, header_actions = NULL) {
+  # Build header if title is provided
+  header_tag <- NULL
+  if (!is.null(title_text)) {
+    header_tag <- div(
+      class = "page-header d-print-none",
+      `aria-label` = "Page header",
       div(
-        class = "row g-2 align-items-center",
+        class = "container-xl",
         div(
-          class = "col",
-          if (!is.null(pretitle_text)) div(class = "page-pretitle", pretitle_text),
-          h2(class = "page-title", title_text)
-        ),
-        if (length(list(...)) > 0) {
+          class = "row g-2 align-items-center",
           div(
-            class = "col-auto ms-auto d-print-none",
-            ...
-          )
-        }
+            class = "col",
+            if (!is.null(pretitle_text)) div(class = "page-pretitle", pretitle_text),
+            h2(class = "page-title", title_text)
+          ),
+          if (!is.null(header_actions)) {
+            div(
+              class = "col-auto ms-auto d-print-none",
+              header_actions
+            )
+          }
+        )
       )
     )
-  )
-}
-
-#' @title Create a page body
-#' @description Create the full page body structure
-#' @param ... Additional elements to include in the body (e.g., cards, plots, tables, etc.)
-#' @rdname tabler-components
-#' @export
-page_body <- function(...) {
-  div(
+  }
+  
+  # Build body
+  body_tag <- div(
     class = "page-body",
     div(
       class = "container-xl",
@@ -175,6 +174,13 @@ page_body <- function(...) {
       )
     )
   )
+  
+  # Return header + body or just body
+  if (!is.null(header_tag)) {
+    tagList(header_tag, body_tag)
+  } else {
+    body_tag
+  }
 }
 
 #' @title Create a Value Box

@@ -2,7 +2,6 @@
 % Please edit documentation in R/core.R
 \name{page}
 \alias{page}
-\alias{body}
 \alias{topbar}
 \alias{footer}
 \alias{sidebar_menu}
@@ -22,8 +21,6 @@ page(
   color = "blue",
   show_theme_button = FALSE
 )
-
-body(..., class = NULL)
 
 topbar(title = NULL, brand_image = NULL, ...)
 
@@ -61,11 +58,9 @@ image and title. Example: `title = list(text = "My App", img = "logo.png")`.}
 
 \item{show_theme_button}{Whether to show the theme toggle buttons (default: `FALSE`).}
 
-\item{...}{Content for this tab}
-
-\item{class}{Additional CSS classes}
-
 \item{brand_image}{URL or path to brand image}
+
+\item{...}{Content for this tab}
 
 \item{left}{Left-aligned content}
 
@@ -84,8 +79,6 @@ image and title. Example: `title = list(text = "My App", img = "logo.png")`.}
 \value{
 HTML tag with dependencies attached
 
-An HTML tag representing the body
-
 An HTML tag representing the top header
 
 An HTML tag representing the footer
@@ -102,8 +95,6 @@ An HTML tag representing the tab item
 }
 \description{
 Main function to create a complete dashboard page with Tabler theme
-
-Container for dashboard content
 
 Helper to create a top navigation header. This replaces the
 previous top-navbar behavior when users passed a header-like component.

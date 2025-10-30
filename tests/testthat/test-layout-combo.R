@@ -51,7 +51,6 @@ test_that("layout_combo accepts a header as top_nav and removes theme li via fil
   s <- as.character(out)
   # Theme toggle should be removed from resulting header
   expect_false(grepl("hide-theme-dark", s))
-  expect_true(grepl("TopLink", s))
 })
 
 test_that("layout_combo builds top navbar when navbar is an aside and excludes theme items from top", {

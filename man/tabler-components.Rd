@@ -4,8 +4,7 @@
 \alias{card}
 \alias{pre_title}
 \alias{title}
-\alias{page_header}
-\alias{page_body}
+\alias{body}
 \alias{value_box}
 \alias{icon}
 \alias{alert}
@@ -18,9 +17,7 @@ pre_title(text)
 
 title(text)
 
-page_header(title_text, pretitle_text = NULL, ...)
-
-page_body(...)
+body(..., title_text = NULL, pretitle_text = NULL, header_actions = NULL)
 
 value_box(value, title, icon = NULL, color = "primary", width = 3)
 
@@ -60,9 +57,11 @@ button(
 
 \item{text}{The title text to display}
 
-\item{title_text}{The main title text}
+\item{title_text}{The main page title text (optional)}
 
-\item{pretitle_text}{The pretitle text (optional)}
+\item{pretitle_text}{The page pretitle text (optional)}
+
+\item{header_actions}{Additional elements to include in the header (e.g., action buttons)}
 
 \item{value}{Main value to display}
 
@@ -120,9 +119,7 @@ Small helper to render the page pretitle element used by Tabler examples
 
 Small helper to render the page title element used by Tabler examples
 
-Create the full page header structure with pretitle and title
-
-Create the full page body structure
+Create the full page body structure with optional header
 
 Display a key metric or value prominently
 
