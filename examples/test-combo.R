@@ -69,7 +69,7 @@ ui <- page(
     body(
       div(
         class = "row",
-        # ── Left column: controls ──────────────────────────────────────────
+        # Left column: controls ----
         column(
           4,
           card(
@@ -102,7 +102,8 @@ ui <- page(
             actionButton("refresh", "Recalculate", icon = "refresh")
           )
         ),
-        # ── Right column: outputs ──────────────────────────────────────────
+        
+        # Right column: outputs ----
         column(
           8,
           card(

@@ -47,7 +47,10 @@ Here’s a minimal example using the “combo” layout with sidebar and top
 navbar:
 <https://github.com/pachadotdev/tabler/blob/main/examples/test-combo.R>
 
-D3PO NEEDS CHANGES - EDIT THIS LATER
+<figure>
+<img src="screenshot-combo.png" title="Combo Layout" alt="combo" />
+<figcaption aria-hidden="true">combo</figcaption>
+</figure>
 
 ``` r
 library(tabler)
@@ -121,7 +124,7 @@ ui <- page(
     body(
       div(
         class = "row",
-        # ── Left column: controls ──────────────────────────────────────────
+        # Left column: controls ----
         column(
           4,
           card(
@@ -154,7 +157,8 @@ ui <- page(
             actionButton("refresh", "Recalculate", icon = "refresh")
           )
         ),
-        # ── Right column: outputs ──────────────────────────────────────────
+        
+        # Right column: outputs ----
         column(
           8,
           card(
