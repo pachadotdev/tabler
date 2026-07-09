@@ -39,11 +39,66 @@ remotes::install_github("pachadotdev/tabler")
 
 Please see the documentation: <https://pacha.dev/tabler/>
 
-Here is a complete example that I use to test all layouts with the theme
-(light/dark) and colour options:
-<https://github.com/pachadotdev/tabler/blob/main/examples/test-layouts.R>
+### Using the fluid layout
 
-### Minimal example
+Using the “fluid” layout to recreate Shiny’s geyser example.
+
+<figure>
+<img src="screenshot-fluid-geyser.png" title="Fluid Layout"
+alt="layout-geyser" />
+<figcaption aria-hidden="true">layout-geyser</figcaption>
+</figure>
+
+``` r
+library(tabler)
+
+ui <- page(
+  layout = "fluid",
+  title  = "Old Faithful Geyser Data",
+  navbar = navbar_menu(
+    menu_item("Home", icon = "home")
+  ),
+  body = list(
+    header(title = "Old Faithful Geyser Data", subtitle = "Histogram"),
+    body(
+      column(
+        4,
+        card(
+          title = "Controls",
+          sliderInput("bins", "Number of bins:", min = 1, max = 50, value = 30)
+        )
+      ),
+      column(
+        8,
+        card(
+          title  = "Output",
+          footer = "Eruption duration (minutes)",
+          plotOutput("distPlot")
+        )
+      )
+    )
+  )
+)
+
+server <- function(input, output, session) {
+  output$distPlot <- renderPlot({
+    x    <- faithful[, 2]
+    bins <- seq(min(x), max(x), length.out = input$bins + 1)
+    x |>
+      hist(
+        breaks = bins,
+        col    = "darkgray",
+        border = "white",
+        main   = NULL,
+        xlab   = "Eruption duration (min)"
+      )
+  })
+}
+
+tablerApp(ui, server)
+```
+
+### Using the combo layout
 
 Using the “combo” layout with sidebar and top navbar:
 
@@ -241,7 +296,7 @@ server <- function(input, output, session) {
 tablerApp(ui, server)
 ```
 
-### Using d3po via htmlwidgets
+### Using the combo layout with d3po via htmlwidgets
 
 Using the “combo” layout with sidebar and top navbar:
 

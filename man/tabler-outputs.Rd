@@ -8,6 +8,8 @@
 \alias{renderText}
 \alias{renderPrint}
 \alias{renderUI}
+\alias{plotOutput}
+\alias{renderPlot}
 \title{Text Output Placeholder}
 \usage{
 textOutput(outputId, inline = FALSE)
@@ -23,13 +25,23 @@ renderText(expr)
 renderPrint(expr)
 
 renderUI(expr)
+
+plotOutput(outputId, width = "100\%", height = "400px")
+
+renderPlot(expr, width = 800, height = 400, res = 96)
 }
 \arguments{
 \item{outputId}{The output identifier.}
 
 \item{inline}{If \code{TRUE}, use \code{<span>}; otherwise \code{<div>}.}
 
-\item{expr}{Expression that returns a tag or tagList.}
+\item{expr}{Expression that draws a plot (e.g. via \code{hist}, \code{plot}).}
+
+\item{width}{Device width in pixels (default \code{800}).}
+
+\item{height}{Device height in pixels (default \code{400}).}
+
+\item{res}{Device resolution in ppi (default \code{96}).}
 }
 \value{
 An HTML tag.
@@ -41,6 +53,10 @@ An HTML tag.
 A \code{tabler_render} object for use with \code{tablerApp}.
 
 A \code{tabler_render} object.
+
+A \code{tabler_render} object.
+
+An HTML tag.
 
 A \code{tabler_render} object.
 }
@@ -61,4 +77,11 @@ Captures the \code{print()} representation of the result and
 
 Returns an HTML tag tree that replaces the inner HTML of the
   matching \code{uiOutput} placeholder.
+
+Places a \code{<div>} in the UI whose content is replaced by a
+  base-R plot rendered server-side via \code{renderPlot}.
+
+Evaluates \code{expr} inside a PNG graphics device, encodes
+  the result as a base64 data URI, and injects an \code{<img>} tag into the
+  matching \code{plotOutput} placeholder.
 }

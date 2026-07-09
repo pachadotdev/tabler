@@ -91,6 +91,40 @@ renderUI <- function(expr) {
   .render(substitute(expr), parent.frame(), "ui")
 }
 
+#' @title Plot Output Placeholder
+#' @description Places a \code{<div>} in the UI whose content is replaced by a
+#'   base-R plot rendered server-side via \code{renderPlot}.
+#' @param outputId The output identifier.
+#' @param width    CSS width string (default \code{"100\%"}).
+#' @param height   CSS height string (default \code{"400px"}).
+#' @return An HTML tag.
+#' @rdname tabler-outputs
+#' @export
+plotOutput <- function(outputId, width = "100%", height = "400px") {
+  div(id    = outputId,
+      class = "tabler-out-ui",
+      style = paste0("width:", width, ";min-height:", height, ";"))
+}
+
+#' @title Render a Base-R Plot
+#' @description Evaluates \code{expr} inside a PNG graphics device, encodes
+#'   the result as a base64 data URI, and injects an \code{<img>} tag into the
+#'   matching \code{plotOutput} placeholder.
+#' @param expr   Expression that draws a plot (e.g. via \code{hist}, \code{plot}).
+#' @param width  Device width in pixels (default \code{800}).
+#' @param height Device height in pixels (default \code{400}).
+#' @param res    Device resolution in ppi (default \code{96}).
+#' @return A \code{tabler_render} object.
+#' @rdname tabler-outputs
+#' @export
+renderPlot <- function(expr, width = 800, height = 400, res = 96) {
+  structure(
+    list(expr = substitute(expr), env = parent.frame(), type = "plot",
+         width = width, height = height, res = res),
+    class = "tabler_render"
+  )
+}
+
 # Serialise a render result to an HTML string
 .serialise_output <- function(val, type) {
   switch(type,

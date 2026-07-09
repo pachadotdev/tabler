@@ -288,8 +288,30 @@ observeEvent <- function(eventExpr, handlerExpr, ignoreInit = TRUE) {
     .push_context(ctx)
     tryCatch({
       if (inherits(render_obj, "tabler_render")) {
-        val  <- eval(render_obj$expr, render_obj$env)
-        type <- render_obj$type
+        if (identical(render_obj$type, "plot")) {
+          # Capture base-R graphics device output as a PNG, then encode as a
+          # base64 data URI and return an <img> tag (handled as "ui" type).
+          tmp <- tempfile(fileext = ".png")
+          on.exit(unlink(tmp), add = TRUE)
+          grDevices::png(tmp,
+                         width  = render_obj$width,
+                         height = render_obj$height,
+                         res    = render_obj$res)
+          tryCatch(
+            eval(render_obj$expr, render_obj$env),
+            finally = grDevices::dev.off()
+          )
+          raw     <- readBin(tmp, "raw", file.info(tmp)$size)
+          encoded <- jsonlite::base64_enc(raw)
+          val  <- .new_tag("img",
+                           src   = paste0("data:image/png;base64,", encoded),
+                           style = "max-width:100%;height:auto;display:block;",
+                           alt   = "plot")
+          type <- "ui"
+        } else {
+          val  <- eval(render_obj$expr, render_obj$env)
+          type <- render_obj$type
+        }
       } else if (is.function(render_obj)) {
         # External render function (e.g. htmlwidgets::shinyRenderWidget).
         # Evaluate the stored expression directly if available.
