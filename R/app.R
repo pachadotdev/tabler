@@ -253,7 +253,16 @@ tablerApp <- function(ui, server, host = "127.0.0.1", port = 3000L,
     call      = http_handler,
     onWSOpen  = ws_handler
   ))
-  on.exit(httpuv::stopServer(srv), add = TRUE)
+  on.exit({
+    # Notify all connected browsers the app is stopping, then give httpuv a
+    # moment to flush the outgoing message before closing the socket.
+    stop_msg <- jsonlite::toJSON(list(type = "stop"), auto_unbox = TRUE)
+    for (.ws in as.list(connections)) {
+      tryCatch(.ws$send(stop_msg), error = function(e) NULL)
+    }
+    tryCatch(httpuv::service(500L), error = function(e) NULL)
+    httpuv::stopServer(srv)
+  }, add = TRUE)
 
   url <- sprintf("http://%s:%d", host, as.integer(port))
   message("Tabler app running at ", url, "\nPress Ctrl+C to stop.")

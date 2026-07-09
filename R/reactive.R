@@ -289,19 +289,25 @@ observeEvent <- function(eventExpr, handlerExpr, ignoreInit = TRUE) {
     tryCatch({
       if (inherits(render_obj, "tabler_render")) {
         if (identical(render_obj$type, "plot")) {
-          # Capture base-R graphics device output as a PNG, then encode as a
-          # base64 data URI and return an <img> tag (handled as "ui" type).
+          # Use local() so on.exit(dev.off()) fires *before* readBin() runs,
+          # guaranteeing the PNG is fully written regardless of success/error.
           tmp <- tempfile(fileext = ".png")
           on.exit(unlink(tmp), add = TRUE)
-          grDevices::png(tmp,
-                         width  = render_obj$width,
-                         height = render_obj$height,
-                         res    = render_obj$res)
-          tryCatch(
-            eval(render_obj$expr, render_obj$env),
-            finally = grDevices::dev.off()
-          )
-          raw     <- readBin(tmp, "raw", file.info(tmp)$size)
+          local({
+            grDevices::png(tmp,
+                           width  = render_obj$width,
+                           height = render_obj$height,
+                           res    = render_obj$res)
+            on.exit(
+              if (grDevices::dev.cur() > 1L) grDevices::dev.off(),
+              add = TRUE
+            )
+            eval(render_obj$expr, render_obj$env)
+          })
+          fsize <- file.info(tmp)$size
+          if (is.na(fsize) || fsize == 0L)
+            stop("renderPlot produced an empty graphic")
+          raw     <- readBin(tmp, "raw", fsize)
           encoded <- jsonlite::base64_enc(raw)
           val  <- .new_tag("img",
                            src   = paste0("data:image/png;base64,", encoded),

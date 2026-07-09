@@ -12,13 +12,54 @@
   var wsUrl = (location.protocol === "https:" ? "wss://" : "ws://") +
               location.host + "/ws";
   var ws;
-  var reconnectDelay = 1000;
+  var reconnectDelay  = 1000;
+  var everConnected   = false;  // guard: only show overlay after first success
+  var stopped         = false;  // set when server sends {type:"stop"}
+
+  /* -----------------------------------------------------------------------
+   * Disconnect overlay — uses <dialog showModal()> so the browser places it
+   * in the top layer, above every z-index and every native control.
+   * --------------------------------------------------------------------- */
+  function showOverlay() {
+    var el = document.getElementById("tabler-disconnect-overlay");
+    if (el && !el.open) el.showModal();
+  }
+
+  function hideOverlay() {
+    var el = document.getElementById("tabler-disconnect-overlay");
+    if (el && el.open) el.close();
+  }
+
+  function createOverlay() {
+    // Style the ::backdrop that showModal() creates automatically
+    var style = document.createElement("style");
+    style.textContent =
+      "#tabler-disconnect-overlay::backdrop { background: rgba(0,0,0,0.55); }";
+    document.head.appendChild(style);
+
+    var dialog = document.createElement("dialog");
+    dialog.id = "tabler-disconnect-overlay";
+    dialog.setAttribute("style",
+      "border:none;" +
+      "border-radius:8px;" +
+      "padding:2rem 3rem;" +
+      "box-shadow:0 4px 24px rgba(0,0,0,0.3);" +
+      "text-align:center;"
+    );
+    dialog.innerHTML =
+      "<div style='font-size:1.5rem;font-weight:600;color:#333;'>App stopped</div>" +
+      "<div style='font-size:0.9rem;color:#888;margin-top:0.5rem;'>" +
+      "Reload the page once the app is restarted.</div>";
+    document.body.appendChild(dialog);
+  }
 
   function connect() {
     ws = new WebSocket(wsUrl);
 
     ws.onopen = function () {
+      everConnected  = true;
       reconnectDelay = 1000;
+      hideOverlay();
       sendCurrentInputs();
     };
 
@@ -32,6 +73,11 @@
     };
 
     ws.onclose = function () {
+      if (stopped) return;   // intentional stop: overlay already shown, no reconnect
+      if (everConnected) {
+        // Connection was alive and just dropped — show overlay immediately.
+        showOverlay();
+      }
       setTimeout(connect, reconnectDelay);
       reconnectDelay = Math.min(reconnectDelay * 2, 10000);
     };
@@ -49,7 +95,11 @@
    * Output handling — update DOM when the server sends a value
    * --------------------------------------------------------------------- */
   function handleMessage(msg) {
-    if (msg.type === "output") {
+    if (msg.type === "stop") {
+      stopped = true;
+      showOverlay();
+      return;
+    } else if (msg.type === "output") {
       var el = document.getElementById(msg.id);
       if (el) {
         el.innerHTML = msg.html;
@@ -156,6 +206,9 @@
    * Initialise
    * --------------------------------------------------------------------- */
   function init() {
+    try { createOverlay(); } catch (e) {
+      console.warn("[tabler] overlay init failed:", e);
+    }
     bindInputs();
     connect();
   }
