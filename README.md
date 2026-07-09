@@ -13,10 +13,10 @@ coverage](https://raw.githubusercontent.com/pachadotdev/tabler/coverage/badges/c
 [![BuyMeACoffee](https://raw.githubusercontent.com/pachadotdev/buymeacoffee-badges/main/bmc-blue.svg)](https://buymeacoffee.com/pacha)
 <!-- badges: end -->
 
-# Tabler Dashboard for Shiny
+# Tabler for R
 
-A modern dashboard framework for R Shiny using the beautiful Tabler
-Bootstrap theme.
+A modern dashboard framework for R using the beautiful Tabler Bootstrap
+theme.
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/_PWVmmis-AE?si=wJYMvUQUpoZz_k3_" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen>
 
@@ -25,6 +25,9 @@ Bootstrap theme.
 ## Installation
 
 ``` r
+# from CRAN (old version, uses Shiny)
+install.packages("tabler", repos = "https://cran.r-project.org")
+
 # using the R-Universe
 install.packages("tabler", repos = "https://pachadotdev.r-universe.dev")
 
@@ -38,23 +41,16 @@ Please see the documentation: <https://pacha.dev/tabler/>
 
 Here is a complete example that I use to test all layouts with the theme
 (light/dark) and colour options:
-<https://github.com/pachadotdev/tabler/blob/main/examples/shiny-test-layouts.R>
+<https://github.com/pachadotdev/tabler/blob/main/examples/test-layouts.R>
 
 Here’s a minimal example using the “combo” layout with sidebar and top
 navbar:
-<https://github.com/pachadotdev/tabler/blob/main/examples/shiny-test-combo.R>
+<https://github.com/pachadotdev/tabler/blob/main/examples/test-combo.R>
+
+D3PO NEEDS CHANGES - EDIT THIS LATER
 
 ``` r
-if (!require("d3po")) {
-  install.packages("d3po", repos = "https://pachadotdev.r-universe.dev")
-}
-
-library(shiny)
-
-# library(tabler)
-load_all()
-
-library(d3po)
+library(tabler)
 
 svg_text <- paste(
   readLines("./examples/tabler-logo.svg", warn = FALSE),
@@ -108,7 +104,7 @@ top_nav <- navbar_menu(
 # Combine both for combo layout
 main_navbar <- list(side = sidebar_nav, top = top_nav)
 
-ui <- tabler_page(
+ui <- page(
   theme = "light",
   color = "teal",
   title = "Combo Layout",
@@ -117,61 +113,142 @@ ui <- tabler_page(
   navbar = main_navbar,
   body = list(
     # Page header
-    page_header(
-      title_text = "Combo Layout",
-      pretitle_text = "Overview"
+    header(
+      title = "Combo Layout",
+      subtitle = "Overview"
     ),
     # Page body content
-    shiny::tags$div(
-      class = "page-body",
-      shiny::tags$div(
-        class = "container-xl",
+    body(
+      div(
+        class = "row",
+        # ── Left column: controls ──────────────────────────────────────────
         column(
-          6,
-          tabler_card(
-            title = "My title",
-            footer = "Footer.",
-            p("My text"),
-            p("More text", class = "text-muted"),
-            d3po_output("plot", width = "100%", height = "500px")
+          4,
+          card(
+            title = "Controls",
+            selectInput(
+              "dataset", "Dataset",
+              choices = c("mtcars", "iris", "airquality"),
+              selected = "mtcars"
+            ),
+            sliderInput(
+              "n_rows", "Rows to display",
+              min = 1, max = 30, value = 10
+            ),
+            sliderInput(
+              "multiplier", "Value multiplier",
+              min = 0.5, max = 5, value = 1, step = 0.5
+            ),
+            textInput(
+              "label", "Dashboard label",
+              value = "My Dashboard"
+            ),
+            checkboxInput(
+              "show_cols", "Show column names",
+              value = FALSE
+            ),
+            radioButtons(
+              "stat", "Summary statistic",
+              choices = c("Mean" = "mean", "Median" = "median", "SD" = "sd")
+            ),
+            actionButton("refresh", "Recalculate", icon = "refresh")
+          )
+        ),
+        # ── Right column: outputs ──────────────────────────────────────────
+        column(
+          8,
+          card(
+            title = uiOutput("card_title"),
+            textOutput("summary_text")
+          ),
+          card(
+            title = "Computed statistic",
+            textOutput("computed")
+          ),
+          card(
+            title = "Data preview",
+            verbatimTextOutput("data_preview")
           )
         )
       )
     )
   ),
-  footer = tabler_footer(
+  footer = footer(
     left = "Tabler",
-    right = shiny::tags$span("v1.4.0")
+    right = tags$span("v1.4.0")
   )
 )
 
 server <- function(input, output, session) {
-  output$plot <- render_d3po({
-    set.seed(123)
 
-    sim <- data.frame(
-      x = rnorm(100),
-      y = rnorm(100),
-      letter = sample(letters[1:3], 100, replace = TRUE)
+  # Reactive dataset — re-evaluates only when input$dataset changes
+  current_data <- reactive({
+    switch(input$dataset %||% "mtcars",
+      mtcars     = mtcars,
+      iris       = iris,
+      airquality = airquality
     )
+  })
 
-    # for light theme
-    axis_color <- "#000"
-    tooltip_color <- "#fff"
+  # Dynamic card title reflects the chosen label
+  output$card_title <- renderUI({
+    lbl <- input$label %||% "Dataset summary"
+    span(lbl, class = "text-teal")
+  })
 
-    # for dark theme
-    axis_color <- "#fff"
-    tooltip_color <- "#000"
+  # One-line summary
+  output$summary_text <- renderText({
+    df <- current_data()
+    n  <- min(input$n_rows %||% 10L, nrow(df))
+    paste0(
+      input$dataset %||% "—", ": ",
+      nrow(df), " rows × ", ncol(df), " cols.",
+      " Showing top ", n, "."
+    )
+  })
 
-    d3po(sim) %>%
-      po_scatter(daes(x = x, y = y, group = letter)) %>%
-      po_labels(title = "Weight Distribution by Type") %>%
-      po_background("transparent") %>%
-      po_theme(axis = axis_color, tooltips = tooltip_color)
+  # Apply the chosen statistic across numeric columns, scaled by multiplier
+  stat_val <- reactive({
+    df       <- current_data()
+    num_cols <- df[, vapply(df, is.numeric, logical(1L)), drop = FALSE]
+    if (ncol(num_cols) == 0L) return(NA_real_)
+
+    fn <- switch(input$stat %||% "mean",
+      mean   = function(x) mean(x, na.rm = TRUE),
+      median = function(x) stats::median(x, na.rm = TRUE),
+      sd     = function(x) stats::sd(x, na.rm = TRUE)
+    )
+    round(mean(vapply(num_cols, fn, numeric(1L))) * (input$multiplier %||% 1), 3L)
+  })
+
+  output$computed <- renderText({
+    val  <- stat_val()
+    cols <- if (isTRUE(input$show_cols)) {
+      df <- current_data()
+      nm <- names(df[, vapply(df, is.numeric, logical(1L)), drop = FALSE])
+      paste0("  [", paste(nm, collapse = ", "), "]")
+    } else ""
+    paste0(input$stat %||% "mean", " of column ", input$stat %||% "mean",
+           "s × multiplier = ", val, cols)
+  })
+
+  # Verbatim data preview — number of rows driven by slider
+  output$data_preview <- renderPrint({
+    df <- current_data()
+    n  <- min(input$n_rows %||% 10L, nrow(df))
+    head(df, n)
+  })
+
+  # Action button: recalculate forces stat_val to reprint (it's already reactive,
+  # but this shows observeEvent wiring)
+  click_count <- reactiveVal(0L)
+  observeEvent(input$refresh, {
+    click_count(click_count() + 1L)
+    message("Recalculate clicked (", click_count(), " times)")
   })
 }
 
-shinyApp(ui, server)
+tablerApp(ui, server)
 ```
 
 ## Available Layouts

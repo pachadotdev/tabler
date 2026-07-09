@@ -1,5 +1,5 @@
 Package: tabler
-Title: Create Dashboards with 'Tabler' and 'Shiny'
+Title: Create Dashboards with 'Tabler'
 Version: 1.4.0
 Authors@R: c(
     person("Mauricio", "Vargas Sepulveda", role = c("aut", "cre"), email = "m.vargas.sepulveda@gmail.com"),
