@@ -27,7 +27,7 @@
 #'
 #' server <- function(input, output, session) {}
 #'
-#' # shinyApp(ui, server)
+#' # tablerApp(ui, server)
 #' @return HTML tag with dependencies attached
 #' @rdname tabler-page
 ## NOTE: exported names intentionally short (no `tabler_` prefix)
@@ -80,7 +80,6 @@ page <- function(
   )
 
   # Build the HTML structure
-  # Note: Do not build a full <html> tag here; Shiny provides that.
 
   # Resolve theme selection and validate color
   allowed_themes <- c("light", "dark")
@@ -116,18 +115,19 @@ page <- function(
   }
   script_text <- paste(script_lines, collapse = ";")
 
-  # Build head and body separately and return a tagList. Returning a full
-  # <html> tag would cause Shiny to nest html/body (Shiny already provides
-  # those), which breaks rendering. Attach dependencies to the returned
-  # tag list so resources are included in the final document.
+  # Build head and body separately and return a tagList so the httpuv
+  # server can render the full page.
+  dep_tags <- add_deps(layout = layout)
+
   html_head <- head(
+    dep_tags,
     meta(charset = "utf-8"),
     meta(name = "viewport", content = "width=device-width, initial-scale=1, viewport-fit=cover"),
     meta(`http-equiv` = "X-UA-Compatible", content = "ie=edge"),
     # Use an actual <title> tag for the document head. The local helper
     # `title()` renders an <h2> element intended for page body headers and
     # accidentally added that to the head when used here.
-    if (!is.null(title)) htmltools::tags$title(title),
+    if (!is.null(title)) tags$title(title),
     script(HTML(script_text))
   )
 
@@ -136,9 +136,8 @@ page <- function(
     list(page_content)
   ))
 
-  # Return head and body as a tag list; add_deps will attach dependencies so
-  # CSS/JS are included in the Shiny page head.
-  add_deps(tagList(html_head, html_body), layout = layout, theme = theme, color = color)
+  # Return head and body as a tag list with dependency link/script tags.
+  tagList(html_head, html_body)
 }
 
 #' @title Create a Topbar Header
@@ -157,14 +156,14 @@ topbar <- function(title = NULL, brand_image = NULL, ...) {
   nav_children <- NULL
   if (length(extra) > 0) {
     # collect li elements
-    li_items <- lapply(extra, function(x) if (inherits(x, "shiny.tag") && x$name == "li") x else NULL)
+    li_items <- lapply(extra, function(x) if (inherits(x, "tabler.tag") && x$name == "li") x else NULL)
     li_items <- Filter(Negate(is.null), li_items)
     if (length(li_items) > 0) {
       # Make first item active by default (add 'active' class to its anchor)
       first_li <- li_items[[1]]
       if (!is.null(first_li$children) && length(first_li$children) > 0) {
         anchor <- first_li$children[[1]]
-        if (inherits(anchor, "shiny.tag") && anchor$name == "a") {
+        if (inherits(anchor, "tabler.tag") && anchor$name == "a") {
           li_items[[1]]$children[[1]] <- tagAppendAttributes(anchor, class = "active")
         }
       }
@@ -173,7 +172,7 @@ topbar <- function(title = NULL, brand_image = NULL, ...) {
     }
   }
 
-  header(
+  tags$header(
     class = "navbar navbar-expand-md navbar-light d-print-none",
     div(
       class = "container-xl",
@@ -188,7 +187,7 @@ topbar <- function(title = NULL, brand_image = NULL, ...) {
       # place any raw passed elements (e.g., anchors, buttons) and the wrapped nav items
       div(
         class = "navbar-nav flex-row order-md-last",
-        lapply(extra, function(x) if (!(inherits(x, "shiny.tag") && x$name == "li")) x else NULL),
+        lapply(extra, function(x) if (!(inherits(x, "tabler.tag") && x$name == "li")) x else NULL),
         nav_children
       )
     )
@@ -241,11 +240,11 @@ sidebar_menu <- function(..., title = NULL) {
   # Make first item active by default if it has a tab_name
   if (length(items) > 0) {
     first_item <- items[[1]]
-    if (inherits(first_item, "shiny.tag")) {
+    if (inherits(first_item, "tabler.tag")) {
       # Find the anchor tag and add active class
       if (!is.null(first_item$children) && length(first_item$children) > 0) {
         anchor <- first_item$children[[1]]
-        if (inherits(anchor, "shiny.tag") && anchor$name == "a") {
+        if (inherits(anchor, "tabler.tag") && anchor$name == "a") {
           items[[1]]$children[[1]] <- tagAppendAttributes(anchor, class = "active")
         }
       }
@@ -257,9 +256,12 @@ sidebar_menu <- function(..., title = NULL) {
     items
   )
 
-  # Attach title as attribute so layout builder can render a navbar-brand
+  # Attach brand metadata as data-* attributes so layout builders can extract
+  # them and so as.character() includes the values in the HTML.
   if (!is.null(title)) {
-    ul$attribs$title <- title
+    if (!is.null(title$img))  ul$attribs[["data-brand-img"]]  <- title$img
+    if (!is.null(title$text)) ul$attribs[["data-brand-text"]] <- title$text
+    if (!is.null(title$href)) ul$attribs[["data-brand-href"]] <- title$href
   }
 
   ul
@@ -295,11 +297,11 @@ horizontal_menu <- function(...) {
   # Make first item active by default if it has a tab_name
   if (length(items) > 0) {
     first_item <- items[[1]]
-    if (inherits(first_item, "shiny.tag")) {
+    if (inherits(first_item, "tabler.tag")) {
       # Find the anchor tag and add active class
       if (!is.null(first_item$children) && length(first_item$children) > 0) {
         anchor <- first_item$children[[1]]
-        if (inherits(anchor, "shiny.tag") && anchor$name == "a") {
+        if (inherits(anchor, "tabler.tag") && anchor$name == "a") {
           items[[1]]$children[[1]] <- tagAppendAttributes(anchor, class = "active")
         }
       }
@@ -416,7 +418,7 @@ menu_dropdown <- function(text, icon = NULL, href = NULL, items = list()) {
       lapply(lst, function(it) {
         if (is.character(it) && length(it) >= 2) {
           a(class = "dropdown-item", href = it[2], it[1])
-        } else if (inherits(it, "shiny.tag")) {
+        } else if (inherits(it, "tabler.tag")) {
           it
         } else {
           a(class = "dropdown-item", href = "#", as.character(it))
@@ -449,7 +451,7 @@ tab_items <- function(...) {
   # Make first item active by default
   if (length(items) > 0) {
     first_item <- items[[1]]
-    if (inherits(first_item, "shiny.tag")) {
+    if (inherits(first_item, "tabler.tag")) {
       # Add 'show active' classes to first tab
       items[[1]] <- tagAppendAttributes(first_item, class = "show active")
     }
@@ -524,7 +526,7 @@ navbar_menu <- function(..., brand = NULL, show_theme_button = FALSE) {
   items <- list(...)
 
   # Collect only <li> elements for the main menu
-  li_items <- lapply(items, function(x) if (inherits(x, "shiny.tag") && x$name == "li") x else NULL)
+  li_items <- lapply(items, function(x) if (inherits(x, "tabler.tag") && x$name == "li") x else NULL)
   li_items <- Filter(Negate(is.null), li_items)
 
   # Brand block (simple link or image). Keep as a node to be included in the menu
@@ -584,9 +586,9 @@ navbar_menu <- function(..., brand = NULL, show_theme_button = FALSE) {
     # build collapse body for sidebar
     # For sidebar context, ensure dropdown anchors use sidebar behavior
     li_items <- lapply(li_items, function(li) {
-      if (inherits(li, "shiny.tag") && li$name == "li" && length(li$children) > 0) {
+      if (inherits(li, "tabler.tag") && li$name == "li" && length(li$children) > 0) {
         anchor <- li$children[[1]]
-        if (inherits(anchor, "shiny.tag") && !is.null(anchor$attribs[["data-bs-toggle"]]) && anchor$attribs[["data-bs-toggle"]] == "dropdown") {
+        if (inherits(anchor, "tabler.tag") && !is.null(anchor$attribs[["data-bs-toggle"]]) && anchor$attribs[["data-bs-toggle"]] == "dropdown") {
           # Overwrite dropdown attributes for sidebar context instead of appending
           # (tagAppendAttributes concatenates values, producing "outside false" etc.)
           anchor$attribs[["data-bs-auto-close"]] <- "false"
@@ -637,7 +639,7 @@ navbar_menu <- function(..., brand = NULL, show_theme_button = FALSE) {
     )
   } else {
     # standard header
-    header(
+    tags$header(
       class = "navbar navbar-expand-md",
       HTML("<!-- BEGIN NAVBAR  -->"),
       div(
@@ -654,9 +656,9 @@ navbar_menu <- function(..., brand = NULL, show_theme_button = FALSE) {
                 if (!is.null(brand_tag)) li(class = "nav-item", brand_tag),
                 # ensure li_items dropdown anchors are normalized for header context
                 lapply(li_items, function(it) {
-                  if (inherits(it, "shiny.tag") && it$name == "li" && length(it$children) > 0) {
+                  if (inherits(it, "tabler.tag") && it$name == "li" && length(it$children) > 0) {
                     a <- it$children[[1]]
-                    if (inherits(a, "shiny.tag") && !is.null(a$attribs[["data-bs-toggle"]]) && a$attribs[["data-bs-toggle"]] == "dropdown") {
+                    if (inherits(a, "tabler.tag") && !is.null(a$attribs[["data-bs-toggle"]]) && a$attribs[["data-bs-toggle"]] == "dropdown") {
                       a$attribs[["aria-expanded"]] <- "false"
                       it$children[[1]] <- a
                     }

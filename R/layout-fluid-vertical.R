@@ -7,15 +7,15 @@
 #' @keywords internal
 layout_fluid_vertical <- function(navbar, sidebar, body, footer, theme = "light", color = NULL, show_theme_button = TRUE) {
   side_nav <- NULL
-  if (is.list(navbar) && !inherits(navbar, "shiny.tag")) {
+  if (is.list(navbar) && !inherits(navbar, "tabler.tag")) {
     side_nav <- navbar$side
-  } else if (!is.null(navbar) && inherits(navbar, "shiny.tag")) {
+  } else if (!is.null(navbar) && inherits(navbar, "tabler.tag")) {
     tag_name <- navbar$name
     if (tag_name == "aside") side_nav <- navbar
   }
 
   # Ensure sidebar has data-bs-theme="dark" attribute
-  if (!is.null(side_nav) && inherits(side_nav, "shiny.tag") && side_nav$name == "aside") {
+  if (!is.null(side_nav) && inherits(side_nav, "tabler.tag") && side_nav$name == "aside") {
     if (grepl("navbar-vertical", side_nav$attribs$class %||% "")) {
       side_nav$attribs[["data-bs-theme"]] <- "dark"
       if (!grepl("navbar-expand-lg", side_nav$attribs$class %||% "")) {

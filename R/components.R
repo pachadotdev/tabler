@@ -1,3 +1,15 @@
+#' @title Bootstrap Grid Column
+#' @description Wraps content in a Bootstrap column of the given width.
+#' @param width Integer 1–12 (number of columns in a 12-column grid).
+#' @param ... Child elements.
+#' @param class Additional CSS classes.
+#' @rdname tabler-components
+#' @return An HTML tag.
+#' @export
+column <- function(width, ..., class = NULL) {
+  div(class = paste(c(paste0("col-", as.integer(width)), class), collapse = " "), ...)
+}
+
 #' @title  Create a Tabler Card
 #' @description Build a modern card component with optional header, body, and footer
 #' @param ... Card body content
@@ -44,8 +56,8 @@ card <- function(..., title = NULL, footer = NULL, status = NULL, class = NULL) 
       if (is.character(body_content)) {
         # character content -> normal paragraph
         body_par <- p(body_content)
-      } else if (is.list(body_content) && length(body_content) == 1 && inherits(body_content[[1]], "shiny.tag")) {
-        # single shiny.tag (e.g., p(...)) -> use as-is
+      } else if (is.list(body_content) && length(body_content) == 1 && inherits(body_content[[1]], "tabler.tag")) {
+        # single tabler.tag (e.g., p(...)) -> use as-is
         body_par <- body_content[[1]]
       } else {
         # other cases: include as-is
@@ -128,39 +140,50 @@ title <- function(text) {
   h2(class = "page-title", text)
 }
 
-#' @title Create a page body
-#' @description Create the full page body structure with optional header
-#' @param ... Additional elements to include in the body (e.g., cards, plots, tables, etc.)
-#' @param title_text The main page title text (optional)
-#' @param pretitle_text The page pretitle text (optional)
+#' @title Create a page header
+#' @description Create a standalone page header with optional pretitle and action buttons
+#' @param title The main page title text
+#' @param subtitle The page pretitle text (optional)
 #' @param header_actions Additional elements to include in the header (e.g., action buttons)
 #' @rdname tabler-components
 #' @export
-body <- function(..., title_text = NULL, pretitle_text = NULL, header_actions = NULL) {
-  # Build header if title is provided
-  header_tag <- NULL
-  if (!is.null(title_text)) {
-    header_tag <- div(
-      class = "page-header d-print-none",
-      `aria-label` = "Page header",
+header <- function(title, subtitle = NULL, header_actions = NULL) {
+  div(
+    class = "page-header d-print-none",
+    `aria-label` = "Page header",
+    div(
+      class = "container-xl",
       div(
-        class = "container-xl",
+        class = "row g-2 align-items-center",
         div(
-          class = "row g-2 align-items-center",
+          class = "col",
+          if (!is.null(subtitle)) div(class = "page-pretitle", subtitle),
+          h2(class = "page-title", title)
+        ),
+        if (!is.null(header_actions)) {
           div(
-            class = "col",
-            if (!is.null(pretitle_text)) div(class = "page-pretitle", pretitle_text),
-            h2(class = "page-title", title_text)
-          ),
-          if (!is.null(header_actions)) {
-            div(
-              class = "col-auto ms-auto d-print-none",
-              header_actions
-            )
-          }
-        )
+            class = "col-auto ms-auto d-print-none",
+            header_actions
+          )
+        }
       )
     )
+  )
+}
+
+#' @title Create a page body
+#' @description Create the full page body structure with optional header
+#' @param ... Additional elements to include in the body (e.g., cards, plots, tables, etc.)
+#' @param title The main page title text (optional)
+#' @param subtitle The page pretitle text (optional)
+#' @param header_actions Additional elements to include in the header (e.g., action buttons)
+#' @rdname tabler-components
+#' @export
+body <- function(..., title = NULL, subtitle = NULL, header_actions = NULL) {
+  # Build header if title is provided
+  header_tag <- NULL
+  if (!is.null(title)) {
+    header_tag <- header(title, subtitle, header_actions)
   }
   
   # Build body
@@ -334,7 +357,7 @@ button <- function(label, href = NULL, onclick = NULL, color = "primary",
   # Icon handling: allow passing an icon name or a full tag
   icon_tag <- NULL
   if (!is.null(icon)) {
-    if (inherits(icon, "shiny.tag") || inherits(icon, "html")) {
+    if (inherits(icon, "tabler.tag") || inherits(icon, "html")) {
       # Single tag element
       icon_tag <- list(icon)
     } else if (is.list(icon)) {
@@ -367,12 +390,12 @@ button <- function(label, href = NULL, onclick = NULL, color = "primary",
   if (isTRUE(disabled)) attrs$class <- paste(attrs$class, "disabled")
 
   # Ensure children is a flat list (but preserve tag objects which are lists
-  # with class 'shiny.tag'). This avoids nested lists that can duplicate
+  # with class 'tabler.tag'). This avoids nested lists that can duplicate
   # elements when icon_tag was itself a list.
   flatten_children <- function(x) {
     out <- list()
     for (el in x) {
-      if (is.list(el) && !inherits(el, "shiny.tag") && !inherits(el, "html")) {
+      if (is.list(el) && !inherits(el, "tabler.tag") && !inherits(el, "html")) {
         out <- c(out, flatten_children(el))
       } else {
         out <- c(out, list(el))
@@ -388,7 +411,7 @@ button <- function(label, href = NULL, onclick = NULL, color = "primary",
     attrs$href <- href
     # role=button when using anchor
     attrs$role <- attrs$role %||% "button"
-    do.call(htmltools::a, c(attrs, children))
+    do.call(a, c(attrs, children))
   } else {
     attrs$type <- type
     do.call(button_tag, c(attrs, children))

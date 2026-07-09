@@ -4,9 +4,9 @@
 layout_navbar_overlap <- function(navbar, sidebar, body, footer, theme = "light", color = NULL, show_theme_button = TRUE) {
   top_nav <- NULL
 
-  if (is.list(navbar) && !inherits(navbar, "shiny.tag")) {
+  if (is.list(navbar) && !inherits(navbar, "tabler.tag")) {
     top_nav <- navbar$top
-  } else if (!is.null(navbar) && inherits(navbar, "shiny.tag")) {
+  } else if (!is.null(navbar) && inherits(navbar, "tabler.tag")) {
     top_nav <- navbar
   }
 
@@ -14,11 +14,11 @@ layout_navbar_overlap <- function(navbar, sidebar, body, footer, theme = "light"
   header_tag <- NULL
   brand_tag <- NULL
 
-  if (!is.null(top_nav) && inherits(top_nav, "shiny.tag") && top_nav$name == "aside") {
+  if (!is.null(top_nav) && inherits(top_nav, "tabler.tag") && top_nav$name == "aside") {
     # Extract components from aside tag
     container <- NULL
     for (ch in top_nav$children) {
-      if (inherits(ch, "shiny.tag") && ch$name == "div" && grepl("container-fluid", ch$attribs$class %||% "")) {
+      if (inherits(ch, "tabler.tag") && ch$name == "div" && grepl("container-fluid", ch$attribs$class %||% "")) {
         container <- ch
         break
       }
@@ -30,7 +30,7 @@ layout_navbar_overlap <- function(navbar, sidebar, body, footer, theme = "light"
     if (!is.null(container)) {
       for (c2 in container$children) {
         # Skip non-tag children (like HTML comments)
-        if (!inherits(c2, "shiny.tag")) next
+        if (!inherits(c2, "tabler.tag")) next
 
         # Extract brand
         if (c2$name == "div" && grepl("navbar-brand", c2$attribs$class %||% "")) {
@@ -44,33 +44,33 @@ layout_navbar_overlap <- function(navbar, sidebar, body, footer, theme = "light"
           !is.null(c2$attribs$id) &&
           c2$attribs$id == "sidebar-menu") {
           for (c3 in c2$children) {
-            if (inherits(c3, "shiny.tag") && c3$name == "ul") {
+            if (inherits(c3, "tabler.tag") && c3$name == "ul") {
               # The ul children might be wrapped in a list - unwrap them
               all_items <- list()
               for (child in c3$children) {
-                if (is.list(child) && !inherits(child, "shiny.tag")) {
+                if (is.list(child) && !inherits(child, "tabler.tag")) {
                   # Unwrap the list
                   all_items <- c(all_items, child)
-                } else if (inherits(child, "shiny.tag")) {
+                } else if (inherits(child, "tabler.tag")) {
                   all_items <- c(all_items, list(child))
                 }
               }
 
               # Separate theme items from regular nav items
               for (item in all_items) {
-                if (inherits(item, "shiny.tag") && item$name == "li") {
+                if (inherits(item, "tabler.tag") && item$name == "li") {
                   if (!is.null(item$attribs$class) && grepl("mt-auto", item$attribs$class %||% "")) {
                     # Theme toggle item - extract the <a> tags directly only if show_theme_button is TRUE
                     if (isTRUE(show_theme_button)) {
                       for (child in item$children) {
                         # Child might be wrapped in a list
-                        if (is.list(child) && !inherits(child, "shiny.tag")) {
+                        if (is.list(child) && !inherits(child, "tabler.tag")) {
                           for (a_tag in child) {
-                            if (inherits(a_tag, "shiny.tag") && a_tag$name == "a") {
+                            if (inherits(a_tag, "tabler.tag") && a_tag$name == "a") {
                               theme_items <- c(theme_items, list(a_tag))
                             }
                           }
-                        } else if (inherits(child, "shiny.tag") && child$name == "a") {
+                        } else if (inherits(child, "tabler.tag") && child$name == "a") {
                           theme_items <- c(theme_items, list(child))
                         }
                       }
@@ -79,7 +79,7 @@ layout_navbar_overlap <- function(navbar, sidebar, body, footer, theme = "light"
                     # Regular nav item - update dropdown aria-expanded
                     if (length(item$children) > 0) {
                       a <- item$children[[1]]
-                      if (inherits(a, "shiny.tag") && !is.null(a$attribs[["data-bs-toggle"]]) && a$attribs[["data-bs-toggle"]] == "dropdown") {
+                      if (inherits(a, "tabler.tag") && !is.null(a$attribs[["data-bs-toggle"]]) && a$attribs[["data-bs-toggle"]] == "dropdown") {
                         a$attribs[["aria-expanded"]] <- "false"
                         a$attribs[["data-bs-auto-close"]] <- "outside"
                         item$children[[1]] <- a
@@ -96,7 +96,7 @@ layout_navbar_overlap <- function(navbar, sidebar, body, footer, theme = "light"
     }
 
     # Build navbar-overlap layout header structure (like condensed but with navbar-overlap class and data-bs-theme="dark")
-    header_tag <- header(
+    header_tag <- tags$header(
       class = "navbar navbar-expand-md navbar-overlap d-print-none",
       `data-bs-theme` = "dark",
       div(
@@ -145,7 +145,7 @@ layout_navbar_overlap <- function(navbar, sidebar, body, footer, theme = "light"
   modified_body <- body
   if (is.list(body)) {
     modified_body <- lapply(body, function(item) {
-      if (inherits(item, "shiny.tag") &&
+      if (inherits(item, "tabler.tag") &&
         item$name == "div" &&
         !is.null(item$attribs$class) &&
         grepl("page-header", item$attribs$class)) {

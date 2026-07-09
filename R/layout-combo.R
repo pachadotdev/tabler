@@ -11,11 +11,11 @@ layout_combo <- function(navbar, sidebar, body, footer, theme = "light", color =
   side_nav <- NULL
 
   # Support both list(navbar = list(top=..., side=...)) and direct tags
-  if (is.list(navbar) && !inherits(navbar, "shiny.tag")) {
+  if (is.list(navbar) && !inherits(navbar, "tabler.tag")) {
     top_nav <- navbar$top
     side_nav <- navbar$side
   } else if (!is.null(navbar)) {
-    if (inherits(navbar, "shiny.tag")) {
+    if (inherits(navbar, "tabler.tag")) {
       tag_name <- navbar$name
       if (tag_name == "header") {
         top_nav <- navbar
@@ -26,7 +26,7 @@ layout_combo <- function(navbar, sidebar, body, footer, theme = "light", color =
   }
 
   # Ensure sidebar has data-bs-theme="dark" attribute
-  if (!is.null(side_nav) && inherits(side_nav, "shiny.tag") && side_nav$name == "aside") {
+  if (!is.null(side_nav) && inherits(side_nav, "tabler.tag") && side_nav$name == "aside") {
     # Check if it has the navbar-vertical class
     if (grepl("navbar-vertical", side_nav$attribs$class %||% "")) {
       # Add data-bs-theme="dark" and ensure navbar-expand-lg
@@ -43,11 +43,11 @@ layout_combo <- function(navbar, sidebar, body, footer, theme = "light", color =
 
   # Build the top navbar if present
   header_tag <- NULL
-  if (!is.null(top_nav) && inherits(top_nav, "shiny.tag") && top_nav$name == "aside") {
+  if (!is.null(top_nav) && inherits(top_nav, "tabler.tag") && top_nav$name == "aside") {
     # Extract navbar items from aside tag
     container <- NULL
     for (ch in top_nav$children) {
-      if (inherits(ch, "shiny.tag") && ch$name == "div" && grepl("container-fluid", ch$attribs$class %||% "")) {
+      if (inherits(ch, "tabler.tag") && ch$name == "div" && grepl("container-fluid", ch$attribs$class %||% "")) {
         container <- ch
         break
       }
@@ -56,9 +56,9 @@ layout_combo <- function(navbar, sidebar, body, footer, theme = "light", color =
     nav_items <- list()
     if (!is.null(container)) {
       for (c2 in container$children) {
-        if (inherits(c2, "shiny.tag") && c2$name == "div" && !is.null(c2$attribs$id) && c2$attribs$id == "sidebar-menu") {
+        if (inherits(c2, "tabler.tag") && c2$name == "div" && !is.null(c2$attribs$id) && c2$attribs$id == "sidebar-menu") {
           for (c3 in c2$children) {
-            if (inherits(c3, "shiny.tag") && c3$name == "ul") {
+            if (inherits(c3, "tabler.tag") && c3$name == "ul") {
               nav_items <- c3$children
             }
           }
@@ -70,7 +70,7 @@ layout_combo <- function(navbar, sidebar, body, footer, theme = "light", color =
     regular_items <- list()
 
     for (item in nav_items) {
-      if (inherits(item, "shiny.tag") && item$name == "li" &&
+      if (inherits(item, "tabler.tag") && item$name == "li" &&
         !is.null(item$attribs$class) && grepl("mt-auto", item$attribs$class %||% "")) {
         # This is a theme toggle item - skip it (only appears in sidebar)
       } else {
@@ -79,7 +79,7 @@ layout_combo <- function(navbar, sidebar, body, footer, theme = "light", color =
     }
 
     # Build horizontal navbar structure with d-none d-lg-flex
-    header_tag <- header(
+    header_tag <- tags$header(
       class = "navbar navbar-expand-md d-none d-lg-flex d-print-none",
       div(
         class = "container-xl",
@@ -94,7 +94,7 @@ layout_combo <- function(navbar, sidebar, body, footer, theme = "light", color =
         )
       )
     )
-  } else if (!is.null(top_nav) && inherits(top_nav, "shiny.tag")) {
+  } else if (!is.null(top_nav) && inherits(top_nav, "tabler.tag")) {
     # If top_nav is already a header tag, filter out theme buttons
     if (top_nav$name == "header") {
       # Recursively remove theme toggle li items from the header

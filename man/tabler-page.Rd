@@ -127,5 +127,5 @@ ui <- page(
 
 server <- function(input, output, session) {}
 
-# shinyApp(ui, server)
+# tablerApp(ui, server)
 }
