@@ -77,6 +77,14 @@ render_html <- function(x) {
   if (inherits(x, "tabler.tag.list")) {
     return(paste(vapply(x, render_html, character(1L)), collapse = ""))
   }
+  # htmltools tags from external packages (e.g. htmlwidgets output placeholders).
+  # Use their own as.character() which is registered by htmltools.
+  if (is.list(x) && "shiny.tag" %in% class(x)) {
+    return(paste(as.character(x), collapse = ""))
+  }
+  if (is.list(x) && "shiny.tag.list" %in% class(x)) {
+    return(paste(vapply(x, function(el) paste(as.character(el), collapse = ""), character(1L)), collapse = ""))
+  }
   if (is.list(x) && !inherits(x, "tabler.tag")) {
     return(paste(vapply(x, render_html, character(1L)), collapse = ""))
   }

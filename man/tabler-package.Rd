@@ -4,7 +4,7 @@
 \name{tabler-package}
 \alias{tabler}
 \alias{tabler-package}
-\title{tabler: Create Dashboards with 'Tabler' and 'Shiny'}
+\title{tabler: Create Dashboards with 'Tabler'}
 \description{
 \if{html}{\figure{logo.svg}{options: style='float: right' alt='logo' width='120'}}
 

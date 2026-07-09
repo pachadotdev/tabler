@@ -82,18 +82,19 @@
 #' @export
 tablerApp <- function(ui, server, host = "127.0.0.1", port = 3000L,
                       launch.browser = interactive()) {
-  # ---- Build the static page HTML once ------------------------------------
+  # Build the static page HTML once ----
   page_html <- paste0("<!DOCTYPE html><html>", render_html(ui), "</html>")
 
-  # ---- Shared app state ---------------------------------------------------
+  # Shared app state ----
   connections  <- new.env(hash = TRUE, parent = emptyenv())  # id -> ws
   output_cache <- new.env(hash = TRUE, parent = emptyenv())  # id -> html string
+  widget_store <- new.env(hash = TRUE, parent = emptyenv())  # id -> widget HTML
 
-  # ---- Input / output proxies ---------------------------------------------
+  # Input / output proxies ----
   input_proxy  <- reactiveValues()          # $.ReactiveValues gives reactive reads
   output_proxy <- new.env(parent = emptyenv())  # plain env; $<- is standard env assign
 
-  # ---- Session object (minimal) -------------------------------------------
+  # Session object (minimal) ----
   send_all <- function(msg_json) {
     for (ws in as.list(connections)) {
       tryCatch(ws$send(msg_json), error = function(e) NULL)
@@ -111,14 +112,29 @@ tablerApp <- function(ui, server, host = "127.0.0.1", port = 3000L,
     close = function() invisible(NULL)
   )
 
-  # ---- Call server --------------------------------------------------------
+  # Call server ----
   server(input_proxy, output_proxy, session)
 
-  # ---- Wire up output observers -------------------------------------------
+  # Wire up output observers ----
   # send_fn is called by .observe_output whenever an output value changes
   make_send_fn <- function(output_id) {
     function(val, type) {
-      html <- .serialise_output(val, type)
+      if (identical(type, "widget") && inherits(val, "htmlwidget")) {
+        # Save the self-contained widget HTML and serve it via HTTP so the
+        # iframe loads it as a normal page (avoids srcdoc encoding issues).
+        tmp <- tempfile(fileext = ".html")
+        on.exit(unlink(tmp), add = TRUE)
+        htmlwidgets::saveWidget(val, tmp, selfcontained = TRUE)
+        raw <- paste(readLines(tmp, warn = FALSE), collapse = "\n")
+        assign(output_id, raw, envir = widget_store)
+        html <- paste0(
+          '<iframe src="/widgets/', output_id, '"',
+          ' style="width:100%;height:100%;border:none;"',
+          ' frameborder="0"></iframe>'
+        )
+      } else {
+        html <- .serialise_output(val, type)
+      }
       assign(output_id, html, envir = output_cache)
       send_all(jsonlite::toJSON(
         list(type = "output", id = output_id, html = html),
@@ -135,7 +151,7 @@ tablerApp <- function(ui, server, host = "127.0.0.1", port = 3000L,
   # Initial flush — populates output_cache before any browser connects
   .flush_domain()
 
-  # ---- HTTP handler -------------------------------------------------------
+  # HTTP handler ----
   http_handler <- function(req) {
     path <- req$PATH_INFO
 
@@ -146,6 +162,27 @@ tablerApp <- function(ui, server, host = "127.0.0.1", port = 3000L,
         headers = list("Content-Type" = "text/html; charset=utf-8"),
         body    = page_html
       ))
+    }
+
+    # Widget HTML endpoint — serve self-contained widget pages
+    if (grepl("^/widgets/", path)) {
+      wid <- sub("^/widgets/", "", path)   # regex mode so ^ anchors correctly
+      # Reject any path tricks
+      if (grepl("..", wid, fixed = TRUE) || grepl("/", wid, fixed = TRUE)) {
+        return(list(status = 403L,
+                    headers = list("Content-Type" = "text/plain"),
+                    body    = "Forbidden"))
+      }
+      if (exists(wid, envir = widget_store, inherits = FALSE)) {
+        return(list(
+          status  = 200L,
+          headers = list("Content-Type" = "text/html; charset=utf-8"),
+          body    = get(wid, envir = widget_store)
+        ))
+      }
+      return(list(status = 404L,
+                  headers = list("Content-Type" = "text/plain"),
+                  body    = "Widget not found"))
     }
 
     # Static assets — resolve via system.file() for path-traversal safety
@@ -177,7 +214,7 @@ tablerApp <- function(ui, server, host = "127.0.0.1", port = 3000L,
     )
   }
 
-  # ---- WebSocket handler --------------------------------------------------
+  # WebSocket handler ----
   ws_handler <- function(ws) {
     ws_id <- paste(sample(c(letters, 0:9), 12L, replace = TRUE), collapse = "")
     assign(ws_id, ws, envir = connections)
@@ -211,7 +248,7 @@ tablerApp <- function(ui, server, host = "127.0.0.1", port = 3000L,
     })
   }
 
-  # ---- Start server -------------------------------------------------------
+  # Start server ----
   srv <- httpuv::startServer(host, as.integer(port), list(
     call      = http_handler,
     onWSOpen  = ws_handler
@@ -223,7 +260,7 @@ tablerApp <- function(ui, server, host = "127.0.0.1", port = 3000L,
 
   if (isTRUE(launch.browser)) utils::browseURL(url)
 
-  # ---- Event loop ---------------------------------------------------------
+  # Event loop ----
   tryCatch(
     repeat {
       httpuv::service(1000L)   # poll for 1 s then yield

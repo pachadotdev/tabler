@@ -99,8 +99,8 @@ renderUI <- function(expr) {
       txt <- paste(utils::capture.output(print(val)), collapse = "\n")
       html_escape(txt)
     },
-    ui    = render_html(val),
-    html  = as.character(val),          # already-escaped error strings
+    ui     = render_html(val),
+    html   = as.character(val),          # already-escaped error strings
     html_escape(as.character(val))
   )
 }

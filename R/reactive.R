@@ -287,9 +287,21 @@ observeEvent <- function(eventExpr, handlerExpr, ignoreInit = TRUE) {
     ctx <- new_context(function() .schedule(run))
     .push_context(ctx)
     tryCatch({
-      val <- eval(render_obj$expr, render_obj$env)
+      if (inherits(render_obj, "tabler_render")) {
+        val  <- eval(render_obj$expr, render_obj$env)
+        type <- render_obj$type
+      } else if (is.function(render_obj)) {
+        # External render function (e.g. htmlwidgets::shinyRenderWidget).
+        # Evaluate the stored expression directly if available.
+        expr <- attr(render_obj, "tabler_expr", exact = TRUE)
+        env  <- attr(render_obj, "tabler_env",  exact = TRUE)
+        val  <- if (!is.null(expr)) eval(expr, env) else render_obj()
+        type <- "widget"
+      } else {
+        stop("output must be a tabler render function")
+      }
       .pop_context()
-      send_fn(val, render_obj$type)
+      send_fn(val, type)
     }, error = function(e) {
       .pop_context()
       send_fn(

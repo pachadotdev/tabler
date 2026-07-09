@@ -22,3 +22,4 @@
 ^package\.json$
 ^package-lock\.json$
 ^screenshot-combo\.png$
+^screenshot-combo-d3po\.png$
