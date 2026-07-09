@@ -82,6 +82,12 @@
 #' @export
 tablerApp <- function(ui, server, host = "127.0.0.1", port = 3000L,
                       launch.browser = interactive()) {
+  # Reset the global reactive domain so stale observers from a previous run
+  # do not interfere with this new session.
+  .domain$pending       <- list()
+  .domain$flushing      <- FALSE
+  .domain$context_stack <- list()
+
   # Build the static page HTML once ----
   page_html <- paste0("<!DOCTYPE html><html>", render_html(ui), "</html>")
 
@@ -148,7 +154,7 @@ tablerApp <- function(ui, server, host = "127.0.0.1", port = 3000L,
     .observe_output(render_obj, make_send_fn(nm))
   }
 
-  # Initial flush — populates output_cache before any browser connects
+  # Initial flush — populates output_cache before any browser connects ----
   .flush_domain()
 
   # HTTP handler ----
@@ -260,7 +266,9 @@ tablerApp <- function(ui, server, host = "127.0.0.1", port = 3000L,
     for (.ws in as.list(connections)) {
       tryCatch(.ws$send(stop_msg), error = function(e) NULL)
     }
-    tryCatch(httpuv::service(500L), error = function(e) NULL)
+    # Catch interrupt as well: if Ctrl+C fired inside service() above, an
+    # unhandled interrupt here would skip stopServer() and leave the port bound.
+    tryCatch(httpuv::service(500L), error = function(e) NULL, interrupt = function(e) NULL)
     httpuv::stopServer(srv)
   }, add = TRUE)
 

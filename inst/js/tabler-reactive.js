@@ -95,7 +95,10 @@
    * Output handling — update DOM when the server sends a value
    * --------------------------------------------------------------------- */
   function handleMessage(msg) {
-    if (msg.type === "stop") {
+    if (msg.type === "reload") {
+      location.reload();
+      return;
+    } else if (msg.type === "stop") {
       stopped = true;
       showOverlay();
       return;
