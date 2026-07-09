@@ -23,21 +23,7 @@ sidebar_nav <- navbar_menu(
     "Layout",
     icon = "layout-2",
     href = "./",
-    items = list(
-      c("Boxed", "./"),
-      c("Combined", "./"),
-      c("Condensed", "./"),
-      c("Fluid", "./"),
-      c("Fluid vertical", "./"),
-      c("Horizontal", "./"),
-      c("Navbar dark", "./"),
-      c("Navbar overlap", "./"),
-      c("Navbar sticky", "./"),
-      c("Right vertical", "./"),
-      c("RTL mode", "./"),
-      c("Vertical", "./"),
-      c("Vertical transparent", "./")
-    )
+    items = list(c("Item 1", "./"))
   )
 )
 
@@ -73,7 +59,7 @@ ui <- page(
     # Page body content
     body(
       column(
-        6,
+        12,
         card(
           title = "My title",
           footer = "Footer.",
@@ -105,8 +91,8 @@ server <- function(input, output, session) {
     tooltip_color <- "#fff"
 
     # for dark theme
-    axis_color <- "#fff"
-    tooltip_color <- "#000"
+    # axis_color <- "#fff"
+    # tooltip_color <- "#000"
 
     d3po(sim) %>%
       po_scatter(daes(x = x, y = y, group = letter)) %>%
