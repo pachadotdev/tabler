@@ -100,6 +100,9 @@ tablerApp <- function(ui, server, host = "127.0.0.1", port = 3000L,
   input_proxy  <- reactiveValues()          # $.ReactiveValues gives reactive reads
   output_proxy <- new.env(parent = emptyenv())  # plain env; $<- is standard env assign
 
+  # URL sync config — NULL means disabled; character() means enabled (empty exclude) ----
+  url_sync_exclude <- NULL
+
   # Session object (minimal) ----
   send_all <- function(msg_json) {
     for (ws in as.list(connections)) {
@@ -115,7 +118,11 @@ tablerApp <- function(ui, server, host = "127.0.0.1", port = 3000L,
       ))
     },
     onSessionEnded = function(fn) invisible(NULL),
-    close = function() invisible(NULL)
+    close = function() invisible(NULL),
+    # Used by syncUrl() — stores the exclude list and enables URL sync
+    .setUrlSync = function(exclude) {
+      url_sync_exclude <<- as.character(exclude)
+    }
   )
 
   # Call server ----
@@ -231,6 +238,18 @@ tablerApp <- function(ui, server, host = "127.0.0.1", port = 3000L,
       tryCatch(
         ws$send(jsonlite::toJSON(
           list(type = "output", id = oid, html = html),
+          auto_unbox = TRUE
+        )),
+        error = function(e) NULL
+      )
+    }
+
+    # Send URL sync config if syncUrl() was called in the server function
+    if (!is.null(url_sync_exclude)) {
+      tryCatch(
+        ws$send(jsonlite::toJSON(
+          list(type = "custom", messageType = "tablerSyncUrl",
+               message = list(exclude = as.list(url_sync_exclude))),
           auto_unbox = TRUE
         )),
         error = function(e) NULL

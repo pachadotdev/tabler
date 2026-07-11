@@ -280,6 +280,39 @@ observeEvent <- function(eventExpr, handlerExpr, ignoreInit = TRUE) {
 }
 
 # ---------------------------------------------------------------------------
+# URL sync
+# ---------------------------------------------------------------------------
+
+#' @title Sync App Inputs with the URL
+#' @description Call once inside the server function to enable two-way URL
+#'   parameter synchronisation: the URL query string initialises inputs on
+#'   page load, and every subsequent input change updates the URL in-place
+#'   (no page reload, no browser-history spam).
+#'
+#' @param session The \code{session} object passed by \code{\link{tablerApp}}
+#'   to the server function.
+#' @param exclude Character vector of input IDs to omit from the URL.
+#'   Action buttons are \emph{always} omitted regardless of this setting.
+#'
+#' @details
+#' The resulting URL is clean and quote-free, e.g.
+#' \preformatted{http://localhost:3000/?dataset=mtcars&n_rows=10&stat=mean}
+#'
+#' Sharing or bookmarking that URL restores the exact input state.
+#'
+#' @return Invisibly, \code{session} (for chaining).
+#' @rdname reactive-primitives
+#' @export
+syncUrl <- function(session, exclude = character(0L)) {
+  if (!is.function(session[[".setUrlSync"]])) {
+    warning("syncUrl() requires a tablerApp session object — ignoring")
+    return(invisible(session))
+  }
+  session$.setUrlSync(as.character(exclude))
+  invisible(session)
+}
+
+# ---------------------------------------------------------------------------
 # Internal: observer for output renderers (avoids NSE at the tablerApp level)
 # ---------------------------------------------------------------------------
 .observe_output <- function(render_obj, send_fn) {

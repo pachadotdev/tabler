@@ -7,6 +7,7 @@
 \alias{isolate}
 \alias{observe}
 \alias{observeEvent}
+\alias{syncUrl}
 \title{Reactive Value}
 \usage{
 reactiveVal(value = NULL)
@@ -20,6 +21,8 @@ isolate(expr)
 observe(expr)
 
 observeEvent(eventExpr, handlerExpr, ignoreInit = TRUE)
+
+syncUrl(session, exclude = character(0L))
 }
 \arguments{
 \item{value}{Initial value.}
@@ -33,6 +36,12 @@ observeEvent(eventExpr, handlerExpr, ignoreInit = TRUE)
 \item{handlerExpr}{Expression to run when the event fires.}
 
 \item{ignoreInit}{If \code{TRUE} (default), skip the first evaluation.}
+
+\item{session}{The \code{session} object passed by \code{\link{tablerApp}}
+to the server function.}
+
+\item{exclude}{Character vector of input IDs to omit from the URL.
+Action buttons are \emph{always} omitted regardless of this setting.}
 }
 \value{
 A function that acts as getter/setter.
@@ -44,6 +53,8 @@ A zero-argument function returning the cached value.
 The result of \code{expr}.
 
 An invisible observer handle with \code{$suspend()} / \code{$resume()}.
+
+Invisibly, \code{session} (for chaining).
 }
 \description{
 A single mutable reactive value.  Call with no argument to read
@@ -63,4 +74,15 @@ Eagerly re-runs \code{expr} whenever its reactive dependencies
   change.
 
 Runs \code{handlerExpr} whenever \code{eventExpr} changes.
+
+Call once inside the server function to enable two-way URL
+  parameter synchronisation: the URL query string initialises inputs on
+  page load, and every subsequent input change updates the URL in-place
+  (no page reload, no browser-history spam).
+}
+\details{
+The resulting URL is clean and quote-free, e.g.
+\preformatted{http://localhost:3000/?dataset=mtcars&n_rows=10&stat=mean}
+
+Sharing or bookmarking that URL restores the exact input state.
 }

@@ -17,6 +17,11 @@
   var stopped         = false;  // set when server sends {type:"stop"}
 
   /* -----------------------------------------------------------------------
+   * URL sync state
+   * --------------------------------------------------------------------- */
+  var urlSync = { enabled: false, exclude: [] };
+
+  /* -----------------------------------------------------------------------
    * Disconnect overlay — uses <dialog showModal()> so the browser places it
    * in the top layer, above every z-index and every native control.
    * --------------------------------------------------------------------- */
@@ -109,11 +114,111 @@
         bindInputs(el);   // re-bind any newly-injected inputs (uiOutput)
       }
     } else if (msg.type === "custom") {
-      var ev = new CustomEvent("tabler:message", {
-        detail: { type: msg.messageType, message: msg.message }
-      });
-      document.dispatchEvent(ev);
+      if (msg.messageType === "tablerSyncUrl") {
+        urlSync.exclude = (msg.message && msg.message.exclude) ? msg.message.exclude : [];
+        urlSync.enabled = true;
+        applyUrlParams();
+      } else {
+        var ev = new CustomEvent("tabler:message", {
+          detail: { type: msg.messageType, message: msg.message }
+        });
+        document.dispatchEvent(ev);
+      }
     }
+  }
+
+  /* -----------------------------------------------------------------------
+   * URL parameter helpers
+   * --------------------------------------------------------------------- */
+
+  // Read URL query, set matching DOM inputs, and send values to R.
+  function applyUrlParams() {
+    if (!location.search) return;
+    var pairs = location.search.slice(1).split("&");
+    for (var i = 0; i < pairs.length; i++) {
+      if (!pairs[i]) continue;
+      var idx = pairs[i].indexOf("=");
+      if (idx < 0) continue;
+      var key = decodeURIComponent(pairs[i].slice(0, idx));
+      var raw = decodeURIComponent(pairs[i].slice(idx + 1));
+      applyParam(key, raw);
+    }
+  }
+
+  // Apply a single URL param to the matching input element(s) and send to R.
+  function applyParam(id, raw) {
+    var els = document.querySelectorAll('[data-tabler-input="' + id + '"]');
+    if (els.length === 0) return;
+    var type = els[0].getAttribute("data-tabler-type") || "text";
+    var val;
+
+    if (type === "checkbox") {
+      var checked = raw === "true";
+      els[0].checked = checked;
+      val = checked;
+    } else if (type === "range" || type === "number") {
+      var n = parseFloat(raw);
+      els[0].value = raw;
+      val = isNaN(n) ? raw : n;
+      var badge = document.getElementById(id + "_val");
+      if (badge) badge.textContent = raw;
+    } else if (type === "radio") {
+      for (var i = 0; i < els.length; i++) els[i].checked = els[i].value === raw;
+      val = raw;
+    } else if (type === "checkbox-group") {
+      var vals = raw.split(",");
+      for (var j = 0; j < els.length; j++) els[j].checked = vals.indexOf(els[j].value) !== -1;
+      val = vals;
+    } else {
+      els[0].value = raw;
+      val = raw;
+    }
+
+    sendMsg({ type: "input", name: id, value: val });
+  }
+
+  // Collect current values for all non-excluded, non-button inputs.
+  function collectUrlParams() {
+    var els = document.querySelectorAll("[data-tabler-input]");
+    var params = {};
+    var seen = {};
+    for (var i = 0; i < els.length; i++) {
+      var el   = els[i];
+      var id   = el.getAttribute("data-tabler-input");
+      var type = el.getAttribute("data-tabler-type") || "text";
+      if (type === "button") continue;
+      if (urlSync.exclude.indexOf(id) !== -1) continue;
+      if (seen[id]) continue;
+      seen[id] = true;
+
+      if (type === "checkbox") {
+        params[id] = el.checked ? "true" : "false";
+      } else if (type === "checkbox-group") {
+        var all = document.querySelectorAll('[data-tabler-input="' + id + '"][data-tabler-type="checkbox-group"]');
+        var checked = [];
+        for (var k = 0; k < all.length; k++) if (all[k].checked) checked.push(all[k].value);
+        if (checked.length) params[id] = checked.join(",");
+      } else if (type === "radio") {
+        var sel = document.querySelector('[data-tabler-input="' + id + '"]:checked');
+        if (sel) params[id] = sel.value;
+      } else {
+        params[id] = el.value;
+      }
+    }
+    return params;
+  }
+
+  // Build a query string from a plain object (no quotes, keys sorted).
+  function buildQueryString(params) {
+    var parts = [];
+    var keys  = Object.keys(params).sort();
+    for (var i = 0; i < keys.length; i++) {
+      var k = keys[i], v = params[k];
+      if (v !== undefined && v !== "") {
+        parts.push(encodeURIComponent(k) + "=" + encodeURIComponent(v));
+      }
+    }
+    return parts.join("&");
   }
 
   /* -----------------------------------------------------------------------
@@ -154,6 +259,12 @@
     if (type === "range") {
       var badge = document.getElementById(id + "_val");
       if (badge) badge.textContent = el.value;
+    }
+
+    // Mirror to URL if sync is enabled
+    if (urlSync.enabled && type !== "button" && urlSync.exclude.indexOf(id) === -1) {
+      var qs = buildQueryString(collectUrlParams());
+      history.replaceState(null, "", location.pathname + (qs ? "?" + qs : ""));
     }
   }
 
