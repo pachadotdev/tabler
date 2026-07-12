@@ -34,7 +34,7 @@
 }
 
 # ---------------------------------------------------------------------------
-# Reactive source — tracks which contexts depend on it
+# Reactive source - tracks which contexts depend on it
 # ---------------------------------------------------------------------------
 new_source <- function() {
   deps <- new.env(hash = TRUE, parent = emptyenv())
@@ -60,7 +60,7 @@ new_source <- function() {
 }
 
 # ---------------------------------------------------------------------------
-# Reactive context — can be invalidated; runs cleanup callbacks on invalidation
+# Reactive context - can be invalidated; runs cleanup callbacks on invalidation
 # ---------------------------------------------------------------------------
 new_context <- function(on_invalidate_fn) {
   id          <- .new_id()
@@ -305,7 +305,7 @@ observeEvent <- function(eventExpr, handlerExpr, ignoreInit = TRUE) {
 #' @export
 syncUrl <- function(session, exclude = character(0L)) {
   if (!is.function(session[[".setUrlSync"]])) {
-    warning("syncUrl() requires a tablerApp session object — ignoring")
+    warning("syncUrl() requires a tablerApp session object - ignoring")
     return(invisible(session))
   }
   session$.setUrlSync(as.character(exclude))
@@ -322,41 +322,65 @@ syncUrl <- function(session, exclude = character(0L)) {
     tryCatch({
       if (inherits(render_obj, "tabler_render")) {
         if (identical(render_obj$type, "plot")) {
-          # Use local() so on.exit(dev.off()) fires *before* readBin() runs,
-          # guaranteeing the PNG is fully written regardless of success/error.
-          tmp <- tempfile(fileext = ".png")
+          # Render to SVG so the output is resolution-independent and works for
+          # base-R, tinyplot, ggplot2, lattice, and any other grid/base device.
+          tmp <- tempfile(fileext = ".svg")
           on.exit(unlink(tmp), add = TRUE)
           local({
-            grDevices::png(tmp,
-                           width  = render_obj$width,
-                           height = render_obj$height,
-                           res    = render_obj$res)
+            grDevices::svg(tmp,
+                           width  = render_obj$width  / 96,  # px -> inches
+                           height = render_obj$height / 96)
             on.exit(
               if (grDevices::dev.cur() > 1L) grDevices::dev.off(),
               add = TRUE
             )
             eval(render_obj$expr, render_obj$env)
           })
-          fsize <- file.info(tmp)$size
-          if (is.na(fsize) || fsize == 0L)
+          svg_txt <- paste(readLines(tmp, warn = FALSE), collapse = "\n")
+          if (!nzchar(svg_txt))
             stop("renderPlot produced an empty graphic")
-          raw     <- readBin(tmp, "raw", fsize)
-          encoded <- jsonlite::base64_enc(raw)
-          val  <- .new_tag("img",
-                           src   = paste0("data:image/png;base64,", encoded),
-                           style = "max-width:100%;height:auto;display:block;",
-                           alt   = "plot")
-          type <- "ui"
+          val  <- svg_txt
+          type <- "plot_src"
         } else {
           val  <- eval(render_obj$expr, render_obj$env)
           type <- render_obj$type
         }
       } else if (is.function(render_obj)) {
-        # External render function (e.g. htmlwidgets::shinyRenderWidget).
-        # Evaluate the stored expression directly if available.
+        # External render function from any htmlwidgets-based package
+        # (render_d3po, renderWidget, leaflet::renderLeaflet, ...).
+        # We never call Shiny internals directly.  Priority order:
+        #
+        #  1. tabler_expr / tabler_env attributes - explicit opt-in kept for
+        #     backward compatibility (e.g. renderWidget() in outputs.R).
+        #
+        #  2. origUserFunc - the un-wrapped user closure stored by
+        #     shiny::createRenderFunction (which htmlwidgets::shinyRenderWidget
+        #     delegates to).  It takes no arguments, evaluates the raw expression
+        #     in the original env, and reactive reads inside it are tracked
+        #     normally because our context is already pushed above.
+        #
+        #  3. Direct call - last resort; will fail for true Shiny render fns
+        #     that require a session, but works for simple zero-arg wrappers.
         expr <- attr(render_obj, "tabler_expr", exact = TRUE)
         env  <- attr(render_obj, "tabler_env",  exact = TRUE)
-        val  <- if (!is.null(expr)) eval(expr, env) else render_obj()
+        if (!is.null(expr)) {
+          val <- eval(expr, env)
+        } else {
+          ouf <- environment(render_obj)[["origUserFunc"]]
+          if (is.function(ouf)) {
+            val <- ouf()
+          } else {
+            val <- tryCatch(
+              render_obj(),
+              error = function(e) {
+                stop("Could not evaluate widget render function without a ",
+                     "Shiny session. Use renderWidget() or any render helper ",
+                     "built on htmlwidgets::shinyRenderWidget.\n",
+                     "Original error: ", conditionMessage(e))
+              }
+            )
+          }
+        }
         type <- "widget"
       } else {
         stop("output must be a tabler render function")

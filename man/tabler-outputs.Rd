@@ -10,6 +10,8 @@
 \alias{renderUI}
 \alias{plotOutput}
 \alias{renderPlot}
+\alias{widgetOutput}
+\alias{renderWidget}
 \title{Text Output Placeholder}
 \usage{
 textOutput(outputId, inline = FALSE)
@@ -28,20 +30,23 @@ renderUI(expr)
 
 plotOutput(outputId, width = "100\%", height = "400px")
 
-renderPlot(expr, width = 800, height = 400, res = 96)
+renderPlot(expr, width = 800, height = 400)
+
+widgetOutput(outputId, width = "100\%", height = "400px")
+
+renderWidget(expr)
 }
 \arguments{
-\item{outputId}{The output identifier.}
+\item{outputId}{The output identifier (must match the server-side name).}
 
 \item{inline}{If \code{TRUE}, use \code{<span>}; otherwise \code{<div>}.}
 
-\item{expr}{Expression that draws a plot (e.g. via \code{hist}, \code{plot}).}
+\item{expr}{Expression that returns an \code{htmlwidget} object (e.g.
+\code{d3po(...)}, \code{leaflet(...)}).}
 
-\item{width}{Device width in pixels (default \code{800}).}
+\item{width}{CSS width string (default \code{"100\%"}).}
 
-\item{height}{Device height in pixels (default \code{400}).}
-
-\item{res}{Device resolution in ppi (default \code{96}).}
+\item{height}{CSS height string (default \code{"400px"}).}
 }
 \value{
 An HTML tag.
@@ -59,6 +64,11 @@ A \code{tabler_render} object.
 An HTML tag.
 
 A \code{tabler_render} object.
+
+An HTML tag.
+
+A zero-argument function with \code{tabler_expr} and
+  \code{tabler_env} attributes recognised by \code{tablerApp}.
 }
 \description{
 Places a \code{<span>} in the UI whose content is updated by
@@ -81,7 +91,29 @@ Returns an HTML tag tree that replaces the inner HTML of the
 Places a \code{<div>} in the UI whose content is replaced by a
   base-R plot rendered server-side via \code{renderPlot}.
 
-Evaluates \code{expr} inside a PNG graphics device, encodes
-  the result as a base64 data URI, and injects an \code{<img>} tag into the
-  matching \code{plotOutput} placeholder.
+Evaluates \code{expr} inside an SVG graphics device, and
+  injects the resulting inline SVG into the matching \code{plotOutput}
+  placeholder.  Works with base-R graphics, \pkg{tinyplot}, \pkg{ggplot2},
+  \pkg{lattice}, and any other graphics system that honours the active
+  device.
+
+Places a \code{<div>} in the UI whose content is replaced by an
+  htmlwidget (e.g. from \pkg{d3po}, \pkg{leaflet}, \pkg{plotly}) rendered by
+  a matching server-side call.  The widget is served inside a sandboxed
+  \code{<iframe>} so its own JS/CSS cannot conflict with the page.
+
+Generic render function for any \pkg{htmlwidgets}-based widget.
+  Captures the expression \emph{without} evaluating it and stores the calling
+  environment, so \code{tablerApp} can evaluate it inside a reactive context
+  without requiring a live Shiny session.  Reactive values referenced inside
+  \code{expr} are tracked automatically.
+}
+\details{
+Package authors who ship their own \code{render_*()} helpers can make them
+tabler-compatible by attaching the same two attributes:
+\preformatted{
+  attr(fn, "tabler_expr") <- substitute(expr)
+  attr(fn, "tabler_env")  <- parent.frame()
+}
+This is exactly what \code{render_d3po()} in \pkg{d3po} already does.
 }

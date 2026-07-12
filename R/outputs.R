@@ -106,23 +106,72 @@ plotOutput <- function(outputId, width = "100%", height = "400px") {
       style = paste0("width:", width, ";min-height:", height, ";"))
 }
 
-#' @title Render a Base-R Plot
-#' @description Evaluates \code{expr} inside a PNG graphics device, encodes
-#'   the result as a base64 data URI, and injects an \code{<img>} tag into the
-#'   matching \code{plotOutput} placeholder.
+#' @title Render a Plot
+#' @description Evaluates \code{expr} inside an SVG graphics device, and
+#'   injects the resulting inline SVG into the matching \code{plotOutput}
+#'   placeholder.  Works with base-R graphics, \pkg{tinyplot}, \pkg{ggplot2},
+#'   \pkg{lattice}, and any other graphics system that honours the active
+#'   device.
 #' @param expr   Expression that draws a plot (e.g. via \code{hist}, \code{plot}).
 #' @param width  Device width in pixels (default \code{800}).
 #' @param height Device height in pixels (default \code{400}).
-#' @param res    Device resolution in ppi (default \code{96}).
 #' @return A \code{tabler_render} object.
 #' @rdname tabler-outputs
 #' @export
-renderPlot <- function(expr, width = 800, height = 400, res = 96) {
+renderPlot <- function(expr, width = 800, height = 400) {
   structure(
     list(expr = substitute(expr), env = parent.frame(), type = "plot",
-         width = width, height = height, res = res),
+         width = width, height = height),
     class = "tabler_render"
   )
+}
+
+#' @title HTML Widget Output Placeholder
+#' @description Places a \code{<div>} in the UI whose content is replaced by an
+#'   htmlwidget (e.g. from \pkg{d3po}, \pkg{leaflet}, \pkg{plotly}) rendered by
+#'   a matching server-side call.  The widget is served inside a sandboxed
+#'   \code{<iframe>} so its own JS/CSS cannot conflict with the page.
+#' @param outputId The output identifier (must match the server-side name).
+#' @param width    CSS width string (default \code{"100\%"}).
+#' @param height   CSS height string (default \code{"400px"}).
+#' @return An HTML tag.
+#' @rdname tabler-outputs
+#' @export
+widgetOutput <- function(outputId, width = "100%", height = "400px") {
+  div(id    = outputId,
+      class = "tabler-out-ui",
+      style = paste0("width:", width, ";min-height:", height, ";"))
+}
+
+#' @title Render an HTML Widget
+#' @description Generic render function for any \pkg{htmlwidgets}-based widget.
+#'   Captures the expression \emph{without} evaluating it and stores the calling
+#'   environment, so \code{tablerApp} can evaluate it inside a reactive context
+#'   without requiring a live Shiny session.  Reactive values referenced inside
+#'   \code{expr} are tracked automatically.
+#'
+#' @details
+#' Package authors who ship their own \code{render_*()} helpers can make them
+#' tabler-compatible by attaching the same two attributes:
+#' \preformatted{
+#'   attr(fn, "tabler_expr") <- substitute(expr)
+#'   attr(fn, "tabler_env")  <- parent.frame()
+#' }
+#' This is exactly what \code{render_d3po()} in \pkg{d3po} already does.
+#'
+#' @param expr Expression that returns an \code{htmlwidget} object (e.g.
+#'   \code{d3po(...)}, \code{leaflet(...)}).
+#' @return A zero-argument function with \code{tabler_expr} and
+#'   \code{tabler_env} attributes recognised by \code{tablerApp}.
+#' @rdname tabler-outputs
+#' @export
+renderWidget <- function(expr) {
+  e   <- substitute(expr)
+  env <- parent.frame()
+  fn  <- function() eval(e, env)
+  attr(fn, "tabler_expr") <- e
+  attr(fn, "tabler_env")  <- env
+  fn
 }
 
 # Serialise a render result to an HTML string

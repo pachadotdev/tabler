@@ -95,6 +95,7 @@ tablerApp <- function(ui, server, host = "127.0.0.1", port = 3000L,
   connections  <- new.env(hash = TRUE, parent = emptyenv())  # id -> ws
   output_cache <- new.env(hash = TRUE, parent = emptyenv())  # id -> html string
   widget_store <- new.env(hash = TRUE, parent = emptyenv())  # id -> widget HTML
+  plot_store   <- new.env(hash = TRUE, parent = emptyenv())  # id -> svg string
 
   # Input / output proxies ----
   input_proxy  <- reactiveValues()          # $.ReactiveValues gives reactive reads
@@ -144,6 +145,14 @@ tablerApp <- function(ui, server, host = "127.0.0.1", port = 3000L,
           '<iframe src="/widgets/', output_id, '"',
           ' style="width:100%;height:100%;border:none;"',
           ' frameborder="0"></iframe>'
+        )
+      } else if (identical(type, "plot_src") && is.character(val)) {
+        # Serve the SVG from a dedicated HTTP endpoint so <img> gets a real
+        # URL — no encoding needed and right-click "Save image as" works.
+        assign(output_id, val, envir = plot_store)
+        html <- paste0(
+          '<img src="/plots/', output_id, '?t=', as.integer(Sys.time()), '"',
+          ' style="max-width:100%;height:auto;display:block;" alt="plot">'
         )
       } else {
         html <- .serialise_output(val, type)
@@ -196,6 +205,27 @@ tablerApp <- function(ui, server, host = "127.0.0.1", port = 3000L,
       return(list(status = 404L,
                   headers = list("Content-Type" = "text/plain"),
                   body    = "Widget not found"))
+    }
+
+    # Plot SVG endpoint — serves raw SVG so <img> can use a plain URL
+    if (grepl("^/plots/", path)) {
+      pid <- sub("^/plots/([^?]*).*$", "\\1", path)
+      if (grepl("..", pid, fixed = TRUE) || grepl("/", pid, fixed = TRUE)) {
+        return(list(status = 403L,
+                    headers = list("Content-Type" = "text/plain"),
+                    body    = "Forbidden"))
+      }
+      if (exists(pid, envir = plot_store, inherits = FALSE)) {
+        return(list(
+          status  = 200L,
+          headers = list("Content-Type"  = "image/svg+xml; charset=utf-8",
+                         "Cache-Control" = "no-cache, no-store, must-revalidate"),
+          body    = get(pid, envir = plot_store)
+        ))
+      }
+      return(list(status = 404L,
+                  headers = list("Content-Type" = "text/plain"),
+                  body    = "Plot not found"))
     }
 
     # Static assets — resolve via system.file() for path-traversal safety
