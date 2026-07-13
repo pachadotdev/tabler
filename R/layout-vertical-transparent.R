@@ -4,13 +4,13 @@
 layout_vertical_transparent <- function(navbar, sidebar, body, footer, theme = "light", color = NULL, show_theme_button = TRUE) {
   # same as vertical but kept for semantic clarity
   side_nav <- NULL
-  if (is.list(navbar) && !inherits(navbar, "shiny.tag")) {
+  if (is.list(navbar) && !inherits(navbar, "tabler.tag")) {
     side_nav <- navbar$side
-  } else if (!is.null(navbar) && inherits(navbar, "shiny.tag")) {
+  } else if (!is.null(navbar) && inherits(navbar, "tabler.tag")) {
     if (navbar$name == "aside") side_nav <- navbar
   }
   # Mark transparent sidebar class when appropriate
-  if (!is.null(side_nav) && inherits(side_nav, "shiny.tag") && side_nav$name == "aside") {
+  if (!is.null(side_nav) && inherits(side_nav, "tabler.tag") && side_nav$name == "aside") {
     if (grepl("navbar-vertical", side_nav$attribs$class %||% "")) {
       if (!grepl("navbar-transparent", side_nav$attribs$class %||% "")) {
         side_nav$attribs$class <- paste(side_nav$attribs$class, "navbar-transparent")

@@ -21,3 +21,6 @@
 ^node_modules$
 ^package\.json$
 ^package-lock\.json$
+^screenshot-combo\.png$
+^screenshot-combo-d3po\.png$
+^screenshot-fluid-geyser\.png$

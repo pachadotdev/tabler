@@ -1,66 +1,39 @@
 #' @keywords internal
 "_PACKAGE"
 
+# Register S3 methods for operator generics at load time.
+# Doing this via .onLoad avoids roxygen2 generating unquoted `S3method($,...)`
+# entries in NAMESPACE, which R's parser rejects.
+.onLoad <- function(libname, pkgname) {
+  ns <- asNamespace(pkgname)
+  registerS3method("$",            "ReactiveValues",  .rv_dollar,               envir = ns)
+  registerS3method("$<-",          "ReactiveValues",  .rv_dollar_assign,        envir = ns)
+  registerS3method("as.character", "tabler.tag",       .as_char_tag,      envir = ns)
+  registerS3method("as.character", "tabler.tag.list",  .as_char_tag_list, envir = ns)
+}
+
 #' @title Add Tabler Dependencies
-#' @description Attach necessary CSS and JavaScript dependencies for Tabler dashboard
-#' @param tag HTML tag object to attach dependencies to
-#' @param layout Layout type (for RTL-specific CSS)
-#' @return HTML tag with dependencies attached
-#' @source \url{https://github.com/tabler/}
+#' @description Return link/script tags that load Tabler CSS/JS.  The httpuv
+#'   server in \code{\link{tablerApp}} serves these paths directly from the
+#'   package's installed \code{inst/} directory.
+#' @param layout Layout type (for RTL-specific CSS).
+#' @return A tagList of \code{<link>} and \code{<script>} tags.
 #' @keywords internal
 #' @noRd
-add_deps <- function(tag, layout = "default", theme = "light", color = "minimal") {
-  # Determine if RTL CSS is needed
-  is_rtl <- layout == "rtl"
+add_deps <- function(layout = "default") {
+  is_rtl   <- layout == "rtl"
+  css_file <- if (!is_rtl) "css/tabler.min.css" else "css/tabler.rtl.min.css"
 
-  # Core dependencies
-  deps <- list(
-    # Tabler Core CSS and JS (mandatory)
-    htmltools::htmlDependency(
-      name = "tabler-core",
-      version = "1.4.0",
-      src = c(file = system.file("tabler-1.4.0", package = "tabler")),
-      stylesheet = if (!is_rtl) "css/tabler.min.css" else "css/tabler.rtl.min.css",
-      script = "js/tabler.min.js"
-    ),
-
-    # Tabler Theme Script
-    htmltools::htmlDependency(
-      name = "tabler-theme",
-      version = "1.4.0",
-      src = c(file = system.file("tabler-1.4.0", package = "tabler")),
-      script = "js/tabler-theme.min.js"
-    ),
-
-    # Tabler Icons (webfont)
-    htmltools::htmlDependency(
-      name = "tabler-icons",
-      version = "3.55.0",
-      src = c(file = system.file("tabler-icons-3.55.0", package = "tabler")),
-      stylesheet = "tabler-icons.min.css"
-    ),
-
-    # Tabler Plugin Styles
-    htmltools::htmlDependency(
-      name = "tabler-plugins",
-      version = "1.4.0",
-      src = c(file = system.file("tabler-1.4.0", package = "tabler")),
-      stylesheet = c(
-        "css/tabler-socials.min.css",
-        "css/tabler-themes.min.css"
-      )
-    ),
-
-    # Tabler Tabs Script (for tab switching)
-    htmltools::htmlDependency(
-      name = "tabler-tabs",
-      version = "1.0.0",
-      src = c(file = system.file(package = "tabler")),
-      script = "js/tabler-tabs.js"
-    )
+  tagList(
+    tags$link(rel = "stylesheet", href = paste0("/tabler-1.4.0/", css_file)),
+    tags$link(rel = "stylesheet", href = "/tabler-icons-3.55.0/tabler-icons.min.css"),
+    tags$link(rel = "stylesheet", href = "/tabler-1.4.0/css/tabler-socials.min.css"),
+    tags$link(rel = "stylesheet", href = "/tabler-1.4.0/css/tabler-themes.min.css"),
+    tags$script(src = "/tabler-1.4.0/js/tabler.min.js"),
+    tags$script(src = "/tabler-1.4.0/js/tabler-theme.min.js"),
+    tags$script(src = "/js/tabler-tabs.js"),
+    tags$script(src = "/js/tabler-reactive.js")
   )
-
-  htmltools::attachDependencies(tag, deps)
 }
 
 #' @title Tabler Icons Data
@@ -77,81 +50,29 @@ add_deps <- function(tag, layout = "default", theme = "light", color = "minimal"
 #' @keywords datasets
 "icons"
 
-#' Re-Export Functions for Internal Use
-#' @keywords internal
-#' @rdname re-exports
-#' @importFrom htmltools div a img tags span p h2 h3 h4 HTML tagList tagAppendAttributes
+# Internal tag aliases used throughout the layout/component files.
+# All come from R/html.R (our pure-R tag system — no external dependency).
 #' @noRd
-ul <- tags$ul
-
-#' Re-Export Functions for Internal Use
-#' @keywords internal
-#' @rdname re-exports
+ul         <- tags$ul
 #' @noRd
-li <- tags$li
-
-#' Re-Export Functions for Internal Use
-#' @keywords internal
-#' @rdname re-exports
+li         <- tags$li
 #' @noRd
-header <- tags$header
-
-#' Re-Export Functions for Internal Use
-#' @keywords internal
-#' @rdname re-exports
+aside      <- tags$aside
 #' @noRd
-aside <- tags$aside
-
-#' Re-Export Functions for Internal Use
-#' @keywords internal
-#' @rdname re-exports
+head       <- tags$head
 #' @noRd
-head <- tags$head
-
-#' Re-Export Functions for Internal Use
-#' @keywords internal
-#' @rdname re-exports
+script     <- tags$script
 #' @noRd
-script <- tags$script
-
-#' Re-Export Functions for Internal Use
-#' @keywords internal
-#' @rdname re-exports
+i          <- tags$i
 #' @noRd
-i <- tags$i
-
-#' Re-Export Functions for Internal Use
-#' @keywords internal
-#' @rdname re-exports
+meta       <- tags$meta
 #' @noRd
-meta <- tags$meta
-
-#' Re-Export Functions for Internal Use
-#' @keywords internal
-#' @rdname re-exports
+href       <- tags$href
 #' @noRd
-href <- tags$href
-
-#' Re-Export Functions for Internal Use
-#' @keywords internal
-#' @rdname re-exports
+nav        <- tags$nav
 #' @noRd
-nav <- tags$nav
-
-#' Re-Export Functions for Internal Use
-#' @keywords internal
-#' @rdname re-exports
-#' @noRd
-body_tag <- tags$body
-
-#' Re-Export Functions for Internal Use
-#' @keywords internal
-#' @rdname re-exports
+body_tag   <- tags$body
 #' @noRd
 footer_tag <- tags$footer
-
-#' Re-Export Functions for Internal Use
-#' @keywords internal
-#' @rdname re-exports
 #' @noRd
 button_tag <- tags$button

@@ -4,9 +4,11 @@
 \name{tabler-package}
 \alias{tabler}
 \alias{tabler-package}
-\title{tabler: Create Dashboards with 'Tabler' and 'Shiny'}
+\title{tabler: Create Dashboards with 'Tabler'}
 \description{
-Provides functions to build interactive dashboards combining the 'Tabler UI Kit' with 'Shiny', making it easy to create professional-looking web applications. 'Tabler' is fully responsive and compatible with all modern browsers. Offers customizable layouts and components built with 'HTML5' and 'CSS3'. The underlying 'Tabler' (\url{https://github.com/tabler/tabler}) and 'Tabler Icons' (\url{https://github.com/tabler/tabler-icons}) were pre-built from source to eliminate the need for 'Node.js' and 'NPM' on package installation.
+\if{html}{\figure{logo.svg}{options: style='float: right' alt='logo' width='120'}}
+
+Provides functions to build interactive dashboards using the 'Tabler', making it easy to create professional-looking web applications. 'Tabler' is fully responsive and compatible with all modern browsers. Offers customizable layouts and components built with 'HTML5' and 'CSS3'. The underlying 'Tabler' (\url{https://github.com/tabler/tabler}) and 'Tabler Icons' (\url{https://github.com/tabler/tabler-icons}) were pre-built from source to eliminate the need for 'Node.js' and 'NPM' on package installation.
 }
 \seealso{
 Useful links:
@@ -18,6 +20,11 @@ Useful links:
 }
 \author{
 \strong{Maintainer}: Mauricio Vargas Sepulveda \email{m.vargas.sepulveda@gmail.com}
+
+Authors:
+\itemize{
+  \item Mauricio Vargas Sepulveda \email{m.vargas.sepulveda@gmail.com}
+}
 
 Other contributors:
 \itemize{

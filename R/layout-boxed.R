@@ -10,10 +10,10 @@ layout_boxed <- function(navbar, sidebar, body, footer, theme = "light", color =
   top_nav <- NULL
   side_nav <- NULL
 
-  if (is.list(navbar) && !inherits(navbar, "shiny.tag")) {
+  if (is.list(navbar) && !inherits(navbar, "tabler.tag")) {
     top_nav <- navbar$top
     side_nav <- navbar$side
-  } else if (!is.null(navbar) && inherits(navbar, "shiny.tag")) {
+  } else if (!is.null(navbar) && inherits(navbar, "tabler.tag")) {
     if (navbar$name %in% c("header", "aside", "ul")) top_nav <- navbar
   }
 
@@ -24,13 +24,13 @@ layout_boxed <- function(navbar, sidebar, body, footer, theme = "light", color =
 
     for (it in items) {
       # Check if this is a theme toggle item (has mt-auto class or is in last position)
-      if (inherits(it, "shiny.tag") && it$name == "li" &&
+      if (inherits(it, "tabler.tag") && it$name == "li" &&
         !is.null(it$attribs$class) && grepl("mt-auto", it$attribs$class %||% "")) {
         # This is a theme button container, extract its children
         theme_items <- c(theme_items, it$children)
-      } else if (inherits(it, "shiny.tag") && it$name == "li" && length(it$children) > 0) {
+      } else if (inherits(it, "tabler.tag") && it$name == "li" && length(it$children) > 0) {
         a <- it$children[[1]]
-        if (inherits(a, "shiny.tag") && !is.null(a$attribs[["data-bs-toggle"]]) && a$attribs[["data-bs-toggle"]] == "dropdown") {
+        if (inherits(a, "tabler.tag") && !is.null(a$attribs[["data-bs-toggle"]]) && a$attribs[["data-bs-toggle"]] == "dropdown") {
           a$attribs[["aria-expanded"]] <- "true"
           a$attribs[["data-bs-auto-close"]] <- "false"
           it$children[[1]] <- a
@@ -45,10 +45,10 @@ layout_boxed <- function(navbar, sidebar, body, footer, theme = "light", color =
   }
 
   header_tag <- NULL
-  if (!is.null(top_nav) && inherits(top_nav, "shiny.tag") && top_nav$name == "aside") {
+  if (!is.null(top_nav) && inherits(top_nav, "tabler.tag") && top_nav$name == "aside") {
     container <- NULL
     for (ch in top_nav$children) {
-      if (inherits(ch, "shiny.tag") && ch$name == "div" && grepl("container-fluid", ch$attribs$class %||% "")) {
+      if (inherits(ch, "tabler.tag") && ch$name == "div" && grepl("container-fluid", ch$attribs$class %||% "")) {
         container <- ch
         break
       }
@@ -58,18 +58,18 @@ layout_boxed <- function(navbar, sidebar, body, footer, theme = "light", color =
     nav_items <- list()
     if (!is.null(container)) {
       for (c2 in container$children) {
-        if (inherits(c2, "shiny.tag") && c2$name == "div" && grepl("navbar-brand", c2$attribs$class %||% "")) {
+        if (inherits(c2, "tabler.tag") && c2$name == "div" && grepl("navbar-brand", c2$attribs$class %||% "")) {
           if (length(c2$children) > 0) brand_tag <- c2$children[[1]]
         }
-        if (inherits(c2, "shiny.tag") && c2$name == "div" && !is.null(c2$attribs$id) && c2$attribs$id == "sidebar-menu") {
-          for (c3 in c2$children) if (inherits(c3, "shiny.tag") && c3$name == "ul") nav_items <- c3$children
+        if (inherits(c2, "tabler.tag") && c2$name == "div" && !is.null(c2$attribs$id) && c2$attribs$id == "sidebar-menu") {
+          for (c3 in c2$children) if (inherits(c3, "tabler.tag") && c3$name == "ul") nav_items <- c3$children
         }
       }
     }
 
     processed_items <- normalize_header_items(nav_items)
 
-    header_tag <- header(
+    header_tag <- tags$header(
       class = "navbar navbar-expand-md",
       div(
         class = "collapse navbar-collapse",
