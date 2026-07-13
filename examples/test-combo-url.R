@@ -79,6 +79,11 @@ ui <- page(
               choices = c("mtcars", "iris", "airquality"),
               selected = "mtcars"
             ),
+            selectInput(
+              "dummy", "Dummy",
+              choices = 1:3,
+              selected = 3
+            ),
             sliderInput(
               "n_rows", "Rows to display",
               min = 1, max = 30, value = 10
@@ -197,7 +202,7 @@ server <- function(input, output, session) {
   })
 
   # URL sync — action buttons are always excluded automatically
-  syncUrl(session, exclude = "label")
+  syncUrl(session, exclude = c("label", "dummy"))
 }
 
 tablerApp(ui, server)

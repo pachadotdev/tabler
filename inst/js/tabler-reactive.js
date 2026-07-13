@@ -118,6 +118,8 @@
         urlSync.exclude = (msg.message && msg.message.exclude) ? msg.message.exclude : [];
         urlSync.enabled = true;
         applyUrlParams();
+        var qs = buildQueryString(collectUrlParams());
+        history.replaceState(null, "", location.pathname + (qs ? "?" + qs : ""));
       } else {
         var ev = new CustomEvent("tabler:message", {
           detail: { type: msg.messageType, message: msg.message }
