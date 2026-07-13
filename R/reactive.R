@@ -270,11 +270,19 @@ observeEvent <- function(eventExpr, handlerExpr, ignoreInit = TRUE) {
   event_q   <- substitute(eventExpr)
   handler_q <- substitute(handlerExpr)
   env       <- parent.frame()
-  init_done <- !isTRUE(ignoreInit)
+  # State is kept in an environment (reference semantics) rather than a plain
+  # local, because the observer body below is eval()'d in this frame and a
+  # `<<-` superassignment would skip the local binding and write to the global
+  # environment, leaving `init_done` permanently FALSE.
+  state <- new.env(parent = emptyenv())
+  state$init_done <- !isTRUE(ignoreInit)
 
   observe({
     eval(event_q, env)          # read to register dependency
-    if (!init_done) { init_done <<- TRUE; return(invisible(NULL)) }
+    if (!state$init_done) {
+      state$init_done <- TRUE
+      return(invisible(NULL))
+    }
     isolate(eval(handler_q, env))
   })
 }
