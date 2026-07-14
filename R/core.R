@@ -6,7 +6,9 @@
 #'   - `horizontal_menu()` for a horizontal menu
 #' @param body Dashboard body content
 #' @param footer Dashboard footer (optional)
-#' @param layout Layout type: "boxed"
+#' @param layout Layout type: "boxed" (default), "combo", "condensed", "fluid", "fluid-vertical",
+#'   "horizontal", "navbar-dark", "navbar-overlap", "navbar-sticky", "navbar-sticky-dark", "rtl",
+#'   "vertical", "vertical-right", "vertical-transparent"
 #' @param theme Default theme: "light" (default) or "dark".
 #' @param color Color theme (optional): "blue" (default), "azure", "indigo", "purple", "pink",
 #'   "red", "orange", "yellow", "lime", "green", "teal", "cyan".

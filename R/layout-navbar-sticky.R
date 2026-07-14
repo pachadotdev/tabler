@@ -115,7 +115,10 @@ layout_navbar_sticky <- function(navbar, sidebar, body, footer, theme = "light",
       )
     )
   } else if (!is.null(top_nav)) {
-    header_tag <- top_nav
+    header_tag <- div(
+      class = "sticky-top",
+      top_nav
+    )
   }
 
   tagList(
