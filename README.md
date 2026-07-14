@@ -48,7 +48,6 @@ The following chunk uses the "fluid" layout to recreate Shiny's geyser example.
 <figure>
 <img src="screenshot-fluid-geyser.png" title="Fluid Layout"
 alt="layout-geyser" />
-<figcaption aria-hidden="true">layout-geyser</figcaption>
 </figure>
 
 ```r
@@ -105,7 +104,6 @@ The same example but adding "theme" and "color".
 <figure>
 <img src="screenshot-fluid-geyser-2.png" title="Fluid Layout"
 alt="layout-geyser" />
-<figcaption aria-hidden="true">layout-geyser</figcaption>
 </figure>
 
 ```r
