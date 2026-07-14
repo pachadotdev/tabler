@@ -1,4 +1,5 @@
 library(tabler)
+library(tinyplot)
 
 svg_text <- paste(
   readLines("./examples/tabler-logo.svg", warn = FALSE),
@@ -15,23 +16,13 @@ sidebar_nav <- navbar_menu(
   brand = sidebar_brand(text = "", img = svg_data_uri, href = "./"),
   menu_item("Home", icon = "home"),
   menu_dropdown(
-    "Layout",
+    "Items",
     icon = "layout-2",
     href = "./",
     items = list(
-      c("Boxed", "./"),
-      c("Combined", "./"),
-      c("Condensed", "./"),
-      c("Fluid", "./"),
-      c("Fluid vertical", "./"),
-      c("Horizontal", "./"),
-      c("Navbar dark", "./"),
-      c("Navbar overlap", "./"),
-      c("Navbar sticky", "./"),
-      c("Right vertical", "./"),
-      c("RTL mode", "./"),
-      c("Vertical", "./"),
-      c("Vertical transparent", "./")
+      c("Item 1", "./"),
+      c("Item 2", "./"),
+      c("Item 3", "./")
     )
   )
 )
@@ -121,7 +112,8 @@ ui <- page(
           ),
           card(
             title = "Data preview",
-            verbatimTextOutput("data_preview")
+            verbatimTextOutput("data_preview"),
+            plotOutput("data_plot")
           )
         )
       )
@@ -156,7 +148,7 @@ server <- function(input, output, session) {
     n  <- min(input$n_rows %||% 10L, nrow(df))
     paste0(
       input$dataset %||% "—", ": ",
-      nrow(df), " rows × ", ncol(df), " cols.",
+      nrow(df), " rows x ", ncol(df), " cols.",
       " Showing top ", n, "."
     )
   })
@@ -183,7 +175,7 @@ server <- function(input, output, session) {
       paste0("  [", paste(nm, collapse = ", "), "]")
     } else ""
     paste0(input$stat %||% "mean", " of column ", input$stat %||% "mean",
-           "s × multiplier = ", val, cols)
+           "s x multiplier = ", val, cols)
   })
 
   # Verbatim data preview — number of rows driven by slider
@@ -191,6 +183,12 @@ server <- function(input, output, session) {
     df <- current_data()
     n  <- min(input$n_rows %||% 10L, nrow(df))
     head(df, n)
+  })
+
+  # Add simple histogram
+  output$data_plot <- renderPlot({
+    df <- current_data()
+    tinyplot(df[, 1], type = "histogram", main = paste(input$dataset, colnames(df)[1], sep = " - "))
   })
 
   # Action button: recalculate forces stat_val to reprint (it's already reactive,
