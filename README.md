@@ -100,6 +100,65 @@ server <- function(input, output, session) {
 tablerApp(ui, server)
 ```
 
+The same example but adding "theme" and "color".
+
+<figure>
+<img src="screenshot-fluid-geyser-2.png" title="Fluid Layout"
+alt="layout-geyser" />
+<figcaption aria-hidden="true">layout-geyser</figcaption>
+</figure>
+
+```r
+library(tabler)
+
+ui <- page(
+  theme = "dark",
+  color = "blue",
+  layout = "fluid",
+  title  = "Old Faithful Geyser Data",
+  navbar = navbar_menu(
+    menu_item("Home", icon = "home")
+  ),
+  body = list(
+    header(title = "Old Faithful Geyser Data", subtitle = "Histogram"),
+    body(
+      column(
+        4,
+        card(
+          title = "Controls",
+          sliderInput("bins", "Number of bins:", min = 1, max = 50, value = 30)
+        )
+      ),
+      column(
+        8,
+        card(
+          title  = "Output",
+          footer = "Eruption duration (minutes)",
+          plotOutput("distPlot")
+        )
+      )
+    )
+  )
+)
+
+server <- function(input, output, session) {
+  output$distPlot <- renderPlot({
+    x    <- faithful[, 2]
+    bins <- seq(min(x), max(x), length.out = input$bins + 1)
+    x |>
+      hist(
+        breaks = bins,
+        col    = "darkgray",
+        border = "white",
+        main   = NULL,
+        xlab   = "Eruption duration (min)"
+      )
+  })
+}
+
+tablerApp(ui, server)
+```
+
 ## Available Layouts
 
 I added [full examples](https://github.com/pachadotdev/tabler/tree/main/examples) for each of the following layouts:
@@ -120,6 +179,9 @@ I added [full examples](https://github.com/pachadotdev/tabler/tree/main/examples
 - **Vertical**: Vertical sidebar layout without top navbar.
 - **Vertical Right**: Vertical sidebar positioned on the right side.
 - **Vertical Transparent**: Vertical layout with transparent sidebar.
+
+Note: `tabler` allows to pass `layout = "navbar"` and `layout = "navbar-sticky-dark"` which are wrappers
+for a light theme navbar layout and a dark theme sticky navbar layour, respectively.
 
 ## Differences with Shiny
 

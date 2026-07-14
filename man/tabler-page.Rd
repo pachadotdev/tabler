@@ -49,7 +49,9 @@ image and title. Example: `title = list(text = "My App", img = "logo.png")`.}
 
 \item{footer}{Dashboard footer (optional)}
 
-\item{layout}{Layout type: "boxed"}
+\item{layout}{Layout type: "boxed" (default), "combo", "condensed", "fluid", "fluid-vertical",
+"horizontal", "navbar", "navbar-dark", "navbar-overlap", "navbar-sticky", "navbar-sticky-dark",
+"rtl", "vertical", "vertical-right", "vertical-transparent"}
 
 \item{theme}{Default theme: "light" (default) or "dark".}
 

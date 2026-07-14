@@ -7,8 +7,8 @@
 #' @param body Dashboard body content
 #' @param footer Dashboard footer (optional)
 #' @param layout Layout type: "boxed" (default), "combo", "condensed", "fluid", "fluid-vertical",
-#'   "horizontal", "navbar-dark", "navbar-overlap", "navbar-sticky", "navbar-sticky-dark", "rtl",
-#'   "vertical", "vertical-right", "vertical-transparent"
+#'   "horizontal", "navbar", "navbar-dark", "navbar-overlap", "navbar-sticky", "navbar-sticky-dark",
+#'   "rtl", "vertical", "vertical-right", "vertical-transparent"
 #' @param theme Default theme: "light" (default) or "dark".
 #' @param color Color theme (optional): "blue" (default), "azure", "indigo", "purple", "pink",
 #'   "red", "orange", "yellow", "lime", "green", "teal", "cyan".
@@ -45,6 +45,7 @@ page <- function(
     "fluid",
     "fluid-vertical",
     "horizontal",
+    "navbar",
     "navbar-dark",
     "navbar-overlap",
     "navbar-sticky",
@@ -73,6 +74,7 @@ page <- function(
     "vertical" = layout_vertical(navbar, NULL, body, footer, theme = theme, color = color, show_theme_button = show_theme_button),
     "vertical-right" = layout_vertical_right(navbar, NULL, body, footer, theme = theme, color = color, show_theme_button = show_theme_button),
     "vertical-transparent" = layout_vertical_transparent(navbar, NULL, body, footer, theme = theme, color = color, show_theme_button = show_theme_button),
+    "navbar" = layout_navbar(navbar, NULL, body, footer, theme = theme, color = color, show_theme_button = show_theme_button),
     "navbar-dark" = layout_navbar_dark(navbar, NULL, body, footer, theme = theme, color = color, show_theme_button = show_theme_button),
     "navbar-overlap" = layout_navbar_overlap(navbar, NULL, body, footer, theme = theme, color = color, show_theme_button = show_theme_button),
     "navbar-sticky" = layout_navbar_sticky(navbar, NULL, body, footer, theme = theme, color = color, show_theme_button = show_theme_button),
