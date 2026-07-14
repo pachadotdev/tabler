@@ -138,7 +138,11 @@ layout_navbar_overlap <- function(navbar, sidebar, body, footer, theme = "light"
       )
     )
   } else if (!is.null(top_nav)) {
-    header_tag <- top_nav
+    header_tag <- tagAppendAttributes(
+      top_nav,
+      class = "navbar-overlap d-print-none",
+      `data-bs-theme` = "dark"
+    )
   }
 
   # Add text-white class to page-header for navbar-overlap layout
