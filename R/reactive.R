@@ -37,7 +37,18 @@
 # Reactive source - tracks which contexts depend on it
 # ---------------------------------------------------------------------------
 new_source <- function() {
-  deps <- new.env(hash = TRUE, parent = emptyenv())
+  # `deps` gives O(1) existence checks (for dedup); `dep_order` is the
+  # insertion-ordered list of ids, and is what invalidate_dependents()
+  # actually iterates over. A plain hashed environment's as.list()/ls() order
+  # is *not* guaranteed to match insertion order, which matters here: several
+  # sibling eventReactive()/bindEvent()/observeEvent() calls gated on the same
+  # event (e.g. input$go) rely on being invalidated/re-run in the order they
+  # were defined (module setup runs top-to-bottom, synchronously) - e.g. a
+  # later observer that eagerly forces several earlier bindEvent()-wrapped
+  # reactives to compute (for progress-bar bracketing) needs those reactives'
+  # own dirty-flagging watchers to have already run.
+  deps      <- new.env(hash = TRUE, parent = emptyenv())
+  dep_order <- character(0)
 
   list(
     depend = function() {
@@ -46,15 +57,19 @@ new_source <- function() {
       id <- as.character(ctx$id)
       if (exists(id, envir = deps, inherits = FALSE)) return(invisible(NULL))
       assign(id, ctx, envir = deps)
+      dep_order <<- c(dep_order, id)
       ctx$on_invalidate(function() {
         if (exists(id, envir = deps, inherits = FALSE)) rm(list = id, envir = deps)
+        dep_order <<- dep_order[dep_order != id]
       })
       invisible(NULL)
     },
     invalidate_dependents = function() {
-      ctxs <- as.list(deps)
+      ids       <- dep_order
+      dep_order <<- character(0)
+      ctxs      <- mget(ids, envir = deps, ifnotfound = list(NULL))
       rm(list = ls(deps), envir = deps)
-      for (ctx in ctxs) ctx$invalidate()
+      for (ctx in ctxs) if (!is.null(ctx)) ctx$invalidate()
     }
   )
 }
