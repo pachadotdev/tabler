@@ -159,6 +159,26 @@ reactiveValues <- function(...) {
   rv
 }
 
+#' @title Convert Reactive Values To A List
+#' @description Returns a plain list snapshot of a \code{\link{reactiveValues}}
+#'   object's current values, establishing a reactive read dependency on each
+#'   contained value, similar to \code{shiny::reactiveValuesToList()}.
+#' @param x A \code{reactiveValues()} object.
+#' @param all.names Include names starting with a dot (default \code{FALSE}).
+#' @return A named list.
+#' @rdname reactive-primitives
+#' @export
+reactiveValuesToList <- function(x, all.names = FALSE) {
+  store <- attr(x, ".store")
+  if (is.null(store)) {
+    stop("reactiveValuesToList() requires a reactiveValues() object", call. = FALSE)
+  }
+  nms <- ls(store, all.names = all.names)
+  out <- lapply(nms, function(nm) .rv_dollar(x, nm))
+  names(out) <- nms
+  out
+}
+
 # Not named `$.ReactiveValues` / `$<-.ReactiveValues` to avoid roxygen2
 # generating invalid NAMESPACE entries for operator generics.
 # Registered as S3 methods in .onLoad() (see tabler-package.R).
@@ -214,6 +234,43 @@ reactive <- function(expr) {
   }
 }
 
+# Internal: shiny-style "truthiness" check used by req().
+.is_truthy <- function(x) {
+  if (is.null(x) || length(x) == 0L) return(FALSE)
+  if (length(x) == 1L) {
+    if (is.na(x)) return(FALSE)
+    if (is.character(x) && !nzchar(x)) return(FALSE)
+    if (is.logical(x) && !isTRUE(x)) return(FALSE)
+  }
+  TRUE
+}
+
+#' @title Ensure Values Are Available Before Proceeding
+#' @description Stops execution of the current reactive expression, observer,
+#'   or render function if any argument is not "truthy" (i.e. is \code{NULL},
+#'   \code{NA}, \code{FALSE}, an empty string, or an empty vector), similar to
+#'   \code{shiny::req()}. Unlike a normal error, this stop is silent: an
+#'   \code{observe()}/\code{observeEvent()} block simply does nothing for this
+#'   run, and a render function (\code{renderUI}, \code{renderText}, ...)
+#'   simply leaves its output unchanged, instead of showing an error.
+#' @param ... Values to check; all must be truthy for \code{req()} to return.
+#' @param cancelOutput Ignored (kept for signature compatibility with Shiny).
+#' @return The last argument, invisibly, if all checks pass.
+#' @rdname reactive-primitives
+#' @export
+req <- function(..., cancelOutput = FALSE) {
+  vals <- list(...)
+  for (v in vals) {
+    if (!.is_truthy(v)) {
+      stop(structure(
+        class = c("tabler_req_stop", "error", "condition"),
+        list(message = "req: value not truthy", call = NULL)
+      ))
+    }
+  }
+  invisible(if (length(vals)) vals[[length(vals)]] else NULL)
+}
+
 #' @title Evaluate Without Tracking Dependencies
 #' @description Any reactive reads inside \code{expr} are not registered as
 #'   dependencies of the current context.
@@ -248,7 +305,11 @@ observe <- function(expr) {
       if (!suspended) .schedule(run)
     })
     .push_context(ctx)
-    tryCatch(eval(expr_q, env), finally = .pop_context())
+    tryCatch(
+      eval(expr_q, env),
+      tabler_req_stop = function(e) invisible(NULL),
+      finally = .pop_context()
+    )
   }
 
   .schedule(run)
@@ -286,6 +347,109 @@ observeEvent <- function(eventExpr, handlerExpr, ignoreInit = TRUE) {
     isolate(eval(handler_q, env))
   })
 }
+
+#' @title Event-Based Reactive Expression
+#' @description A reactive expression that recomputes \code{valueExpr} only
+#'   when \code{eventExpr} changes, similar to \code{shiny::eventReactive()}.
+#' @param eventExpr  Reactive expression whose change triggers re-evaluation.
+#' @param valueExpr  Expression to evaluate (and cache) when the event fires.
+#' @param ignoreNULL If \code{TRUE} (default), do not (re)compute while
+#'   \code{eventExpr} evaluates to \code{NULL}.
+#' @param ignoreInit If \code{FALSE} (default), \code{valueExpr} is also
+#'   evaluated once immediately, before \code{eventExpr} first changes.
+#' @return A zero-argument function returning the cached value.
+#' @rdname reactive-primitives
+#' @export
+eventReactive <- function(eventExpr, valueExpr, ignoreNULL = TRUE, ignoreInit = FALSE) {
+  event_q <- substitute(eventExpr)
+  value_q <- substitute(valueExpr)
+  env     <- parent.frame()
+
+  src   <- new_source()
+  state <- new.env(parent = emptyenv())
+  state$init_done <- !isTRUE(ignoreInit)
+  state$has_value <- FALSE
+  state$value     <- NULL
+
+  observe({
+    ev        <- eval(event_q, env)   # read to register dependency
+    first_run <- !state$init_done
+    state$init_done <- TRUE
+    if (first_run && isTRUE(ignoreInit)) return(invisible(NULL))
+    if (isTRUE(ignoreNULL) && is.null(ev)) return(invisible(NULL))
+    state$value     <- isolate(eval(value_q, env))
+    state$has_value <- TRUE
+    src$invalidate_dependents()
+  })
+
+  function() {
+    src$depend()
+    if (!state$has_value) return(NULL)
+    state$value
+  }
+}
+
+#' @title Bind an Event Trigger to a Reactive Expression
+#' @description Modifies a reactive expression created by \code{\link{reactive}}
+#'   so that it only (re)executes when the given event expression(s) change,
+#'   similar to \code{shiny::bindEvent()}. Typically used with the pipe:
+#'   \code{reactive({...}) |> bindEvent(input$go)}.
+#' @param x A reactive expression created by \code{\link{reactive}}.
+#' @param ... One or more (unevaluated) event expressions. The reactive fires
+#'   whenever any of them change.
+#' @param ignoreNULL If \code{TRUE} (default), do not (re)compute while all
+#'   event expressions evaluate to \code{NULL}.
+#' @param ignoreInit If \code{FALSE} (default), also compute \code{x} once
+#'   immediately, before any event expression first changes.
+#' @return A new zero-argument function returning the cached value.
+#' @rdname reactive-primitives
+#' @export
+bindEvent <- function(x, ..., ignoreNULL = TRUE, ignoreInit = FALSE) {
+  if (!is.function(x)) {
+    stop("bindEvent() only supports reactive expressions created by reactive()", call. = FALSE)
+  }
+  dots <- substitute(list(...))[-1]
+  env  <- parent.frame()
+
+  src   <- new_source()
+  state <- new.env(parent = emptyenv())
+  state$init_done <- !isTRUE(ignoreInit)
+  state$has_value <- FALSE
+  state$value     <- NULL
+
+  observe({
+    evs       <- lapply(dots, function(e) eval(e, env))   # register dependencies
+    first_run <- !state$init_done
+    state$init_done <- TRUE
+    if (first_run && isTRUE(ignoreInit)) return(invisible(NULL))
+    if (isTRUE(ignoreNULL) && all(vapply(evs, is.null, logical(1L)))) return(invisible(NULL))
+    state$value     <- isolate(x())
+    state$has_value <- TRUE
+    src$invalidate_dependents()
+  })
+
+  function() {
+    src$depend()
+    if (!state$has_value) return(NULL)
+    state$value
+  }
+}
+
+#' @title Cache a Reactive Expression's Value
+#' @description A dependency-free stand-in for \code{shiny::bindCache()}.
+#'   \code{\link{reactive}} already caches its value between invalidations,
+#'   so this simply returns \code{x} unchanged; it exists so pipelines
+#'   written for Shiny (e.g. \code{reactive({...}) |> bindCache(...) |>
+#'   bindEvent(...)}) keep working without modification.
+#' @param x A reactive expression.
+#' @param ... Ignored.
+#' @return \code{x}, unchanged.
+#' @rdname reactive-primitives
+#' @export
+bindCache <- function(x, ...) {
+  x
+}
+
 
 # ---------------------------------------------------------------------------
 # URL sync
@@ -395,6 +559,9 @@ syncUrl <- function(session, exclude = character(0L)) {
       }
       .pop_context()
       send_fn(val, type)
+    }, tabler_req_stop = function(e) {
+      .pop_context()
+      invisible(NULL)
     }, error = function(e) {
       .pop_context()
       send_fn(

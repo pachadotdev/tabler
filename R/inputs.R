@@ -15,28 +15,75 @@
   )
 }
 
+# Internal: expand a Shiny-style choices vector/list into a flat list of
+# list(value=, label=, group=) items. A top-level element that is itself a
+# vector of length > 1 represents an <optgroup> (its name is the group
+# label); scalar elements are plain top-level options.
+.expand_choices <- function(choices) {
+  nms <- names(choices)
+  out <- list()
+  for (i in seq_along(choices)) {
+    item <- choices[[i]]
+    nm   <- if (!is.null(nms)) nms[[i]] else NULL
+    if (length(item) > 1L) {
+      sub_nms <- names(item)
+      for (j in seq_along(item)) {
+        val <- as.character(item[[j]])
+        lbl <- if (!is.null(sub_nms)) sub_nms[[j]] else val
+        out[[length(out) + 1L]] <- list(value = val, label = lbl, group = nm)
+      }
+    } else {
+      val <- as.character(item)
+      lbl <- if (!is.null(nm)) nm else val
+      out[[length(out) + 1L]] <- list(value = val, label = lbl, group = NULL)
+    }
+  }
+  out
+}
+
 #' @title Select Input
 #' @description A dropdown that lets the user pick one item from a list.
 #' @param inputId The input identifier used in \code{server}.
 #' @param label   Display label shown above the control.
-#' @param choices Named or unnamed character vector of choices.
+#' @param choices Named or unnamed character vector of choices. A top-level
+#'   element that is itself a vector of length > 1 is rendered as an
+#'   \code{<optgroup>} (its name becomes the group label), matching Shiny's
+#'   grouped-choices convention.
 #' @param selected Initially-selected value (defaults to the first choice).
 #' @param ... Additional HTML attributes passed to the \code{<select>} element.
 #' @return An HTML tag.
 #' @rdname tabler-inputs
 #' @export
 selectInput <- function(inputId, label, choices, selected = NULL, ...) {
-  if (is.null(selected)) selected <- choices[[1L]]
-  if (!is.null(names(choices))) {
-    option_tags <- lapply(seq_along(choices), function(i) {
-      val  <- choices[[i]]
-      lbl  <- names(choices)[[i]]
-      tags$option(value = val, selected = if (identical(val, selected)) TRUE else NULL, lbl)
-    })
-  } else {
-    option_tags <- lapply(choices, function(ch) {
-      tags$option(value = ch, selected = if (identical(ch, selected)) TRUE else NULL, ch)
-    })
+  flat <- .expand_choices(choices)
+  if (is.null(selected) && length(flat)) selected <- flat[[1L]]$value
+  selected <- if (!is.null(selected)) as.character(selected) else NULL
+
+  build_option <- function(it) {
+    tags$option(value = it$value, selected = if (identical(it$value, selected)) TRUE else NULL, it$label)
+  }
+
+  option_tags <- list()
+  i <- 1L
+  n <- length(flat)
+  while (i <= n) {
+    grp <- flat[[i]]$group
+    if (!is.null(grp)) {
+      j <- i
+      members <- list()
+      while (j <= n && identical(flat[[j]]$group, grp)) {
+        members[[length(members) + 1L]] <- flat[[j]]
+        j <- j + 1L
+      }
+      option_tags[[length(option_tags) + 1L]] <- do.call(
+        tags$optgroup,
+        c(list(label = grp), lapply(members, build_option))
+      )
+      i <- j
+    } else {
+      option_tags[[length(option_tags) + 1L]] <- build_option(flat[[i]])
+      i <- i + 1L
+    }
   }
 
   control <- do.call(tags$select, c(
@@ -86,6 +133,80 @@ sliderInput <- function(inputId, label, min, max, value, step = 1, ...) {
   )
 
   .input_wrap(inputId, tagList(label, value_display), control)
+}
+
+# Internal: send an "update this input" message to the browser, respecting
+# the current module namespace (see moduleServer()/session$ns()).
+.updateInputMessage <- function(session, inputId, params) {
+  if (!is.list(session) || !is.function(session[["sendCustomMessage"]])) {
+    warning("update*Input() requires a tablerApp session object - ignoring", call. = FALSE)
+    return(invisible(NULL))
+  }
+  id <- inputId
+  if (is.function(session[["ns"]])) id <- session$ns(id)
+  params$id <- id
+  session$sendCustomMessage("tabler-updateInput", params)
+  invisible(NULL)
+}
+
+# Internal: normalize choices (named/unnamed vector or list, optionally
+# grouped) into a flat list of list(value=, label=, group=) pairs for the
+# "tabler-updateInput" browser message, reusing selectInput()'s own choice
+# expansion so both stay in sync.
+.normalize_choices_for_update <- function(choices) {
+  lapply(.expand_choices(choices), function(it) {
+    if (is.null(it$group)) list(value = it$value, label = it$label)
+    else list(value = it$value, label = it$label, group = it$group)
+  })
+}
+
+#' @title Update a Select Input
+#' @description Change the choices and/or selected value of a
+#'   \code{\link{selectInput}} already displayed in the browser, without a
+#'   full page reload, similar to \code{shiny::updateSelectInput()}.
+#' @param session  The session object.
+#' @param inputId  The id of the input to update.
+#' @param label    Ignored (kept for signature compatibility with Shiny).
+#' @param choices  New choices (named or unnamed character vector/list). If
+#'   \code{NULL} (default), the existing choices are left unchanged.
+#' @param selected New selected value.
+#' @param ... Ignored (kept for signature compatibility with Shiny, e.g. the
+#'   \code{server} argument of \code{updateSelectizeInput()}).
+#' @return Invisibly, \code{NULL}.
+#' @rdname tabler-inputs
+#' @export
+updateSelectInput <- function(session, inputId, label = NULL, choices = NULL, selected = NULL, ...) {
+  params <- list()
+  if (!is.null(choices))  params$choices  <- .normalize_choices_for_update(choices)
+  if (!is.null(selected)) params$selected <- selected
+  .updateInputMessage(session, inputId, params)
+}
+
+#' @rdname tabler-inputs
+#' @export
+updateSelectizeInput <- updateSelectInput
+
+#' @title Update a Slider Input
+#' @description Change the value/min/max/step of a \code{\link{sliderInput}}
+#'   already displayed in the browser, similar to
+#'   \code{shiny::updateSliderInput()}.
+#' @param session The session object.
+#' @param inputId The id of the input to update.
+#' @param label   Ignored (kept for signature compatibility with Shiny).
+#' @param value   New value (scalar, or length-2 vector for a range slider).
+#' @param min     New minimum.
+#' @param max     New maximum.
+#' @param step    New step size.
+#' @return Invisibly, \code{NULL}.
+#' @rdname tabler-inputs
+#' @export
+updateSliderInput <- function(session, inputId, label = NULL, value = NULL, min = NULL, max = NULL, step = NULL) {
+  params <- list()
+  if (!is.null(value)) params$value <- value
+  if (!is.null(min))   params$min   <- min
+  if (!is.null(max))   params$max   <- max
+  if (!is.null(step))  params$step  <- step
+  .updateInputMessage(session, inputId, params)
 }
 
 #' @title Text Input
