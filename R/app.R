@@ -28,6 +28,29 @@
 }
 
 # ---------------------------------------------------------------------------
+# Static resource path registry
+# ---------------------------------------------------------------------------
+
+# Package-level registry: prefix -> absolute directory path
+.resource_paths <- new.env(parent = emptyenv())
+
+#' @title Register a Directory of Static Resources
+#' @description Serves files under \code{directoryPath} at URLs beginning
+#'   with \code{/prefix/}, mirroring \code{shiny::addResourcePath()}. Use this
+#'   to serve an app's own CSS/JS/image assets (e.g. from \code{inst/app/www})
+#'   without depending on \pkg{shiny} or \pkg{golem}.
+#' @param prefix The URL prefix (e.g. \code{"www"} serves files at \code{/www/...}).
+#' @param directoryPath Absolute path to the directory to serve.
+#' @return Invisibly, \code{NULL}.
+#' @export
+addResourcePath <- function(prefix, directoryPath) {
+  prefix <- sub("^/+", "", prefix)
+  prefix <- sub("/+$", "", prefix)
+  assign(prefix, normalizePath(directoryPath, mustWork = TRUE), envir = .resource_paths)
+  invisible(NULL)
+}
+
+# ---------------------------------------------------------------------------
 # Input proxy — a reactiveValues() store; $.ReactiveValues handles reactive
 # reads so no custom S3 method for $ is needed here.
 # ---------------------------------------------------------------------------
@@ -236,6 +259,34 @@ tablerApp <- function(ui, server, host = "127.0.0.1", port = 3000L,
       return(list(status = 403L,
                   headers = list("Content-Type" = "text/plain"),
                   body = "Forbidden"))
+    }
+
+    # Registered app resource paths (see addResourcePath()) take priority
+    seg <- sub("/.*$", "", rel)
+    if (exists(seg, envir = .resource_paths, inherits = FALSE)) {
+      base_dir  <- get(seg, envir = .resource_paths, inherits = FALSE)
+      file_rel  <- sub(paste0("^", seg, "/?"), "", rel)
+      file_path <- if (nzchar(file_rel)) {
+        normalizePath(file.path(base_dir, file_rel), mustWork = FALSE)
+      } else {
+        ""
+      }
+      if (nzchar(file_rel) &&
+          startsWith(file_path, base_dir) &&
+          file.exists(file_path) && !dir.exists(file_path)) {
+        fsize   <- file.info(file_path)$size
+        con     <- file(file_path, "rb")
+        content <- readBin(con, "raw", fsize)
+        close(con)
+        return(list(
+          status  = 200L,
+          headers = list("Content-Type" = .mime_type(file_path)),
+          body    = content
+        ))
+      }
+      return(list(status = 404L,
+                  headers = list("Content-Type" = "text/plain"),
+                  body = "Not found"))
     }
 
     file_path <- system.file(rel, package = "tabler")
