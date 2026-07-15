@@ -1,0 +1,63 @@
+/* Dual-thumb range slider ("range2"): two native <input type="range">
+ * elements stacked exactly on top of each other so they read as a single
+ * visual control. Without this, they render as two separate full-width
+ * sliders stacked vertically.
+ *
+ * The trick: both inputs are absolutely positioned over the same box, and
+ * pointer-events are disabled on the input itself (so clicking/dragging the
+ * track of one input doesn't block the other) but re-enabled on just the
+ * thumb, so each handle stays independently draggable. Each input's own
+ * track is made transparent and a single shared line is drawn behind both
+ * (via ::before) - otherwise the *second* input's track paints on top of
+ * the DOM and visually covers the *first* input's thumb.
+ */
+.tabler-range2 {
+  position: relative;
+  height: 1.25rem;
+}
+
+.tabler-range2::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 0.25rem;
+  transform: translateY(-50%);
+  background-color: var(--tblr-border-color);
+  border-radius: 1rem;
+  pointer-events: none;
+}
+
+.tabler-range2 input[type="range"] {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  margin: 0;
+  transform: translateY(-50%);
+  background: none;
+  pointer-events: none;
+}
+
+.tabler-range2 input[type="range"]::-webkit-slider-runnable-track {
+  background: transparent;
+  box-shadow: none;
+}
+
+.tabler-range2 input[type="range"]::-moz-range-track {
+  background: transparent;
+  box-shadow: none;
+}
+
+.tabler-range2 input[type="range"]::-webkit-slider-thumb {
+  position: relative;
+  z-index: 2;
+  pointer-events: auto;
+}
+
+.tabler-range2 input[type="range"]::-moz-range-thumb {
+  position: relative;
+  z-index: 2;
+  pointer-events: auto;
+}

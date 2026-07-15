@@ -34,6 +34,7 @@ add_deps <- function(layout = "default") {
     tags$link(rel = "stylesheet", href = "/tabler-1.4.0/css/tabler-socials.min.css"),
     tags$link(rel = "stylesheet", href = "/tabler-1.4.0/css/tabler-themes.min.css"),
     tags$link(rel = "stylesheet", href = "/css/tabler-progress.css"),
+    tags$link(rel = "stylesheet", href = "/css/tabler-range2.css"),
     tags$script(src = "/tabler-1.4.0/js/tabler.min.js"),
     tags$script(src = "/tabler-1.4.0/js/tabler-theme.min.js"),
     tags$script(src = "/js/tabler-tabs.js"),

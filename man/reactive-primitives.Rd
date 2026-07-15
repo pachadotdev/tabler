@@ -31,9 +31,9 @@ observe(expr)
 
 observeEvent(eventExpr, handlerExpr, ignoreInit = TRUE)
 
-eventReactive(eventExpr, valueExpr, ignoreNULL = TRUE, ignoreInit = FALSE)
+eventReactive(eventExpr, valueExpr, ignoreNULL = TRUE, ignoreInit = TRUE)
 
-bindEvent(x, ..., ignoreNULL = TRUE, ignoreInit = FALSE)
+bindEvent(x, ..., ignoreNULL = TRUE, ignoreInit = TRUE)
 
 bindCache(x, ...)
 
@@ -56,8 +56,10 @@ syncUrl(session, exclude = character(0L))
 
 \item{handlerExpr}{Expression to run when the event fires.}
 
-\item{ignoreInit}{If \code{FALSE} (default), also compute \code{x} once
-immediately, before any event expression first changes.}
+\item{ignoreInit}{If \code{TRUE} (default), \code{x} is not computed until
+an event expression first changes (e.g. an actionButton's click counter
+starts at \code{0}, not \code{NULL}, so without this, \code{x} would
+compute once immediately on creation, before any click).}
 
 \item{valueExpr}{Expression to evaluate (and cache) when the event fires.}
 

@@ -155,7 +155,11 @@
     var val;
 
     if (type === "range2") {
-      var parts = raw.split(",");
+      // Preferred format is dash-separated (e.g. "2013-2020"), an unreserved
+      // URI character that never needs percent-encoding. Still accept the
+      // legacy comma-separated format for old bookmarked/shared URLs.
+      var m = /^(-?[\d.]+)-(-?[\d.]+)$/.exec(raw);
+      var parts = m ? [m[1], m[2]] : raw.split(",");
       var lo = els[0].querySelector('[data-tabler-range-role="lo"]');
       var hi = els[0].querySelector('[data-tabler-range-role="hi"]');
       var loV = parseFloat(parts[0]);
@@ -206,7 +210,7 @@
 
       if (type === "range2") {
         var pair = readRange2(el);
-        params[id] = pair.lo + "," + pair.hi;
+        params[id] = pair.lo + "-" + pair.hi;
       } else if (type === "checkbox") {
         params[id] = el.checked ? "true" : "false";
       } else if (type === "checkbox-group") {

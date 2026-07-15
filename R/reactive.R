@@ -381,12 +381,15 @@ observeEvent <- function(eventExpr, handlerExpr, ignoreInit = TRUE) {
 #' @param valueExpr  Expression to evaluate (and cache) when the event fires.
 #' @param ignoreNULL If \code{TRUE} (default), do not (re)compute while
 #'   \code{eventExpr} evaluates to \code{NULL}.
-#' @param ignoreInit If \code{FALSE} (default), \code{valueExpr} is also
-#'   evaluated once immediately, before \code{eventExpr} first changes.
+#' @param ignoreInit If \code{TRUE} (default), \code{valueExpr} is not
+#'   evaluated until \code{eventExpr} first changes (e.g. an actionButton's
+#'   click counter starts at \code{0}, not \code{NULL}, so without this,
+#'   \code{valueExpr} would run once immediately on creation, before any
+#'   click).
 #' @return A zero-argument function returning the cached value.
 #' @rdname reactive-primitives
 #' @export
-eventReactive <- function(eventExpr, valueExpr, ignoreNULL = TRUE, ignoreInit = FALSE) {
+eventReactive <- function(eventExpr, valueExpr, ignoreNULL = TRUE, ignoreInit = TRUE) {
   event_q <- substitute(eventExpr)
   value_q <- substitute(valueExpr)
   env     <- parent.frame()
@@ -396,20 +399,35 @@ eventReactive <- function(eventExpr, valueExpr, ignoreNULL = TRUE, ignoreInit = 
   state$init_done <- !isTRUE(ignoreInit)
   state$has_value <- FALSE
   state$value     <- NULL
+  state$dirty     <- FALSE
 
+  # Eagerly track invalidation of the event expression (exactly like a plain
+  # observe()) so the dependency is registered, and the once-only "init"
+  # check happens, right away - this can't race a real click that occurs in
+  # the same flush pass. Crucially, this does NOT compute valueExpr; it only
+  # flags the cached value as stale. Computation stays fully lazy (pull-based,
+  # like reactive()), because several sibling eventReactive()/bindEvent()
+  # calls are often gated by the same event (e.g. input$go): if one of them
+  # eagerly recomputed here, another one reading it moments later in the
+  # *same* flush pass (observers run in scheduling order, not dependency
+  # order) could still see its stale pre-event value.
   observe({
     ev        <- eval(event_q, env)   # read to register dependency
     first_run <- !state$init_done
     state$init_done <- TRUE
     if (first_run && isTRUE(ignoreInit)) return(invisible(NULL))
     if (isTRUE(ignoreNULL) && is.null(ev)) return(invisible(NULL))
-    state$value     <- isolate(eval(value_q, env))
-    state$has_value <- TRUE
+    state$dirty <- TRUE
     src$invalidate_dependents()
   })
 
   function() {
     src$depend()
+    if (state$dirty) {
+      state$value     <- isolate(eval(value_q, env))
+      state$has_value <- TRUE
+      state$dirty     <- FALSE
+    }
     if (!state$has_value) return(NULL)
     state$value
   }
@@ -425,12 +443,14 @@ eventReactive <- function(eventExpr, valueExpr, ignoreNULL = TRUE, ignoreInit = 
 #'   whenever any of them change.
 #' @param ignoreNULL If \code{TRUE} (default), do not (re)compute while all
 #'   event expressions evaluate to \code{NULL}.
-#' @param ignoreInit If \code{FALSE} (default), also compute \code{x} once
-#'   immediately, before any event expression first changes.
+#' @param ignoreInit If \code{TRUE} (default), \code{x} is not computed until
+#'   an event expression first changes (e.g. an actionButton's click counter
+#'   starts at \code{0}, not \code{NULL}, so without this, \code{x} would
+#'   compute once immediately on creation, before any click).
 #' @return A new zero-argument function returning the cached value.
 #' @rdname reactive-primitives
 #' @export
-bindEvent <- function(x, ..., ignoreNULL = TRUE, ignoreInit = FALSE) {
+bindEvent <- function(x, ..., ignoreNULL = TRUE, ignoreInit = TRUE) {
   if (!is.function(x)) {
     stop("bindEvent() only supports reactive expressions created by reactive()", call. = FALSE)
   }
@@ -442,20 +462,28 @@ bindEvent <- function(x, ..., ignoreNULL = TRUE, ignoreInit = FALSE) {
   state$init_done <- !isTRUE(ignoreInit)
   state$has_value <- FALSE
   state$value     <- NULL
+  state$dirty     <- FALSE
 
+  # See the comment in eventReactive() above: only invalidation-tracking is
+  # eager here; the wrapped x() is pulled lazily on next read so that sibling
+  # reactives gated by the same event always see each other's fresh values.
   observe({
     evs       <- lapply(dots, function(e) eval(e, env))   # register dependencies
     first_run <- !state$init_done
     state$init_done <- TRUE
     if (first_run && isTRUE(ignoreInit)) return(invisible(NULL))
     if (isTRUE(ignoreNULL) && all(vapply(evs, is.null, logical(1L)))) return(invisible(NULL))
-    state$value     <- isolate(x())
-    state$has_value <- TRUE
+    state$dirty <- TRUE
     src$invalidate_dependents()
   })
 
   function() {
     src$depend()
+    if (state$dirty) {
+      state$value     <- isolate(x())
+      state$has_value <- TRUE
+      state$dirty     <- FALSE
+    }
     if (!state$has_value) return(NULL)
     state$value
   }
