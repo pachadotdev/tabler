@@ -489,19 +489,95 @@ bindEvent <- function(x, ..., ignoreNULL = TRUE, ignoreInit = TRUE) {
   }
 }
 
+#' @title Set Tabler Package Options
+#' @description Configure package-wide options for tabler. Currently this
+#'   only sets the cache backend used by \code{\link{bindCache}}, mirroring
+#'   \code{shiny::shinyOptions(cache = ...)}.
+#' @param cache A \pkg{cachem} cache object (e.g. \code{cachem::cache_disk(dir
+#'   = "/path/to/cache")} or \code{cachem::cache_mem()}) used to store
+#'   \code{\link{bindCache}} values. If never set, an in-memory
+#'   \code{cachem::cache_mem()} is created and used automatically - which
+#'   (like a plain \code{\link{reactive}}) does not survive an R restart.
+#'   Pass a \code{cache_disk()} object to persist values across app restarts
+#'   and sessions.
+#' @return Invisibly, the previous options (as a named list, for restoring
+#'   later).
+#' @rdname reactive-primitives
+#' @export
+tablerOptions <- function(cache) {
+  old <- list(cache = .tabler_opts$cache)
+  if (!missing(cache)) .tabler_opts$cache <- cache
+  invisible(old)
+}
+
+# Internal: package-wide option storage (mirrors shiny's .globals env).
+.tabler_opts <- new.env(parent = emptyenv())
+
+# Internal: lazily create a default in-memory cache if none was configured
+# via tablerOptions(cache = ...).
+.tabler_cache <- function() {
+  if (is.null(.tabler_opts$cache)) {
+    .tabler_opts$cache <- cachem::cache_mem()
+  }
+  .tabler_opts$cache
+}
+
+# Internal: build a valid cachem cache key (lowercase hex hash) from a list
+# of evaluated key expression values. cachem's cache_disk/cache_mem require
+# keys matching a filesystem-safe, lowercase-alphanumeric pattern, so the
+# key expressions' values (which can be arbitrary R objects) must be hashed
+# rather than used as a literal string.
+.tabler_cache_key <- function(keys) {
+  rlang::hash(keys)
+}
+
 #' @title Cache a Reactive Expression's Value
-#' @description A dependency-free stand-in for \code{shiny::bindCache()}.
-#'   \code{\link{reactive}} already caches its value between invalidations,
-#'   so this simply returns \code{x} unchanged; it exists so pipelines
-#'   written for Shiny (e.g. \code{reactive({...}) |> bindCache(...) |>
-#'   bindEvent(...)}) keep working without modification.
-#' @param x A reactive expression.
-#' @param ... Ignored.
-#' @return \code{x}, unchanged.
+#' @description Persistently caches a reactive expression's value, keyed by
+#'   one or more key expressions, similar to \code{shiny::bindCache()}.
+#'   Unlike \code{\link{reactive}}'s built-in caching (in-memory, lost as
+#'   soon as its dependencies change), \code{bindCache()} stores values in
+#'   the cache backend configured via \code{\link{tablerOptions}} (e.g.
+#'   \code{cachem::cache_disk()}), so identical key combinations are served
+#'   instantly - even across app restarts or different sessions - without
+#'   re-running \code{x}. Typically used with the pipe:
+#'   \code{reactive({...}) |> bindCache(key1, key2) |> bindEvent(input$go)}.
+#' @param x A reactive expression created by \code{\link{reactive}}.
+#' @param ... One or more (unevaluated) key expressions. Whenever their
+#'   combined value changes, \code{x} is (re)computed and the result is
+#'   cached; otherwise the previously cached value is returned directly,
+#'   without calling \code{x} again.
+#' @return A new zero-argument function returning the (possibly cached) value.
 #' @rdname reactive-primitives
 #' @export
 bindCache <- function(x, ...) {
-  x
+  if (!is.function(x)) {
+    stop("bindCache() only supports reactive expressions created by reactive()", call. = FALSE)
+  }
+  key_q <- substitute(list(...))[-1]
+  env   <- parent.frame()
+
+  # Every bindCache() call site gets its own namespace, folded into every key
+  # it generates. Without this, two different reactives bound to the same
+  # cache with identical key *values* (e.g. two outputs both keyed on the same
+  # inputs) would collide on the exact same cache slot and silently return
+  # each other's cached value instead of each computing its own. The
+  # namespace is the literal source text of the `x` argument (e.g. the whole
+  # `reactive({...})` block passed in via the pipe) - unique per call site,
+  # and (unlike a runtime counter) stable across app restarts, so a
+  # cache_disk() cache still hits after a restart.
+  ns <- paste(deparse(substitute(x)), collapse = "\n")
+
+  function() {
+    keys  <- lapply(key_q, function(e) eval(e, env))
+    cache <- .tabler_cache()
+    key   <- .tabler_cache_key(c(list(ns), keys))
+    if (cache$exists(key)) {
+      return(cache$get(key))
+    }
+    val <- x()
+    cache$set(key, val)
+    val
+  }
 }
 
 

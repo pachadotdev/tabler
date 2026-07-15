@@ -11,6 +11,7 @@
 \alias{observeEvent}
 \alias{eventReactive}
 \alias{bindEvent}
+\alias{tablerOptions}
 \alias{bindCache}
 \alias{syncUrl}
 \title{Reactive Value}
@@ -35,6 +36,8 @@ eventReactive(eventExpr, valueExpr, ignoreNULL = TRUE, ignoreInit = TRUE)
 
 bindEvent(x, ..., ignoreNULL = TRUE, ignoreInit = TRUE)
 
+tablerOptions(cache)
+
 bindCache(x, ...)
 
 syncUrl(session, exclude = character(0L))
@@ -42,9 +45,12 @@ syncUrl(session, exclude = character(0L))
 \arguments{
 \item{value}{Initial value.}
 
-\item{...}{Ignored.}
+\item{...}{One or more (unevaluated) key expressions. Whenever their
+combined value changes, \code{x} is (re)computed and the result is
+cached; otherwise the previously cached value is returned directly,
+without calling \code{x} again.}
 
-\item{x}{A reactive expression.}
+\item{x}{A reactive expression created by \code{\link{reactive}}.}
 
 \item{all.names}{Include names starting with a dot (default \code{FALSE}).}
 
@@ -65,6 +71,14 @@ compute once immediately on creation, before any click).}
 
 \item{ignoreNULL}{If \code{TRUE} (default), do not (re)compute while all
 event expressions evaluate to \code{NULL}.}
+
+\item{cache}{A \pkg{cachem} cache object (e.g. \code{cachem::cache_disk(dir
+= "/path/to/cache")} or \code{cachem::cache_mem()}) used to store
+\code{\link{bindCache}} values. If never set, an in-memory
+\code{cachem::cache_mem()} is created and used automatically - which
+(like a plain \code{\link{reactive}}) does not survive an R restart.
+Pass a \code{cache_disk()} object to persist values across app restarts
+and sessions.}
 
 \item{session}{The \code{session} object passed by \code{\link{tablerApp}}
 to the server function.}
@@ -91,7 +105,10 @@ A zero-argument function returning the cached value.
 
 A new zero-argument function returning the cached value.
 
-\code{x}, unchanged.
+Invisibly, the previous options (as a named list, for restoring
+  later).
+
+A new zero-argument function returning the (possibly cached) value.
 
 Invisibly, \code{session} (for chaining).
 }
@@ -134,11 +151,19 @@ Modifies a reactive expression created by \code{\link{reactive}}
   similar to \code{shiny::bindEvent()}. Typically used with the pipe:
   \code{reactive({...}) |> bindEvent(input$go)}.
 
-A dependency-free stand-in for \code{shiny::bindCache()}.
-  \code{\link{reactive}} already caches its value between invalidations,
-  so this simply returns \code{x} unchanged; it exists so pipelines
-  written for Shiny (e.g. \code{reactive({...}) |> bindCache(...) |>
-  bindEvent(...)}) keep working without modification.
+Configure package-wide options for tabler. Currently this
+  only sets the cache backend used by \code{\link{bindCache}}, mirroring
+  \code{shiny::shinyOptions(cache = ...)}.
+
+Persistently caches a reactive expression's value, keyed by
+  one or more key expressions, similar to \code{shiny::bindCache()}.
+  Unlike \code{\link{reactive}}'s built-in caching (in-memory, lost as
+  soon as its dependencies change), \code{bindCache()} stores values in
+  the cache backend configured via \code{\link{tablerOptions}} (e.g.
+  \code{cachem::cache_disk()}), so identical key combinations are served
+  instantly - even across app restarts or different sessions - without
+  re-running \code{x}. Typically used with the pipe:
+  \code{reactive({...}) |> bindCache(key1, key2) |> bindEvent(input$go)}.
 
 Call once inside the server function to enable two-way URL
   parameter synchronisation: the URL query string initialises inputs on

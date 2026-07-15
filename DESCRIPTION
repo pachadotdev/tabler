@@ -16,8 +16,10 @@ Depends:
     R (>= 3.5.0)
 License: Apache License (>= 2)
 Imports: 
+    cachem,
     httpuv,
-    jsonlite
+    jsonlite,
+    rlang
 Suggests: 
     DT,
     htmlwidgets,
