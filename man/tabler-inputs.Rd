@@ -109,7 +109,9 @@ An HTML tag.
 \description{
 A dropdown that lets the user pick one item from a list.
 
-A horizontal range slider.
+A horizontal range slider. When \code{value} has length 2,
+  two thumbs are rendered (a "from"/"to" range slider) and the server
+  receives a length-2 numeric vector, e.g. \code{c(2018, 2022)}.
 
 Change the choices and/or selected value of a
   \code{\link{selectInput}} already displayed in the browser, without a

@@ -101,35 +101,61 @@ selectInput <- function(inputId, label, choices, selected = NULL, ...) {
 }
 
 #' @title Slider Input
-#' @description A horizontal range slider.
+#' @description A horizontal range slider. When \code{value} has length 2,
+#'   two thumbs are rendered (a "from"/"to" range slider) and the server
+#'   receives a length-2 numeric vector, e.g. \code{c(2018, 2022)}.
 #' @param inputId The input identifier.
 #' @param label   Display label.
 #' @param min     Minimum value.
 #' @param max     Maximum value.
-#' @param value   Initial value.
+#' @param value   Initial value. A length-2 vector renders a dual-thumb range
+#'   slider.
 #' @param step    Step size (default \code{1}).
 #' @param ... Additional HTML attributes.
 #' @return An HTML tag.
 #' @rdname tabler-inputs
 #' @export
 sliderInput <- function(inputId, label, min, max, value, step = 1, ...) {
-  control <- tags$input(
-    type               = "range",
-    id                 = inputId,
-    class              = "form-range",
-    min                = min,
-    max                = max,
-    step               = step,
-    value              = value,
-    `data-tabler-input` = inputId,
-    `data-tabler-type`  = "range",
-    ...
-  )
+  is_range <- length(value) > 1L
+
+  if (is_range) {
+    lo_value <- base::min(value)
+    hi_value <- base::max(value)
+    control <- div(
+      class               = "tabler-range2",
+      id                  = inputId,
+      `data-tabler-input` = inputId,
+      `data-tabler-type`  = "range2",
+      tags$input(
+        type = "range", class = "form-range",
+        min = min, max = max, step = step, value = lo_value,
+        `data-tabler-range-role` = "lo"
+      ),
+      tags$input(
+        type = "range", class = "form-range",
+        min = min, max = max, step = step, value = hi_value,
+        `data-tabler-range-role` = "hi"
+      )
+    )
+  } else {
+    control <- tags$input(
+      type               = "range",
+      id                 = inputId,
+      class              = "form-range",
+      min                = min,
+      max                = max,
+      step               = step,
+      value              = value,
+      `data-tabler-input` = inputId,
+      `data-tabler-type`  = "range",
+      ...
+    )
+  }
 
   value_display <- span(
     id    = paste0(inputId, "_val"),
     class = "badge bg-azure ms-2",
-    if (length(value) > 1L) paste(value, collapse = " - ") else value
+    if (is_range) paste(value, collapse = " - ") else value
   )
 
   .input_wrap(inputId, tagList(label, value_display), control)

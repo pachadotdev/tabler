@@ -154,7 +154,18 @@
     var type = els[0].getAttribute("data-tabler-type") || "text";
     var val;
 
-    if (type === "checkbox") {
+    if (type === "range2") {
+      var parts = raw.split(",");
+      var lo = els[0].querySelector('[data-tabler-range-role="lo"]');
+      var hi = els[0].querySelector('[data-tabler-range-role="hi"]');
+      var loV = parseFloat(parts[0]);
+      var hiV = parseFloat(parts[1]);
+      if (lo && !isNaN(loV)) lo.value = loV;
+      if (hi && !isNaN(hiV)) hi.value = isNaN(hiV) ? loV : hiV;
+      var badge2 = document.getElementById(id + "_val");
+      if (badge2) badge2.textContent = loV + " - " + (isNaN(hiV) ? loV : hiV);
+      val = [loV, isNaN(hiV) ? loV : hiV];
+    } else if (type === "checkbox") {
       var checked = raw === "true";
       els[0].checked = checked;
       val = checked;
@@ -193,7 +204,10 @@
       if (seen[id]) continue;
       seen[id] = true;
 
-      if (type === "checkbox") {
+      if (type === "range2") {
+        var pair = readRange2(el);
+        params[id] = pair.lo + "," + pair.hi;
+      } else if (type === "checkbox") {
         params[id] = el.checked ? "true" : "false";
       } else if (type === "checkbox-group") {
         var all = document.querySelectorAll('[data-tabler-input="' + id + '"][data-tabler-type="checkbox-group"]');
@@ -231,7 +245,10 @@
     var type = el.getAttribute("data-tabler-type") || "text";
     var val;
 
-    if (type === "checkbox") {
+    if (type === "range2") {
+      var pair = readRange2(el);
+      val = [pair.lo, pair.hi];
+    } else if (type === "checkbox") {
       val = el.checked;
     } else if (type === "checkbox-group") {
       // Collect all checked values for this group
@@ -261,6 +278,9 @@
     if (type === "range") {
       var badge = document.getElementById(id + "_val");
       if (badge) badge.textContent = el.value;
+    } else if (type === "range2") {
+      var badge2 = document.getElementById(id + "_val");
+      if (badge2) badge2.textContent = val[0] + " - " + val[1];
     }
 
     // Mirror to URL if sync is enabled
@@ -268,6 +288,21 @@
       var qs = buildQueryString(collectUrlParams());
       history.replaceState(null, "", location.pathname + (qs ? "?" + qs : ""));
     }
+  }
+
+  // Read/clamp a range2 (dual-thumb) widget's current lo/hi values. If the
+  // thumb being dragged has crossed the other one, the other thumb is
+  // pushed to match it so lo never exceeds hi.
+  function readRange2(wrapper) {
+    var lo = wrapper.querySelector('[data-tabler-range-role="lo"]');
+    var hi = wrapper.querySelector('[data-tabler-range-role="hi"]');
+    var loV = parseFloat(lo.value);
+    var hiV = parseFloat(hi.value);
+    if (loV > hiV) {
+      if (document.activeElement === hi) { loV = hiV; lo.value = loV; }
+      else { hiV = loV; hi.value = hiV; }
+    }
+    return { lo: loV, hi: hiV };
   }
 
   // Bind all data-tabler-input elements inside `root` (or document)
@@ -282,7 +317,13 @@
         var type = el.getAttribute("data-tabler-type") || "text";
         var eventName;
 
-        if (type === "select") {
+        if (type === "range2") {
+          // Native "input" events on either thumb bubble up to the wrapper.
+          el.addEventListener("input", function () {
+            sendInputValue(el);
+          });
+          return;
+        } else if (type === "select") {
           eventName = "change";
         } else if (type === "range") {
           eventName = "input";
@@ -309,6 +350,13 @@
       var el   = els[i];
       var id   = el.getAttribute("data-tabler-input");
       var type = el.getAttribute("data-tabler-type") || "text";
+
+      // Buttons (actionButton) have no "current value" to resend - their
+      // value is a click counter that must only advance on a real click.
+      // Resending it here would fake a click on every page load/reconnect,
+      // immediately firing any observeEvent()/eventReactive()/bindEvent()
+      // gated on the button before the user ever interacts with it.
+      if (type === "button") continue;
 
       // For checkbox-group and radio, send once per group
       if ((type === "checkbox-group" || type === "radio") && seen[id]) continue;

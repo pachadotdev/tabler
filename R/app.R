@@ -55,10 +55,24 @@ addResourcePath <- function(prefix, directoryPath) {
 # reads so no custom S3 method for $ is needed here.
 # ---------------------------------------------------------------------------
 
+# Internal helper: jsonlite::fromJSON(..., simplifyVector = FALSE) turns
+# every JSON array into an R list, even ones that only contain scalars (e.g.
+# a dual-thumb slider's [2018, 2022] or a checkbox-group's ["a", "b"]). Shiny
+# code expects these as plain atomic vectors (input$y[1], min(input$y), ...),
+# so unwrap any such "flat" list before it reaches input$<name>.
+.simplify_input_value <- function(x) {
+  if (is.list(x) && length(x) > 0L &&
+      all(vapply(x, function(e) is.atomic(e) && length(e) == 1L, logical(1L)))) {
+    return(unlist(x, use.names = FALSE))
+  }
+  x
+}
+
 # Internal helper: set a reactive input value without going through $<-
 .rv_set <- function(rv, name, value) {
   store   <- attr(rv, ".store")
   sources <- attr(rv, ".sources")
+  value   <- .simplify_input_value(value)
   assign(name, value, envir = store)
   if (!exists(name, envir = sources, inherits = FALSE)) {
     assign(name, new_source(), envir = sources)
@@ -398,6 +412,7 @@ tablerApp <- function(ui, server, host = "127.0.0.1", port = 3000L,
         if (identical(msg[["type"]], "input")) {
           .rv_set(input_proxy, msg[["name"]], msg[["value"]])
           .flush_domain()
+
         }
       }, error = function(e) NULL)
     })

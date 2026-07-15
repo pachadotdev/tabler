@@ -98,7 +98,17 @@ new_context <- function(on_invalidate_fn) {
   while (length(.domain$pending) > 0L) {
     fn <- .domain$pending[[1L]]
     .domain$pending <- .domain$pending[-1L]
-    fn()
+    # An uncaught error in one observer must not abort the whole flush: any
+    # other observers still pending (e.g. one that calls hideProgress(), or
+    # reveals a UI section) would otherwise silently never run. This mirrors
+    # shiny, where an error in one observer/output doesn't take down
+    # unrelated ones.
+    tryCatch(
+      fn(),
+      error = function(e) {
+        message("tabler: error in reactive observer: ", conditionMessage(e))
+      }
+    )
   }
 }
 
@@ -299,16 +309,32 @@ observe <- function(expr) {
   env       <- parent.frame()
   suspended <- FALSE
 
+  # Snapshot the reactive domain (session) that is active when this observer
+  # is *created* - e.g. the module-scoped session set up by moduleServer()
+  # while it synchronously runs the module's server function. Without this,
+  # functions that default to getDefaultReactiveDomain() (show(), hide(),
+  # showProgress(), ...) would resolve to the wrong session - the top-level
+  # one - whenever this observer's body actually runs later (on a button
+  # click, say), because moduleServer() already restored the previous
+  # session by the time that happens. Restoring the captured session for the
+  # duration of each run mirrors shiny's withReactiveDomain() behaviour.
+  captured_session <- .domain$current_session
+
   run <- function() {
     if (suspended) return(invisible(NULL))
     ctx <- new_context(function() {
       if (!suspended) .schedule(run)
     })
     .push_context(ctx)
+    prev_session <- .domain$current_session
+    .domain$current_session <- captured_session
     tryCatch(
       eval(expr_q, env),
       tabler_req_stop = function(e) invisible(NULL),
-      finally = .pop_context()
+      finally = {
+        .domain$current_session <- prev_session
+        .pop_context()
+      }
     )
   }
 
