@@ -8,6 +8,10 @@
   ns <- asNamespace(pkgname)
   registerS3method("$",            "ReactiveValues",  .rv_dollar,               envir = ns)
   registerS3method("$<-",          "ReactiveValues",  .rv_dollar_assign,        envir = ns)
+  registerS3method("$",            "tabler.module.input",  .mi_dollar,          envir = ns)
+  registerS3method("$<-",          "tabler.module.input",  .mi_dollar_assign,   envir = ns)
+  registerS3method("$",            "tabler.module.output", .mo_dollar,          envir = ns)
+  registerS3method("$<-",          "tabler.module.output", .mo_dollar_assign,   envir = ns)
   registerS3method("as.character", "tabler.tag",       .as_char_tag,      envir = ns)
   registerS3method("as.character", "tabler.tag.list",  .as_char_tag_list, envir = ns)
 }
@@ -29,11 +33,14 @@ add_deps <- function(layout = "default") {
     tags$link(rel = "stylesheet", href = "/tabler-icons-3.55.0/tabler-icons.min.css"),
     tags$link(rel = "stylesheet", href = "/tabler-1.4.0/css/tabler-socials.min.css"),
     tags$link(rel = "stylesheet", href = "/tabler-1.4.0/css/tabler-themes.min.css"),
+    tags$link(rel = "stylesheet", href = "/css/tabler-progress.css"),
     tags$script(src = "/tabler-1.4.0/js/tabler.min.js"),
     tags$script(src = "/tabler-1.4.0/js/tabler-theme.min.js"),
     tags$script(src = "/js/tabler-tabs.js"),
     tags$script(src = "/js/tabler-reactive.js"),
-    tags$script(src = "/js/tabler-visibility.js")
+    tags$script(src = "/js/tabler-visibility.js"),
+    tags$script(src = "/js/tabler-update-input.js"),
+    tags$script(src = "/js/tabler-progress.js")
   )
 }
 

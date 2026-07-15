@@ -115,10 +115,11 @@ tablerApp <- function(ui, server, host = "127.0.0.1", port = 3000L,
   page_html <- paste0("<!DOCTYPE html><html>", render_html(ui), "</html>")
 
   # Shared app state ----
-  connections  <- new.env(hash = TRUE, parent = emptyenv())  # id -> ws
-  output_cache <- new.env(hash = TRUE, parent = emptyenv())  # id -> html string
-  widget_store <- new.env(hash = TRUE, parent = emptyenv())  # id -> widget HTML
-  plot_store   <- new.env(hash = TRUE, parent = emptyenv())  # id -> svg string
+  connections    <- new.env(hash = TRUE, parent = emptyenv())  # id -> ws
+  output_cache   <- new.env(hash = TRUE, parent = emptyenv())  # id -> html string
+  widget_store   <- new.env(hash = TRUE, parent = emptyenv())  # id -> widget HTML
+  plot_store     <- new.env(hash = TRUE, parent = emptyenv())  # id -> svg string
+  download_store <- new.env(hash = TRUE, parent = emptyenv())  # id -> tabler_render (type="download")
 
   # Input / output proxies ----
   input_proxy  <- reactiveValues()          # $.ReactiveValues gives reactive reads
@@ -135,6 +136,9 @@ tablerApp <- function(ui, server, host = "127.0.0.1", port = 3000L,
   }
 
   session <- list(
+    input  = input_proxy,
+    output = output_proxy,
+    ns     = function(id) id,
     sendCustomMessage = function(type, message) {
       send_all(jsonlite::toJSON(
         list(type = "custom", messageType = type, message = message),
@@ -148,6 +152,10 @@ tablerApp <- function(ui, server, host = "127.0.0.1", port = 3000L,
       url_sync_exclude <<- as.character(exclude)
     }
   )
+
+  # Make this session discoverable via getDefaultReactiveDomain(), used as
+  # the default `session` argument of moduleServer() ----
+  .domain$current_session <- session
 
   # Call server ----
   server(input_proxy, output_proxy, session)
@@ -190,6 +198,12 @@ tablerApp <- function(ui, server, host = "127.0.0.1", port = 3000L,
 
   for (nm in ls(output_proxy)) {
     render_obj <- get(nm, envir = output_proxy)
+    if (inherits(render_obj, "tabler_render") && identical(render_obj$type, "download")) {
+      # Download handlers are served on-demand via the /downloads/ HTTP
+      # endpoint below, not pushed reactively like other outputs.
+      assign(nm, render_obj, envir = download_store)
+      next
+    }
     .observe_output(render_obj, make_send_fn(nm))
   }
 
@@ -228,6 +242,47 @@ tablerApp <- function(ui, server, host = "127.0.0.1", port = 3000L,
       return(list(status = 404L,
                   headers = list("Content-Type" = "text/plain"),
                   body    = "Widget not found"))
+    }
+
+    # Download endpoint — evaluates a downloadHandler() on demand
+    if (grepl("^/downloads/", path)) {
+      did <- sub("^/downloads/([^?]*).*$", "\\1", path)
+      if (grepl("..", did, fixed = TRUE) || grepl("/", did, fixed = TRUE)) {
+        return(list(status = 403L,
+                    headers = list("Content-Type" = "text/plain"),
+                    body    = "Forbidden"))
+      }
+      if (!exists(did, envir = download_store, inherits = FALSE)) {
+        return(list(status = 404L,
+                    headers = list("Content-Type" = "text/plain"),
+                    body    = "Download not found"))
+      }
+      dh <- get(did, envir = download_store, inherits = FALSE)
+      result <- tryCatch({
+        fname <- isolate(if (is.function(dh$filename)) dh$filename() else dh$filename)
+        tmp   <- tempfile()
+        on.exit(unlink(tmp), add = TRUE)
+        isolate(dh$content(tmp))
+        if (!file.exists(tmp)) stop("downloadHandler's content() did not write to the given file path")
+        fsize   <- file.info(tmp)$size
+        con     <- file(tmp, "rb")
+        on.exit(close(con), add = TRUE)
+        content <- readBin(con, "raw", fsize)
+        ctype   <- if (!is.null(dh$contentType)) dh$contentType else .mime_type(fname)
+        list(
+          status  = 200L,
+          headers = list(
+            "Content-Type"        = ctype,
+            "Content-Disposition" = sprintf('attachment; filename="%s"', fname)
+          ),
+          body    = content
+        )
+      }, error = function(e) {
+        list(status = 500L,
+             headers = list("Content-Type" = "text/plain"),
+             body = paste("Download failed:", conditionMessage(e)))
+      })
+      return(result)
     }
 
     # Plot SVG endpoint — serves raw SVG so <img> can use a plain URL
