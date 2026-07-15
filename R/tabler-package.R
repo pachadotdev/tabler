@@ -32,7 +32,8 @@ add_deps <- function(layout = "default") {
     tags$script(src = "/tabler-1.4.0/js/tabler.min.js"),
     tags$script(src = "/tabler-1.4.0/js/tabler-theme.min.js"),
     tags$script(src = "/js/tabler-tabs.js"),
-    tags$script(src = "/js/tabler-reactive.js")
+    tags$script(src = "/js/tabler-reactive.js"),
+    tags$script(src = "/js/tabler-visibility.js")
   )
 }
 

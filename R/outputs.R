@@ -31,14 +31,17 @@ verbatimTextOutput <- function(outputId) {
 }
 
 #' @title UI Output Placeholder
-#' @description Places a \code{<div>} whose inner HTML is replaced wholesale by
-#'   \code{renderUI} output.
+#' @description Places a tag (by default a \code{<div>}) whose inner HTML is
+#'   replaced wholesale by \code{renderUI} output.
 #' @param outputId The output identifier.
+#' @param container A tag-building function used to create the placeholder
+#'   element, e.g. \code{tags$h1}. Defaults to \code{\link{div}}.
+#' @param ... Additional arguments passed to \code{container}.
 #' @return An HTML tag.
 #' @rdname tabler-outputs
 #' @export
-uiOutput <- function(outputId) {
-  div(id = outputId, class = "tabler-out-ui")
+uiOutput <- function(outputId, container = div, ...) {
+  container(id = outputId, class = "tabler-out-ui", ...)
 }
 
 #' @aliases htmlOutput
