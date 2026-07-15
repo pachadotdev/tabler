@@ -177,6 +177,69 @@ renderWidget <- function(expr) {
   fn
 }
 
+#' @title Create a Download Handler
+#' @description Assigned to \code{output$id}, serves a file for download when
+#'   the browser requests the matching \code{\link{downloadButton}}'s link,
+#'   similar to \code{shiny::downloadHandler()}. Unlike other outputs, the
+#'   file is generated fresh (not cached/pushed) each time it is requested.
+#' @param filename A string, or a zero-argument function returning a string,
+#'   giving the filename offered to the browser (e.g. \code{"data.csv"}).
+#' @param content A one-argument function \code{function(file) {...}} that
+#'   writes the file's contents to the path given by \code{file}.
+#' @param contentType Optional MIME type string. If \code{NULL} (default), it
+#'   is guessed from the filename's extension.
+#' @return A \code{tabler_render} object for use with \code{tablerApp}.
+#' @rdname tabler-outputs
+#' @export
+downloadHandler <- function(filename, content, contentType = NULL) {
+  structure(
+    list(filename = filename, content = content, contentType = contentType, type = "download"),
+    class = "tabler_render"
+  )
+}
+
+#' @title Download Button/Link
+#' @description Creates a link that triggers a file download from the
+#'   matching \code{\link{downloadHandler}}, similar to
+#'   \code{shiny::downloadButton()}/\code{shiny::downloadLink()}.
+#' @param outputId The output identifier (must match the server-side
+#'   \code{downloadHandler} assigned to \code{output[[outputId]]}).
+#' @param label Link/button text.
+#' @param class Additional CSS classes (default \code{"btn-primary"} for
+#'   \code{downloadButton}, none for \code{downloadLink}).
+#' @param icon Optional icon name to prepend.
+#' @param ... Additional HTML attributes.
+#' @return An HTML tag.
+#' @rdname tabler-outputs
+#' @export
+downloadButton <- function(outputId, label = "Download", class = "btn-primary", icon = "download", ...) {
+  icon_tag <- if (!is.null(icon)) tags$i(class = paste0("ti ti-", icon, " me-1"))
+  tags$a(
+    id     = outputId,
+    href   = paste0("/downloads/", outputId),
+    class  = paste("btn", class),
+    target = "_blank",
+    icon_tag,
+    label,
+    ...
+  )
+}
+
+#' @rdname tabler-outputs
+#' @export
+downloadLink <- function(outputId, label = "Download", class = NULL, icon = NULL, ...) {
+  icon_tag <- if (!is.null(icon)) tags$i(class = paste0("ti ti-", icon, " me-1"))
+  tags$a(
+    id     = outputId,
+    href   = paste0("/downloads/", outputId),
+    class  = class,
+    target = "_blank",
+    icon_tag,
+    label,
+    ...
+  )
+}
+
 # Serialise a render result to an HTML string
 .serialise_output <- function(val, type) {
   switch(type,
