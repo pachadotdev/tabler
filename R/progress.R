@@ -114,6 +114,14 @@ withProgress <- function(session = getDefaultReactiveDomain(), text = "Loading..
   later::later(function() {
     tryCatch(
       eval(expr_q, env),
+      error = function(e) {
+        # This callback runs via later::run_now() in tablerApp()'s event
+        # loop, outside of .flush_domain()'s per-observer tryCatch (see
+        # reactive.R). An uncaught error here would propagate out of
+        # later::run_now() and crash the whole event loop, silently freezing
+        # the entire app - so it must be caught here instead.
+        message("tabler: error in withProgress(): ", conditionMessage(e))
+      },
       finally = hideProgress(session)
     )
   }, delay = 0)
