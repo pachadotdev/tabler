@@ -18,9 +18,9 @@ textOutput(outputId, inline = FALSE)
 
 verbatimTextOutput(outputId)
 
-uiOutput(outputId)
+uiOutput(outputId, container = div, ...)
 
-htmlOutput(outputId)
+htmlOutput(outputId, container = div, ...)
 
 renderText(expr)
 
@@ -40,6 +40,11 @@ renderWidget(expr)
 \item{outputId}{The output identifier (must match the server-side name).}
 
 \item{inline}{If \code{TRUE}, use \code{<span>}; otherwise \code{<div>}.}
+
+\item{container}{A tag-building function used to create the placeholder
+element, e.g. \code{tags$h1}. Defaults to \code{\link{div}}.}
+
+\item{...}{Additional arguments passed to \code{container}.}
 
 \item{expr}{Expression that returns an \code{htmlwidget} object (e.g.
 \code{d3po(...)}, \code{leaflet(...)}).}
@@ -76,8 +81,8 @@ Places a \code{<span>} in the UI whose content is updated by
 
 Places a \code{<pre>} in the UI for monospace/printed output.
 
-Places a \code{<div>} whose inner HTML is replaced wholesale by
-  \code{renderUI} output.
+Places a tag (by default a \code{<div>}) whose inner HTML is
+  replaced wholesale by \code{renderUI} output.
 
 Returns a character string that is HTML-escaped and injected as
   the inner HTML of the matching \code{textOutput} placeholder.

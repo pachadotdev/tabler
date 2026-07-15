@@ -10,7 +10,7 @@ HTML(text)
 \item{text}{Character string of literal HTML.}
 }
 \value{
-An object of class \code{"html"}.
+An object of class \code{"tabler.html"}.
 }
 \description{
 Mark a String as Raw HTML (Do Not Escape)

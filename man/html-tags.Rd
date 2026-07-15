@@ -16,6 +16,7 @@
 \alias{h4}
 \alias{h5}
 \alias{h6}
+\alias{br}
 \title{HTML Tag Builder Functions}
 \usage{
 div(...)
@@ -45,6 +46,8 @@ h4(...)
 h5(...)
 
 h6(...)
+
+br(...)
 }
 \arguments{
 \item{...}{Child elements (strings, other tags) and/or named HTML
