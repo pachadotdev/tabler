@@ -357,7 +357,7 @@ button <- function(label, href = NULL, onclick = NULL, color = "primary",
   # Icon handling: allow passing an icon name or a full tag
   icon_tag <- NULL
   if (!is.null(icon)) {
-    if (inherits(icon, "tabler.tag") || inherits(icon, "html")) {
+    if (inherits(icon, "tabler.tag") || inherits(icon, "tabler.html")) {
       # Single tag element
       icon_tag <- list(icon)
     } else if (is.list(icon)) {
@@ -395,7 +395,7 @@ button <- function(label, href = NULL, onclick = NULL, color = "primary",
   flatten_children <- function(x) {
     out <- list()
     for (el in x) {
-      if (is.list(el) && !inherits(el, "tabler.tag") && !inherits(el, "html")) {
+      if (is.list(el) && !inherits(el, "tabler.tag") && !inherits(el, "tabler.html")) {
         out <- c(out, flatten_children(el))
       } else {
         out <- c(out, list(el))

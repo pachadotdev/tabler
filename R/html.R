@@ -32,7 +32,7 @@ html_escape <- function(text) {
     if (is.null(v)) next
     if (nzchar(nm)) {
       attribs[[nm]] <- v
-    } else if (is.list(v) && !inherits(v, c("tabler.tag", "tabler.tag.list", "html"))) {
+    } else if (is.list(v) && !inherits(v, c("tabler.tag", "tabler.tag.list", "tabler.html"))) {
       children <- c(children, v)   # flatten bare lists
     } else {
       children <- c(children, list(v))
@@ -58,7 +58,7 @@ html_escape <- function(text) {
     } else if (isFALSE(v) || is.null(v)) {
       parts[i] <- ""
     } else {
-      parts[i] <- sprintf('%s="%s"', k, html_escape(as.character(v)))
+      parts[i] <- sprintf('%s="%s"', k, html_escape(paste(as.character(v), collapse = " ")))
     }
   }
   paste(parts[nzchar(parts)], collapse = " ")
@@ -71,7 +71,7 @@ html_escape <- function(text) {
 #' @noRd
 render_html <- function(x) {
   if (is.null(x))                              return("")
-  if (inherits(x, "html"))                     return(as.character(x))
+  if (inherits(x, "tabler.html"))              return(x$html)
   if (is.logical(x) || is.numeric(x))         return(html_escape(as.character(x)))
   if (is.character(x))                         return(html_escape(x))
   if (inherits(x, "tabler.tag.list")) {
@@ -88,7 +88,7 @@ render_html <- function(x) {
   if (is.list(x) && !inherits(x, "tabler.tag")) {
     return(paste(vapply(x, render_html, character(1L)), collapse = ""))
   }
-  if (!inherits(x, "tabler.tag"))               return(html_escape(as.character(x)))
+  if (!inherits(x, "tabler.tag"))               return(paste(as.character(x), collapse = ""))
 
   nm    <- x$name
   attrs <- .render_attribs(x$attribs)
@@ -100,6 +100,7 @@ render_html <- function(x) {
   if (nchar(attrs) > 0L) return(sprintf("<%s %s>%s</%s>", nm, attrs, kids, nm))
   sprintf("<%s>%s</%s>", nm, kids, nm)
 }
+
 
 # Public API ----------------------------------------------------------------
 
@@ -131,14 +132,14 @@ tagList <- function(...) {
 
 #' Mark a String as Raw HTML (Do Not Escape)
 #' @param text Character string of literal HTML.
-#' @return An object of class \code{"html"}.
+#' @return An object of class \code{"tabler.html"}.
 #' @export
 HTML <- function(text) {
-  structure(list(html = text), class = c("html", "character"))
+  structure(list(html = text), class = "tabler.html")
 }
 
-#' @exportS3Method as.character html
-as.character.html <- function(x, ...) x$html
+#' @exportS3Method as.character tabler.html
+as.character.tabler.html <- function(x, ...) x$html
 
 # S3 methods for tabler.tag and tabler.tag.list — registered via registerS3method()
 # in .onLoad() so tinydev/roxygen2 never see dot-separated names as S3 methods.
@@ -204,6 +205,9 @@ h5   <- function(...) .new_tag("h5",    ...)
 #' @rdname html-tags
 #' @export
 h6   <- function(...) .new_tag("h6",    ...)
+#' @rdname html-tags
+#' @export
+br   <- function(...) .new_tag("br",    ...)
 
 #' HTML Tag Namespace
 #' @description A named list of tag-builder functions covering the full HTML5
