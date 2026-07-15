@@ -82,7 +82,7 @@ sliderInput <- function(inputId, label, min, max, value, step = 1, ...) {
   value_display <- span(
     id    = paste0(inputId, "_val"),
     class = "badge bg-azure ms-2",
-    value
+    if (length(value) > 1L) paste(value, collapse = " - ") else value
   )
 
   .input_wrap(inputId, tagList(label, value_display), control)
