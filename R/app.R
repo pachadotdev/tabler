@@ -451,6 +451,10 @@ tablerApp <- function(ui, server, host = "127.0.0.1", port = 3000L,
   tryCatch(
     repeat {
       httpuv::service(1000L)   # poll for 1 s then yield
+      # Run any due later::later() callbacks (e.g. work deferred by
+      # withProgress() so the "show" message can reach the browser first)
+      # before flushing reactive observers that they may have scheduled.
+      later::run_now(timeoutSecs = 0, all = TRUE)
       .flush_domain()          # process any queued reactive work
     },
     interrupt = function(e) invisible(NULL)

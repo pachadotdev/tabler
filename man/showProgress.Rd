@@ -29,6 +29,21 @@ JS overlay setups. It works the same way as
 \code{\link{show}}/\code{\link{hide}}: the server sends a small message
 over the WebSocket connection and the browser-side JS
 (\code{tabler-progress.js}) creates/reveals or hides the overlay.
+
+\code{\link{tablerApp}}'s event loop only writes queued WebSocket messages
+to the socket in between iterations of its
+\code{repeat \{ httpuv::service(); ... \}} loop. If \code{showProgress()}
+is immediately followed by a long, blocking computation in the same
+observer, the "show" message sits in the queue - never reaching the
+browser - until that observer (and thus the slow computation) finishes,
+making the overlay flash on right at the end instead of before the work
+starts. Calling \code{httpuv::service()} again from inside the observer to
+force an early flush is unsafe here: it re-enters \pkg{httpuv}'s event
+loop while it is still dispatching the current WebSocket message, which
+can cause that message (and the input it carries) to be processed more
+than once. Use \code{\link{withProgress}} instead, which defers the slow
+computation with \code{later::later()} so control returns to the event
+loop (flushing the "show" message) before the work actually runs.
 }
 \examples{
 if (interactive()) {
@@ -39,9 +54,9 @@ if (interactive()) {
 
   server <- function(input, output, session) {
     observeEvent(input$btn, {
-      showProgress(session, "Loading data...")
-      Sys.sleep(2)
-      hideProgress(session)
+      withProgress(session, "Loading data...", {
+        Sys.sleep(2)
+      })
     })
   }
 
@@ -49,5 +64,5 @@ if (interactive()) {
 }
 }
 \seealso{
-\code{\link{tablerApp}}
+\code{\link{tablerApp}}, \code{\link{withProgress}}
 }

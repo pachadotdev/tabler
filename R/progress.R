@@ -11,11 +11,26 @@
 #' over the WebSocket connection and the browser-side JS
 #' (\code{tabler-progress.js}) creates/reveals or hides the overlay.
 #'
+#' \code{\link{tablerApp}}'s event loop only writes queued WebSocket messages
+#' to the socket in between iterations of its
+#' \code{repeat \{ httpuv::service(); ... \}} loop. If \code{showProgress()}
+#' is immediately followed by a long, blocking computation in the same
+#' observer, the "show" message sits in the queue - never reaching the
+#' browser - until that observer (and thus the slow computation) finishes,
+#' making the overlay flash on right at the end instead of before the work
+#' starts. Calling \code{httpuv::service()} again from inside the observer to
+#' force an early flush is unsafe here: it re-enters \pkg{httpuv}'s event
+#' loop while it is still dispatching the current WebSocket message, which
+#' can cause that message (and the input it carries) to be processed more
+#' than once. Use \code{\link{withProgress}} instead, which defers the slow
+#' computation with \code{later::later()} so control returns to the event
+#' loop (flushing the "show" message) before the work actually runs.
+#'
 #' @param session The \code{session} object passed by \code{\link{tablerApp}}
 #'   to the server function. Defaults to \code{\link{getDefaultReactiveDomain}()}.
 #' @param text The message displayed above the progress bar.
 #' @return Invisibly, \code{NULL}.
-#' @seealso \code{\link{tablerApp}}
+#' @seealso \code{\link{tablerApp}}, \code{\link{withProgress}}
 #' @examples
 #' if (interactive()) {
 #'   ui <- page(
@@ -25,9 +40,9 @@
 #'
 #'   server <- function(input, output, session) {
 #'     observeEvent(input$btn, {
-#'       showProgress(session, "Loading data...")
-#'       Sys.sleep(2)
-#'       hideProgress(session)
+#'       withProgress(session, "Loading data...", {
+#'         Sys.sleep(2)
+#'       })
 #'     })
 #'   }
 #'
@@ -51,5 +66,56 @@ hideProgress <- function(session = getDefaultReactiveDomain()) {
     return(invisible(NULL))
   }
   session$sendCustomMessage("tabler-hideProgress", list())
+  invisible(NULL)
+}
+
+#' Run a Long Computation with a Progress Overlay
+#'
+#' Shows the full-page progress overlay (see \code{\link{showProgress}}),
+#' then runs \code{expr}, then hides the overlay again - but unlike calling
+#' \code{\link{showProgress}}/\code{\link{hideProgress}} directly around a
+#' blocking computation, \code{expr} is deferred with \code{later::later()}
+#' so that \code{\link{tablerApp}}'s event loop gets a chance to actually
+#' flush the "show" message to the browser before the slow work begins.
+#'
+#' @param session The \code{session} object passed by \code{\link{tablerApp}}
+#'   to the server function. Defaults to \code{\link{getDefaultReactiveDomain}()}.
+#' @param text The message displayed above the progress bar.
+#' @param expr The (potentially slow) expression to run once the overlay is visible.
+#' @return Invisibly, \code{NULL}. \code{expr} runs asynchronously, after
+#'   \code{withProgress()} itself has already returned.
+#' @seealso \code{\link{showProgress}}, \code{\link{tablerApp}}
+#' @examples
+#' if (interactive()) {
+#'   ui <- page(
+#'     title = "Progress Example",
+#'     body = body(actionButton("btn", "Load data"))
+#'   )
+#'
+#'   server <- function(input, output, session) {
+#'     observeEvent(input$btn, {
+#'       withProgress(session, "Loading data...", {
+#'         Sys.sleep(2)
+#'       })
+#'     })
+#'   }
+#'
+#'   tablerApp(ui, server)
+#' }
+#' @export
+withProgress <- function(session = getDefaultReactiveDomain(), text = "Loading...", expr) {
+  if (!is.list(session) || !is.function(session[["sendCustomMessage"]])) {
+    warning("withProgress() requires a tablerApp session object - ignoring", call. = FALSE)
+    return(invisible(NULL))
+  }
+  expr_q <- substitute(expr)
+  env    <- parent.frame()
+  showProgress(session, text)
+  later::later(function() {
+    tryCatch(
+      eval(expr_q, env),
+      finally = hideProgress(session)
+    )
+  }, delay = 0)
   invisible(NULL)
 }
