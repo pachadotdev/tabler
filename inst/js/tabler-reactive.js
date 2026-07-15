@@ -310,6 +310,19 @@
   }
 
   // Bind all data-tabler-input elements inside `root` (or document)
+  //
+  // Elements bound at page load (before the WebSocket connects) get their
+  // initial value pushed to the server via sendCurrentInputs() once the
+  // socket opens - see connect()'s ws.onopen. But elements injected LATER
+  // by a renderUI()/uiOutput() update (e.g. a <select> inside a downloadable
+  // section that only appears after a button click) are bound here, with
+  // the socket already open, and sendCurrentInputs() never runs again for
+  // them. Without an explicit initial send, such an input's default value
+  // (e.g. the first <option selected>) is visible in the browser but the
+  // corresponding input$xxx stays NULL on the server until the user
+  // manually interacts with it - causing anything that reads it immediately
+  // (e.g. a downloadHandler's filename()) to fail. So every newly-bound,
+  // non-button input has its current value sent right after binding.
   function bindInputs(root) {
     var container = root || document;
     var els = container.querySelectorAll("[data-tabler-input]");
@@ -326,6 +339,7 @@
           el.addEventListener("input", function () {
             sendInputValue(el);
           });
+          sendInputValue(el);   // push initial lo/hi values
           return;
         } else if (type === "select") {
           eventName = "change";
@@ -342,6 +356,13 @@
         el.addEventListener(eventName, function () {
           sendInputValue(el);
         });
+
+        // Buttons' value is a click counter that must only advance on a
+        // real click (see sendCurrentInputs()'s own comment) - never send
+        // an initial value for those.
+        if (type !== "button") {
+          sendInputValue(el);
+        }
       })(els[i]);
     }
   }

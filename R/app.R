@@ -274,7 +274,8 @@ tablerApp <- function(ui, server, host = "127.0.0.1", port = 3000L,
       dh <- get(did, envir = download_store, inherits = FALSE)
       result <- tryCatch({
         fname <- isolate(if (is.function(dh$filename)) dh$filename() else dh$filename)
-        tmp   <- tempfile()
+        ext   <- tools::file_ext(fname)
+        tmp   <- if (nzchar(ext)) tempfile(fileext = paste0(".", ext)) else tempfile()
         on.exit(unlink(tmp), add = TRUE)
         isolate(dh$content(tmp))
         if (!file.exists(tmp)) stop("downloadHandler's content() did not write to the given file path")
