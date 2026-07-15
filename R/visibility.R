@@ -91,14 +91,20 @@ NULL
     warning(fxn, "() requires a tablerApp session object - ignoring", call. = FALSE)
     return(invisible(NULL))
   }
+  # Respect module namespacing: within moduleServer(), session$ns() prefixes
+  # ids with the module's namespace so id = "panel" resolves to the actual
+  # DOM id (e.g. "co-panel") created by the module's ns() call in the UI.
+  if (!is.null(params[["id"]]) && is.function(session[["ns"]])) {
+    params[["id"]] <- session$ns(params[["id"]])
+  }
   session$sendCustomMessage(paste0("tabler-", fxn), params)
   invisible(NULL)
 }
 
 #' @export
 #' @rdname visibilityFuncs
-show <- function(session, id = NULL, anim = FALSE, animType = "slide", time = 0.5,
-                 selector = NULL) {
+show <- function(session = getDefaultReactiveDomain(), id = NULL, anim = FALSE,
+                 animType = "slide", time = 0.5, selector = NULL) {
   params <- list(id = id, anim = anim, animType = animType,
                  time = time, selector = selector)
   .visibilityMessage(session, "show", params)
@@ -110,8 +116,8 @@ showElement <- show
 
 #' @export
 #' @rdname visibilityFuncs
-hide <- function(session, id = NULL, anim = FALSE, animType = "slide", time = 0.5,
-                 selector = NULL) {
+hide <- function(session = getDefaultReactiveDomain(), id = NULL, anim = FALSE,
+                 animType = "slide", time = 0.5, selector = NULL) {
   params <- list(id = id, anim = anim, animType = animType,
                  time = time, selector = selector)
   .visibilityMessage(session, "hide", params)
@@ -123,8 +129,8 @@ hideElement <- hide
 
 #' @export
 #' @rdname visibilityFuncs
-toggle <- function(session, id = NULL, anim = FALSE, animType = "slide", time = 0.5,
-                   selector = NULL, condition = NULL) {
+toggle <- function(session = getDefaultReactiveDomain(), id = NULL, anim = FALSE,
+                   animType = "slide", time = 0.5, selector = NULL, condition = NULL) {
   params <- list(id = id, anim = anim, animType = animType,
                  time = time, selector = selector, condition = condition)
   .visibilityMessage(session, "toggle", params)
