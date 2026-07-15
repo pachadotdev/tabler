@@ -12,6 +12,9 @@
 \alias{renderPlot}
 \alias{widgetOutput}
 \alias{renderWidget}
+\alias{downloadHandler}
+\alias{downloadButton}
+\alias{downloadLink}
 \title{Text Output Placeholder}
 \usage{
 textOutput(outputId, inline = FALSE)
@@ -35,16 +38,29 @@ renderPlot(expr, width = 800, height = 400)
 widgetOutput(outputId, width = "100\%", height = "400px")
 
 renderWidget(expr)
+
+downloadHandler(filename, content, contentType = NULL)
+
+downloadButton(
+  outputId,
+  label = "Download",
+  class = "btn-primary",
+  icon = "download",
+  ...
+)
+
+downloadLink(outputId, label = "Download", class = NULL, icon = NULL, ...)
 }
 \arguments{
-\item{outputId}{The output identifier (must match the server-side name).}
+\item{outputId}{The output identifier (must match the server-side
+\code{downloadHandler} assigned to \code{output[[outputId]]}).}
 
 \item{inline}{If \code{TRUE}, use \code{<span>}; otherwise \code{<div>}.}
 
 \item{container}{A tag-building function used to create the placeholder
 element, e.g. \code{tags$h1}. Defaults to \code{\link{div}}.}
 
-\item{...}{Additional arguments passed to \code{container}.}
+\item{...}{Additional HTML attributes.}
 
 \item{expr}{Expression that returns an \code{htmlwidget} object (e.g.
 \code{d3po(...)}, \code{leaflet(...)}).}
@@ -52,6 +68,22 @@ element, e.g. \code{tags$h1}. Defaults to \code{\link{div}}.}
 \item{width}{CSS width string (default \code{"100\%"}).}
 
 \item{height}{CSS height string (default \code{"400px"}).}
+
+\item{filename}{A string, or a zero-argument function returning a string,
+giving the filename offered to the browser (e.g. \code{"data.csv"}).}
+
+\item{content}{A one-argument function \code{function(file) {...}} that
+writes the file's contents to the path given by \code{file}.}
+
+\item{contentType}{Optional MIME type string. If \code{NULL} (default), it
+is guessed from the filename's extension.}
+
+\item{label}{Link/button text.}
+
+\item{class}{Additional CSS classes (default \code{"btn-primary"} for
+\code{downloadButton}, none for \code{downloadLink}).}
+
+\item{icon}{Optional icon name to prepend.}
 }
 \value{
 An HTML tag.
@@ -74,6 +106,10 @@ An HTML tag.
 
 A zero-argument function with \code{tabler_expr} and
   \code{tabler_env} attributes recognised by \code{tablerApp}.
+
+A \code{tabler_render} object for use with \code{tablerApp}.
+
+An HTML tag.
 }
 \description{
 Places a \code{<span>} in the UI whose content is updated by
@@ -112,6 +148,15 @@ Generic render function for any \pkg{htmlwidgets}-based widget.
   environment, so \code{tablerApp} can evaluate it inside a reactive context
   without requiring a live Shiny session.  Reactive values referenced inside
   \code{expr} are tracked automatically.
+
+Assigned to \code{output$id}, serves a file for download when
+  the browser requests the matching \code{\link{downloadButton}}'s link,
+  similar to \code{shiny::downloadHandler()}. Unlike other outputs, the
+  file is generated fresh (not cached/pushed) each time it is requested.
+
+Creates a link that triggers a file download from the
+  matching \code{\link{downloadHandler}}, similar to
+  \code{shiny::downloadButton()}/\code{shiny::downloadLink()}.
 }
 \details{
 Package authors who ship their own \code{render_*()} helpers can make them

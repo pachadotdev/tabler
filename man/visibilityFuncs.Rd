@@ -11,7 +11,7 @@
 \title{Show/Hide an element}
 \usage{
 show(
-  session,
+  session = getDefaultReactiveDomain(),
   id = NULL,
   anim = FALSE,
   animType = "slide",
@@ -20,7 +20,7 @@ show(
 )
 
 showElement(
-  session,
+  session = getDefaultReactiveDomain(),
   id = NULL,
   anim = FALSE,
   animType = "slide",
@@ -29,7 +29,7 @@ showElement(
 )
 
 hide(
-  session,
+  session = getDefaultReactiveDomain(),
   id = NULL,
   anim = FALSE,
   animType = "slide",
@@ -38,7 +38,7 @@ hide(
 )
 
 hideElement(
-  session,
+  session = getDefaultReactiveDomain(),
   id = NULL,
   anim = FALSE,
   animType = "slide",
@@ -47,7 +47,7 @@ hideElement(
 )
 
 toggle(
-  session,
+  session = getDefaultReactiveDomain(),
   id = NULL,
   anim = FALSE,
   animType = "slide",
@@ -57,7 +57,7 @@ toggle(
 )
 
 toggleElement(
-  session,
+  session = getDefaultReactiveDomain(),
   id = NULL,
   anim = FALSE,
   animType = "slide",

@@ -3,10 +3,15 @@
 \name{reactiveVal}
 \alias{reactiveVal}
 \alias{reactiveValues}
+\alias{reactiveValuesToList}
 \alias{reactive}
+\alias{req}
 \alias{isolate}
 \alias{observe}
 \alias{observeEvent}
+\alias{eventReactive}
+\alias{bindEvent}
+\alias{bindCache}
 \alias{syncUrl}
 \title{Reactive Value}
 \usage{
@@ -14,7 +19,11 @@ reactiveVal(value = NULL)
 
 reactiveValues(...)
 
+reactiveValuesToList(x, all.names = FALSE)
+
 reactive(expr)
+
+req(..., cancelOutput = FALSE)
 
 isolate(expr)
 
@@ -22,20 +31,38 @@ observe(expr)
 
 observeEvent(eventExpr, handlerExpr, ignoreInit = TRUE)
 
+eventReactive(eventExpr, valueExpr, ignoreNULL = TRUE, ignoreInit = FALSE)
+
+bindEvent(x, ..., ignoreNULL = TRUE, ignoreInit = FALSE)
+
+bindCache(x, ...)
+
 syncUrl(session, exclude = character(0L))
 }
 \arguments{
 \item{value}{Initial value.}
 
-\item{...}{Initial \code{name = value} pairs.}
+\item{...}{Ignored.}
+
+\item{x}{A reactive expression.}
+
+\item{all.names}{Include names starting with a dot (default \code{FALSE}).}
 
 \item{expr}{Expression with side effects.}
 
-\item{eventExpr}{Reactive expression whose change triggers the handler.}
+\item{cancelOutput}{Ignored (kept for signature compatibility with Shiny).}
+
+\item{eventExpr}{Reactive expression whose change triggers re-evaluation.}
 
 \item{handlerExpr}{Expression to run when the event fires.}
 
-\item{ignoreInit}{If \code{TRUE} (default), skip the first evaluation.}
+\item{ignoreInit}{If \code{FALSE} (default), also compute \code{x} once
+immediately, before any event expression first changes.}
+
+\item{valueExpr}{Expression to evaluate (and cache) when the event fires.}
+
+\item{ignoreNULL}{If \code{TRUE} (default), do not (re)compute while all
+event expressions evaluate to \code{NULL}.}
 
 \item{session}{The \code{session} object passed by \code{\link{tablerApp}}
 to the server function.}
@@ -48,11 +75,21 @@ A function that acts as getter/setter.
 
 An environment of class \code{"ReactiveValues"}.
 
+A named list.
+
 A zero-argument function returning the cached value.
+
+The last argument, invisibly, if all checks pass.
 
 The result of \code{expr}.
 
 An invisible observer handle with \code{$suspend()} / \code{$resume()}.
+
+A zero-argument function returning the cached value.
+
+A new zero-argument function returning the cached value.
+
+\code{x}, unchanged.
 
 Invisibly, \code{session} (for chaining).
 }
@@ -64,8 +101,20 @@ A single mutable reactive value.  Call with no argument to read
 A named collection of reactive values similar to a reactive list.
   Access with \code{rv$name} (reactive read) or \code{rv$name <- val} (reactive write).
 
+Returns a plain list snapshot of a \code{\link{reactiveValues}}
+  object's current values, establishing a reactive read dependency on each
+  contained value, similar to \code{shiny::reactiveValuesToList()}.
+
 A lazy, cached computation that re-evaluates only when its
   reactive dependencies are invalidated.
+
+Stops execution of the current reactive expression, observer,
+  or render function if any argument is not "truthy" (i.e. is \code{NULL},
+  \code{NA}, \code{FALSE}, an empty string, or an empty vector), similar to
+  \code{shiny::req()}. Unlike a normal error, this stop is silent: an
+  \code{observe()}/\code{observeEvent()} block simply does nothing for this
+  run, and a render function (\code{renderUI}, \code{renderText}, ...)
+  simply leaves its output unchanged, instead of showing an error.
 
 Any reactive reads inside \code{expr} are not registered as
   dependencies of the current context.
@@ -74,6 +123,20 @@ Eagerly re-runs \code{expr} whenever its reactive dependencies
   change.
 
 Runs \code{handlerExpr} whenever \code{eventExpr} changes.
+
+A reactive expression that recomputes \code{valueExpr} only
+  when \code{eventExpr} changes, similar to \code{shiny::eventReactive()}.
+
+Modifies a reactive expression created by \code{\link{reactive}}
+  so that it only (re)executes when the given event expression(s) change,
+  similar to \code{shiny::bindEvent()}. Typically used with the pipe:
+  \code{reactive({...}) |> bindEvent(input$go)}.
+
+A dependency-free stand-in for \code{shiny::bindCache()}.
+  \code{\link{reactive}} already caches its value between invalidations,
+  so this simply returns \code{x} unchanged; it exists so pipelines
+  written for Shiny (e.g. \code{reactive({...}) |> bindCache(...) |>
+  bindEvent(...)}) keep working without modification.
 
 Call once inside the server function to enable two-way URL
   parameter synchronisation: the URL query string initialises inputs on

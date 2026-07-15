@@ -3,6 +3,9 @@
 \name{selectInput}
 \alias{selectInput}
 \alias{sliderInput}
+\alias{updateSelectInput}
+\alias{updateSelectizeInput}
+\alias{updateSliderInput}
 \alias{textInput}
 \alias{numericInput}
 \alias{checkboxInput}
@@ -14,6 +17,34 @@
 selectInput(inputId, label, choices, selected = NULL, ...)
 
 sliderInput(inputId, label, min, max, value, step = 1, ...)
+
+updateSelectInput(
+  session,
+  inputId,
+  label = NULL,
+  choices = NULL,
+  selected = NULL,
+  ...
+)
+
+updateSelectizeInput(
+  session,
+  inputId,
+  label = NULL,
+  choices = NULL,
+  selected = NULL,
+  ...
+)
+
+updateSliderInput(
+  session,
+  inputId,
+  label = NULL,
+  value = NULL,
+  min = NULL,
+  max = NULL,
+  step = NULL
+)
 
 textInput(inputId, label, value = "", placeholder = NULL, ...)
 
@@ -46,6 +77,8 @@ radioButtons(inputId, label, choices, selected = NULL)
 
 \item{step}{Step size (default \code{1}).}
 
+\item{session}{The session object.}
+
 \item{placeholder}{Placeholder text.}
 
 \item{class}{Additional CSS classes (default \code{"btn-primary"}).}
@@ -56,6 +89,10 @@ radioButtons(inputId, label, choices, selected = NULL)
 An HTML tag.
 
 An HTML tag.
+
+Invisibly, \code{NULL}.
+
+Invisibly, \code{NULL}.
 
 An HTML tag.
 
@@ -73,6 +110,14 @@ An HTML tag.
 A dropdown that lets the user pick one item from a list.
 
 A horizontal range slider.
+
+Change the choices and/or selected value of a
+  \code{\link{selectInput}} already displayed in the browser, without a
+  full page reload, similar to \code{shiny::updateSelectInput()}.
+
+Change the value/min/max/step of a \code{\link{sliderInput}}
+  already displayed in the browser, similar to
+  \code{shiny::updateSliderInput()}.
 
 A single-line text field.
 
