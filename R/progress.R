@@ -13,17 +13,17 @@
 #'
 #' \code{\link{tablerApp}}'s event loop only writes queued WebSocket messages
 #' to the socket in between iterations of its
-#' \code{repeat \{ httpuv::service(); ... \}} loop. If \code{showProgress()}
+#' \code{repeat \{ httpuv2::service(); ... \}} loop. If \code{showProgress()}
 #' is immediately followed by a long, blocking computation in the same
 #' observer, the "show" message sits in the queue - never reaching the
 #' browser - until that observer (and thus the slow computation) finishes,
 #' making the overlay flash on right at the end instead of before the work
-#' starts. Calling \code{httpuv::service()} again from inside the observer to
+#' starts. Calling \code{httpuv2::service()} again from inside the observer to
 #' force an early flush is unsafe here: it re-enters \pkg{httpuv}'s event
 #' loop while it is still dispatching the current WebSocket message, which
 #' can cause that message (and the input it carries) to be processed more
 #' than once. Use \code{\link{withProgress}} instead, which defers the slow
-#' computation with \code{later::later()} so control returns to the event
+#' computation with \code{later2::later()} so control returns to the event
 #' loop (flushing the "show" message) before the work actually runs.
 #'
 #' @param session The \code{session} object passed by \code{\link{tablerApp}}
@@ -74,7 +74,7 @@ hideProgress <- function(session = getDefaultReactiveDomain()) {
 #' Shows the full-page progress overlay (see \code{\link{showProgress}}),
 #' then runs \code{expr}, then hides the overlay again - but unlike calling
 #' \code{\link{showProgress}}/\code{\link{hideProgress}} directly around a
-#' blocking computation, \code{expr} is deferred with \code{later::later()}
+#' blocking computation, \code{expr} is deferred with \code{later2::later()}
 #' so that \code{\link{tablerApp}}'s event loop gets a chance to actually
 #' flush the "show" message to the browser before the slow work begins.
 #'
@@ -111,14 +111,14 @@ withProgress <- function(session = getDefaultReactiveDomain(), text = "Loading..
   expr_q <- substitute(expr)
   env    <- parent.frame()
   showProgress(session, text)
-  later::later(function() {
+  later2::later(function() {
     tryCatch(
       eval(expr_q, env),
       error = function(e) {
-        # This callback runs via later::run_now() in tablerApp()'s event
+        # This callback runs via later2::run_now() in tablerApp()'s event
         # loop, outside of .flush_domain()'s per-observer tryCatch (see
         # reactive.R). An uncaught error here would propagate out of
-        # later::run_now() and crash the whole event loop, silently freezing
+        # later2::run_now() and crash the whole event loop, silently freezing
         # the entire app - so it must be caught here instead.
         message("tabler: error in withProgress(): ", conditionMessage(e))
       },

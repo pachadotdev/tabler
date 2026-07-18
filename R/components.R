@@ -10,6 +10,92 @@ column <- function(width, ..., class = NULL) {
   div(class = paste(c(paste0("col-", as.integer(width)), class), collapse = " "), ...)
 }
 
+#' @title Shorthand for column of width 12
+#' @description Adapted from the 'golem' package for 'Shiny'.
+#' @rdname col_shorthands
+#' @param ... Arguments passed to `column()`
+#' @export
+col12 <- function(...) {
+  column(12, ...)
+}
+
+#' @title Shorthand for column of width 11
+#' @rdname col_shorthands
+#' @export
+col11 <- function(...) {
+  column(11, ...)
+}
+
+#' @title Shorthand for column of width 10
+#' @rdname col_shorthands
+#' @export
+col10 <- function(...) {
+  column(10, ...)
+}
+
+#' @title Shorthand for column of width 9
+#' @rdname col_shorthands
+#' @export
+col9 <- function(...) {
+  column(9, ...)
+}
+
+#' @title Shorthand for column of width 8
+#' @rdname col_shorthands
+#' @export
+col8 <- function(...) {
+  column(8, ...)
+}
+
+#' @title Shorthand for column of width 7
+#' @rdname col_shorthands
+#' @export
+col7 <- function(...) {
+  column(7, ...)
+}
+
+#' @title Shorthand for column of width 6
+#' @rdname col_shorthands
+#' @export
+col6 <- function(...) {
+  column(6, ...)
+}
+
+#' @title Shorthand for column of width 5
+#' @rdname col_shorthands
+#' @export
+col5 <- function(...) {
+  column(5, ...)
+}
+
+#' @title Shorthand for column of width 4
+#' @rdname col_shorthands
+#' @export
+col4 <- function(...) {
+  column(4, ...)
+}
+
+#' @title Shorthand for column of width 3
+#' @rdname col_shorthands
+#' @export
+col3 <- function(...) {
+  column(3, ...)
+}
+
+#' @title Shorthand for column of width 2
+#' @rdname col_shorthands
+#' @export
+col2 <- function(...) {
+  column(2, ...)
+}
+
+#' @title Shorthand for column of width 1
+#' @rdname col_shorthands
+#' @export
+col1 <- function(...) {
+  column(1, ...)
+}
+
 #' @title  Create a Tabler Card
 #' @description Build a modern card component with optional header, body, and footer
 #' @param ... Card body content

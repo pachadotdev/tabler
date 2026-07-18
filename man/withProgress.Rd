@@ -22,7 +22,7 @@ Invisibly, \code{NULL}. \code{expr} runs asynchronously, after
 Shows the full-page progress overlay (see \code{\link{showProgress}}),
 then runs \code{expr}, then hides the overlay again - but unlike calling
 \code{\link{showProgress}}/\code{\link{hideProgress}} directly around a
-blocking computation, \code{expr} is deferred with \code{later::later()}
+blocking computation, \code{expr} is deferred with \code{later2::later()}
 so that \code{\link{tablerApp}}'s event loop gets a chance to actually
 flush the "show" message to the browser before the slow work begins.
 }

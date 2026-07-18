@@ -1,0 +1,35 @@
+{
+	"folders": [
+		{
+			"path": "../tradestatistics-visualization-with-shiny"
+		},
+		{
+			"path": "."
+		},
+		{
+			"path": "../shinyjs"
+		},
+		{
+			"path": "../cpp4r"
+		},
+		{
+			"path": "../tinydev"
+		},
+		{
+			"path": "../later2"
+		},
+		{
+			"path": "../promises"
+		},
+		{
+			"path": "../tabler-server"
+		},
+		{
+			"path": "../httpuv2"
+		},
+		{
+			"path": "../d3po"
+		}
+	],
+	"settings": {}
+}

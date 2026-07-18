@@ -16,6 +16,7 @@
 \alias{h4}
 \alias{h5}
 \alias{h6}
+\alias{hr}
 \alias{br}
 \title{HTML Tag Builder Functions}
 \usage{
@@ -46,6 +47,8 @@ h4(...)
 h5(...)
 
 h6(...)
+
+hr(...)
 
 br(...)
 }

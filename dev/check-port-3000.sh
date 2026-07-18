@@ -1,0 +1,1 @@
+lsof -nP -iTCP:3000 -sTCP:LISTEN

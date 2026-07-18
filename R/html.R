@@ -207,6 +207,9 @@ h5   <- function(...) .new_tag("h5",    ...)
 h6   <- function(...) .new_tag("h6",    ...)
 #' @rdname html-tags
 #' @export
+hr   <- function(...) .new_tag("hr",    ...)
+#' @rdname html-tags
+#' @export
 br   <- function(...) .new_tag("br",    ...)
 
 #' HTML Tag Namespace

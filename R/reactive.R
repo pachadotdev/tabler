@@ -241,12 +241,30 @@ reactive <- function(expr) {
   src     <- new_source()
   cached  <- NULL
   invalid <- TRUE
+  gen     <- 0L  # bumped on every (re)computation attempt, incl. failed ones
 
   function() {
     src$depend()
     if (!invalid) return(cached)
 
+    # Tag this attempt with the current generation. If this attempt aborts
+    # early (e.g. via req()) before `invalid <<- FALSE` runs, `invalid` stays
+    # TRUE and the *next* call creates another context for a new generation -
+    # but this stale context's dependency registrations on upstream sources
+    # (e.g. an input) are never removed. When that upstream source is later
+    # invalidated, it fires every stale context's on_invalidate_fn as well as
+    # the current one. The generation check makes stale firings a no-op
+    # instead of re-flipping `invalid` back to TRUE right after a fresh,
+    # correct recompute and triggering a redundant second recompute of every
+    # dependent output. (Doing this via an eager `ctx$invalidate()` call
+    # instead would risk re-entrantly recomputing this same reactive from
+    # within its own evaluation, since invalidating this reactive's `src`
+    # dependents can synchronously schedule/flush observers that call back
+    # into it.)
+    gen <<- gen + 1L
+    my_gen <- gen
     ctx <- new_context(function() {
+      if (my_gen != gen) return(invisible(NULL))
       invalid <<- TRUE
       src$invalidate_dependents()
     })
@@ -633,6 +651,14 @@ syncUrl <- function(session, exclude = character(0L)) {
 # Internal: observer for output renderers (avoids NSE at the tablerApp level)
 # ---------------------------------------------------------------------------
 .observe_output <- function(render_obj, send_fn) {
+  # Without this, render_obj/send_fn are lazy promises bound to the loop
+  # variables in tablerApp()'s `for (nm in ls(output_proxy))` loop; run()
+  # (called later via .schedule()) would resolve them using whatever value
+  # those loop variables hold *at that later time*, not at the time
+  # .observe_output() was called for this particular output.
+  force(render_obj)
+  force(send_fn)
+
   run <- function() {
     ctx <- new_context(function() .schedule(run))
     .push_context(ctx)
@@ -658,6 +684,14 @@ syncUrl <- function(session, exclude = character(0L)) {
             stop("renderPlot produced an empty graphic")
           val  <- svg_txt
           type <- "plot_src"
+        } else if (identical(render_obj$type, "print")) {
+          # Capture printed output (cat(), print(), str(), ...) rather than
+          # the expression's return value, which is often invisible NULL.
+          val <- paste(
+            utils::capture.output(eval(render_obj$expr, render_obj$env)),
+            collapse = "\n"
+          )
+          type <- "print"
         } else {
           val  <- eval(render_obj$expr, render_obj$env)
           type <- render_obj$type

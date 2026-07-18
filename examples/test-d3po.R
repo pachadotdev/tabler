@@ -94,9 +94,9 @@ server <- function(input, output, session) {
     # axis_color <- "#fff"
     # tooltip_color <- "#000"
 
-    d3po(sim) %>%
-      po_scatter(daes(x = x, y = y, group = letter)) %>%
-      po_labels(title = "Weight Distribution by Type") %>%
+    d3po(sim) |>
+      po_scatter(daes(x = x, y = y, group = letter)) |>
+      po_labels(title = "Weight Distribution by Type") |>
       po_theme(axis = axis_color, tooltips = tooltip_color, background = "transparent")
   })
 }

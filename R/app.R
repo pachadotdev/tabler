@@ -177,6 +177,11 @@ tablerApp <- function(ui, server, host = "127.0.0.1", port = 3000L,
   # Wire up output observers ----
   # send_fn is called by .observe_output whenever an output value changes
   make_send_fn <- function(output_id) {
+    # See matching force() note in .observe_output() (R/reactive.R): without
+    # this, output_id is a lazy promise bound to the `nm` loop variable below
+    # and would resolve to the last output's id for every closure.
+    force(output_id)
+
     function(val, type) {
       if (identical(type, "widget") && inherits(val, "htmlwidget")) {
         # Save the self-contained widget HTML and serve it via HTTP so the
@@ -426,7 +431,7 @@ tablerApp <- function(ui, server, host = "127.0.0.1", port = 3000L,
   }
 
   # Start server ----
-  srv <- httpuv::startServer(host, as.integer(port), list(
+  srv <- httpuv2::startServer(host, as.integer(port), list(
     call      = http_handler,
     onWSOpen  = ws_handler
   ))
@@ -439,8 +444,8 @@ tablerApp <- function(ui, server, host = "127.0.0.1", port = 3000L,
     }
     # Catch interrupt as well: if Ctrl+C fired inside service() above, an
     # unhandled interrupt here would skip stopServer() and leave the port bound.
-    tryCatch(httpuv::service(500L), error = function(e) NULL, interrupt = function(e) NULL)
-    httpuv::stopServer(srv)
+    tryCatch(httpuv2::service(500L), error = function(e) NULL, interrupt = function(e) NULL)
+    httpuv2::stopServer(srv)
   }, add = TRUE)
 
   url <- sprintf("http://%s:%d", host, as.integer(port))
@@ -451,13 +456,13 @@ tablerApp <- function(ui, server, host = "127.0.0.1", port = 3000L,
   # Event loop ----
   tryCatch(
     repeat {
-      httpuv::service(1000L)   # poll for 1 s then yield
-      # Run any due later::later() callbacks (e.g. work deferred by
+      httpuv2::service(1000L)   # poll for 1 s then yield
+      # Run any due later2::later() callbacks (e.g. work deferred by
       # withProgress() so the "show" message can reach the browser first)
       # before flushing reactive observers that they may have scheduled. An
       # uncaught error here must not take down the whole event loop/app.
       tryCatch(
-        later::run_now(timeoutSecs = 0, all = TRUE),
+        later2::run_now(timeoutSecs = 0, all = TRUE),
         error = function(e) {
           message("tabler: error in later callback: ", conditionMessage(e))
         }

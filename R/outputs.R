@@ -244,10 +244,8 @@ downloadLink <- function(outputId, label = "Download", class = NULL, icon = NULL
 .serialise_output <- function(val, type) {
   switch(type,
     text  = html_escape(paste(as.character(val), collapse = " ")),
-    print = {
-      txt <- paste(utils::capture.output(print(val)), collapse = "\n")
-      html_escape(txt)
-    },
+    # `val` is already the captured printed text (see .observe_output).
+    print  = html_escape(as.character(val)),
     ui     = render_html(val),
     html   = as.character(val),          # already-escaped error strings
     html_escape(as.character(val))

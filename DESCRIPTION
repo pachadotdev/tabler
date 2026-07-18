@@ -17,9 +17,9 @@ Depends:
 License: Apache License (>= 2)
 Imports: 
     cachem,
-    httpuv,
+    httpuv2,
     jsonlite,
-    later,
+    later2,
     rlang
 Suggests: 
     DT,
