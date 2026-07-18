@@ -12,3 +12,4 @@ official-examples/preview.tabler.io/static/
 package-lock.json
 package.json
 node_modules/
+tabler.code-workspace
