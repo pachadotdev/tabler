@@ -647,14 +647,6 @@ syncUrl <- function(session, exclude = character(0L)) {
 # Internal: observer for output renderers (avoids NSE at the tablerApp level)
 # ---------------------------------------------------------------------------
 .observe_output <- function(render_obj, send_fn) {
-  # Without this, render_obj/send_fn are lazy promises bound to the loop
-  # variables in tablerApp()'s `for (nm in ls(output_proxy))` loop; run()
-  # (called later via .schedule()) would resolve them using whatever value
-  # those loop variables hold *at that later time*, not at the time
-  # .observe_output() was called for this particular output.
-  force(render_obj)
-  force(send_fn)
-
   run <- function() {
     ctx <- new_context(function() .schedule(run))
     .push_context(ctx)

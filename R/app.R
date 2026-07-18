@@ -177,11 +177,6 @@ tablerApp <- function(ui, server, host = "127.0.0.1", port = 3000L,
   # Wire up output observers ----
   # send_fn is called by .observe_output whenever an output value changes
   make_send_fn <- function(output_id) {
-    # See matching force() note in .observe_output() (R/reactive.R): without
-    # this, output_id is a lazy promise bound to the `nm` loop variable below
-    # and would resolve to the last output's id for every closure.
-    force(output_id)
-
     function(val, type) {
       if (identical(type, "widget") && inherits(val, "htmlwidget")) {
         # Save the self-contained widget HTML and serve it via HTTP so the
@@ -215,16 +210,20 @@ tablerApp <- function(ui, server, host = "127.0.0.1", port = 3000L,
     }
   }
 
-  for (nm in ls(output_proxy)) {
+  # lapply (rather than a `for` loop) so each closure below binds its own
+  # `nm` value directly - a `for` loop would rebind the same `nm` variable
+  # every iteration, and any output_id captured lazily by reference (instead
+  # of by value) would resolve to the last output's id for every closure.
+  invisible(lapply(ls(output_proxy), function(nm) {
     render_obj <- get(nm, envir = output_proxy)
     if (inherits(render_obj, "tabler_render") && identical(render_obj$type, "download")) {
       # Download handlers are served on-demand via the /downloads/ HTTP
       # endpoint below, not pushed reactively like other outputs.
       assign(nm, render_obj, envir = download_store)
-      next
+      return(invisible(NULL))
     }
     .observe_output(render_obj, make_send_fn(nm))
-  }
+  }))
 
   # Initial flush — populates output_cache before any browser connects ----
   .flush_domain()
