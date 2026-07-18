@@ -241,33 +241,29 @@ reactive <- function(expr) {
   src     <- new_source()
   cached  <- NULL
   invalid <- TRUE
-  gen     <- 0L  # bumped on every (re)computation attempt, incl. failed ones
+  cur_ctx <- NULL
 
   function() {
     src$depend()
     if (!invalid) return(cached)
 
-    # Tag this attempt with the current generation. If this attempt aborts
-    # early (e.g. via req()) before `invalid <<- FALSE` runs, `invalid` stays
-    # TRUE and the *next* call creates another context for a new generation -
-    # but this stale context's dependency registrations on upstream sources
-    # (e.g. an input) are never removed. When that upstream source is later
-    # invalidated, it fires every stale context's on_invalidate_fn as well as
-    # the current one. The generation check makes stale firings a no-op
-    # instead of re-flipping `invalid` back to TRUE right after a fresh,
-    # correct recompute and triggering a redundant second recompute of every
-    # dependent output. (Doing this via an eager `ctx$invalidate()` call
-    # instead would risk re-entrantly recomputing this same reactive from
-    # within its own evaluation, since invalidating this reactive's `src`
-    # dependents can synchronously schedule/flush observers that call back
-    # into it.)
-    gen <<- gen + 1L
-    my_gen <- gen
-    ctx <- new_context(function() {
-      if (my_gen != gen) return(invisible(NULL))
-      invalid <<- TRUE
-      src$invalidate_dependents()
-    })
+    # Reuse the current internal context across repeated evaluation attempts
+    # made while still invalid (e.g. several req()-aborted attempts, each
+    # triggered by a different output, before an upstream input first has a
+    # value) instead of creating a brand new context on every call. A fresh
+    # context is only needed once the previous one has actually been
+    # invalidated by a real upstream change - otherwise every failed attempt
+    # would register its own separate, never-cleaned-up dependency on the
+    # same upstream source (e.g. an input), and each of those stale contexts
+    # would independently fire its own invalidate+recompute cascade once the
+    # upstream source finally changes, instead of exactly one.
+    if (is.null(cur_ctx) || cur_ctx$is_invalidated()) {
+      cur_ctx <<- new_context(function() {
+        invalid <<- TRUE
+        src$invalidate_dependents()
+      })
+    }
+    ctx <- cur_ctx
     .push_context(ctx)
     tryCatch(
       { cached <<- eval(expr_q, env); invalid <<- FALSE },
