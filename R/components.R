@@ -1,5 +1,30 @@
+#' @title Bootstrap Grid Row
+#' @description Wraps content in a Bootstrap row. Required as the direct
+#'   parent of \code{column()}/\code{col1()}-\code{col12()} calls: those
+#'   only lay out side-by-side inside a \code{.row} (which sets
+#'   \code{display: flex}) - without it, columns stack vertically like any
+#'   other block element. Includes the \code{row-deck row-cards} classes by
+#'   default: \code{row-deck} stretches each column to the row's height and
+#'   sets \code{flex: 1 1 auto} on any \code{\link{card}()} inside it (so
+#'   cards end up the same height); \code{row-cards} applies Tabler's card
+#'   row gutter spacing.
+#' @param ... Child elements, typically \code{column()}/\code{col*()} calls.
+#' @param class Additional CSS classes.
+#' @param equal_height Whether cards in this row should be stretched to the
+#'   same height (adds the \code{row-deck row-cards} classes). Set to
+#'   \code{FALSE} to let cards keep their natural height.
+#' @rdname tabler-components
+#' @return An HTML tag.
+#' @export
+row <- function(..., class = NULL, equal_height = TRUE) {
+  row_class <- if (isTRUE(equal_height)) c("row-deck", "row-cards") else NULL
+  div(class = paste(c("row", row_class, class), collapse = " "), ...)
+}
+
 #' @title Bootstrap Grid Column
 #' @description Wraps content in a Bootstrap column of the given width.
+#'   Must be placed directly inside a \code{\link{row}()} to lay out
+#'   side-by-side with sibling columns.
 #' @param width Integer 1–12 (number of columns in a 12-column grid).
 #' @param ... Child elements.
 #' @param class Additional CSS classes.
