@@ -1,17 +1,19 @@
-setwd("~/Documents/tabler/inst/templates/self-contained")
-
 library(tabler)
 
 # Sidebar/topbar ----
 
-svg_text <- paste(
-  readLines("./tabler-logo.svg", warn = FALSE),
-  collapse = "\n"
-)
-
 svg_data_uri <- paste0(
   "data:image/svg+xml;utf8,",
-  URLencode(svg_text, reserved = TRUE)
+  URLencode(
+    paste(
+      readLines(
+        system.file("extdata", "app-template", "tabler-logo.svg", package = "tabler"),
+        warn = FALSE
+      ),
+      collapse = "\n"
+    ),
+    reserved = TRUE
+  )
 )
 
 sidebar_nav <- navbar_menu(
@@ -79,7 +81,6 @@ ui <- page(
   layout = "combo",
   show_theme_button = TRUE,
   title = "Combo Layout",
-  # navbar = sidebar_nav,
   navbar = list(side = sidebar_nav, top = topbar_nav),
   body = list(
     tab_items(
@@ -118,7 +119,6 @@ ui <- page(
 # Server ----
 
 server <- function(input, output, session) {
-
   # Generic histogram renderer, shared across the three sections
   render_histogram <- function(data, col_reactive, bins_reactive) {
     renderPlot({
@@ -135,49 +135,23 @@ server <- function(input, output, session) {
     })
   }
 
-  # Fake "slow recompute" showcase: the plot doesn't read the column/bins
-  # inputs directly. Instead, whenever either settles on a new value, a
-  # progress overlay is shown, a 3s Sys.sleep() simulates slow work, and only
-  # then are the *committed reactiveVals below updated - which is what the
-  # plot actually depends on. withProgress() defers the sleep with
-  # later2::later(delay = 0) so the "show overlay" message reaches the
-  # browser before the blocking wait starts (see ?withProgress).
-  mtcars_col_c      <- reactiveVal("mpg")
-  mtcars_bins_c     <- reactiveVal(5)
-  iris_col_c        <- reactiveVal("Sepal.Length")
-  iris_bins_c       <- reactiveVal(5)
-  airquality_col_c  <- reactiveVal("Temp")
-  airquality_bins_c <- reactiveVal(5)
+  output$mtcars_plot <- render_histogram(
+    mtcars,
+    reactive(input$mtcars_col %||% "mpg"),
+    reactive(input$mtcars_bins %||% 5)
+  )
 
-  observeEvent(list(input$mtcars_col, input$mtcars_bins), {
-    withProgress(session, "Recomputing histogram with an added time for display...", {
-      Sys.sleep(1.5)
-      mtcars_col_c(input$mtcars_col %||% "mpg")
-      mtcars_bins_c(input$mtcars_bins %||% 5)
-    })
-  })
+  output$iris_plot <- render_histogram(
+    iris,
+    reactive(input$iris_col %||% "Sepal.Length"),
+    reactive(input$iris_bins %||% 5)
+  )
 
-  observeEvent(list(input$iris_col, input$iris_bins), {
-    withProgress(session, "Recomputing histogram with an added time for display...", {
-      Sys.sleep(1.5)
-      iris_col_c(input$iris_col %||% "Sepal.Length")
-      iris_bins_c(input$iris_bins %||% 5)
-    })
-  })
-
-  observeEvent(list(input$airquality_col, input$airquality_bins), {
-    withProgress(session, "Recomputing histogram with an added time for display...", {
-      Sys.sleep(1.5)
-      airquality_col_c(input$airquality_col %||% "Temp")
-      airquality_bins_c(input$airquality_bins %||% 5)
-    })
-  })
-
-  output$mtcars_plot <- render_histogram(mtcars, mtcars_col_c, mtcars_bins_c)
-
-  output$iris_plot <- render_histogram(iris, iris_col_c, iris_bins_c)
-
-  output$airquality_plot <- render_histogram(airquality, airquality_col_c, airquality_bins_c)
+  output$airquality_plot <- render_histogram(
+    airquality,
+    reactive(input$airquality_col %||% "Temp"),
+    reactive(input$airquality_bins %||% 5)
+  )
 
   # Download handlers — export the full underlying dataset as CSV
   output$mtcars_download <- downloadHandler(

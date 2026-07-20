@@ -1,3 +1,4 @@
+#' @useDynLib tabler, .registration = TRUE
 #' @keywords internal
 "_PACKAGE"
 

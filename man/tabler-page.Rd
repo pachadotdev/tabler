@@ -19,6 +19,9 @@ page(
   layout = "boxed",
   theme = "light",
   color = "blue",
+  font = "sans-serif",
+  base = "gray",
+  radius = "1",
   show_theme_button = FALSE
 )
 
@@ -58,7 +61,15 @@ image and title. Example: `title = list(text = "My App", img = "logo.png")`.}
 \item{color}{Color theme (optional): "blue" (default), "azure", "indigo", "purple", "pink",
 "red", "orange", "yellow", "lime", "green", "teal", "cyan".}
 
-\item{show_theme_button}{Whether to show the theme toggle buttons (default: `FALSE`).}
+\item{font}{Font family: "sans-serif" (default), "serif", "monospace", "comic".}
+
+\item{base}{Theme base/gray shade: "gray" (default), "slate", "zinc", "neutral", "stone".}
+
+\item{radius}{Corner radius factor: 1 (default), 0, 0.5, 1.5, 2.}
+
+\item{show_theme_button}{Whether to show the theme toggle buttons in the
+navbar and the floating theme settings customizer panel (color mode,
+color scheme, font family, theme base and corner radius). Default `FALSE`.}
 
 \item{brand_image}{URL or path to brand image}
 

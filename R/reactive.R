@@ -555,9 +555,13 @@ tablerOptions <- function(cache) {
 # of evaluated key expression values. cachem's cache_disk/cache_mem require
 # keys matching a filesystem-safe, lowercase-alphanumeric pattern, so the
 # key expressions' values (which can be arbitrary R objects) must be hashed
-# rather than used as a literal string.
+# rather than used as a literal string. serialize(x, connection = NULL) gives
+# the same in-memory raw bytes rlang::hash()/digest() would hash; those raw
+# bytes are then mixed by tabler_hash_raw() (src/00_cache_hash.h, via cpp4r),
+# a small compiled 128-bit hash, avoiding both the rlang dependency and any
+# disk I/O (unlike tools::md5sum(), which only hashes files).
 .tabler_cache_key <- function(keys) {
-  rlang::hash(keys)
+  tabler_hash_raw(serialize(keys, connection = NULL))
 }
 
 #' @title Cache a Reactive Expression's Value

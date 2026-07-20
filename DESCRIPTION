@@ -20,7 +20,9 @@ Imports:
     httpuv2,
     jsonlite,
     later2,
-    rlang
+    roxygen2
+LinkingTo: 
+    cpp4r
 Suggests: 
     DT,
     htmlwidgets,
