@@ -1,8 +1,9 @@
 #' @title Theme Settings Customizer Panel
-#' @description Builds a floating action button plus an offcanvas panel that
-#'   lets the end-user customize the color mode, color scheme, font family,
-#'   theme base (gray shade) and corner radius, mirroring the customizer found
-#'   on <https://tabler.io/admin-template/preview>. Choices are persisted to
+#' @description Builds a floating action button (bottom-left) plus an
+#'   offcanvas panel that lets the end-user customize the color mode, color
+#'   scheme, font family, theme base (gray shade) and corner radius,
+#'   mirroring the customizer found on
+#'   <https://tabler.io/admin-template/preview>. Choices are persisted to
 #'   `localStorage` (under the same `tabler-*` keys used by the bundled
 #'   `tabler-theme.min.js`) and applied immediately via `data-bs-*` attributes
 #'   on `<html>`.

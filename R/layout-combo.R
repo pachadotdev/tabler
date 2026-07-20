@@ -36,13 +36,10 @@ layout_combo <- function(navbar, sidebar, body, footer, theme = "light", color =
       }
     }
     # show_theme_button on page()/layout_combo() is the single source of
-    # truth: strip any toggle navbar_menu() may have built, then re-add the
-    # sidebar-style one if requested, so callers don't need to also pass
-    # show_theme_button to navbar_menu().
+    # truth: strip any toggle navbar_menu() may have built. The theme
+    # settings trigger (gear icon) only lives in the topbar (top-right), not
+    # the sidebar, so nothing is re-inserted here.
     side_nav <- filter_theme_li(side_nav)
-    if (isTRUE(show_theme_button)) {
-      side_nav <- insert_theme_li(side_nav, theme_toggle_li(sidebar_style = TRUE))
-    }
   }
 
   # Build the top navbar if present
@@ -71,8 +68,8 @@ layout_combo <- function(navbar, sidebar, body, footer, theme = "light", color =
     }
 
     # Sidebar-style theme toggle items (mt-auto) never go in the top navbar
-    # for combo layout - strip them here; the topbar gets its own
-    # topbar-style toggle appended below if requested.
+    # for combo layout - strip them here. The theme settings panel is a
+    # floating button injected at the page() level, not part of the navbar.
     regular_items <- list()
 
     for (item in nav_items) {
@@ -94,22 +91,17 @@ layout_combo <- function(navbar, sidebar, body, footer, theme = "light", color =
           id = "navbar-menu",
           ul(
             class = "navbar-nav",
-            regular_items,
-            if (isTRUE(show_theme_button)) theme_toggle_li(sidebar_style = FALSE)
+            regular_items
           )
         )
       )
     )
   } else if (!is.null(top_nav) && inherits(top_nav, "tabler.tag")) {
-    # If top_nav is already a header tag: show_theme_button on
-    # page()/layout_combo() is the single source of truth here too - strip
-    # any toggle navbar_menu() may have built, then re-add the topbar-style
-    # one if requested.
+    # If top_nav is already a header tag: strip any toggle navbar_menu() may
+    # have built. The theme settings panel is a floating button injected at
+    # the page() level, not part of the navbar.
     if (top_nav$name == "header") {
       header_tag <- filter_theme_li(top_nav)
-      if (isTRUE(show_theme_button)) {
-        header_tag <- insert_theme_li(header_tag, theme_toggle_li(sidebar_style = FALSE))
-      }
     } else {
       header_tag <- top_nav
     }

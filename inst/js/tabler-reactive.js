@@ -46,14 +46,16 @@
     dialog.id = "tabler-disconnect-overlay";
     dialog.setAttribute("style",
       "border:none;" +
+      "outline:none;" +
       "border-radius:8px;" +
       "padding:2rem 3rem;" +
       "box-shadow:0 4px 24px rgba(0,0,0,0.3);" +
-      "text-align:center;"
+      "text-align:center;" +
+      "background:var(--tblr-bg-surface,#fff);"
     );
     dialog.innerHTML =
-      "<div style='font-size:1.5rem;font-weight:600;color:#333;'>App stopped</div>" +
-      "<div style='font-size:0.9rem;color:#888;margin-top:0.5rem;'>" +
+      "<div style='font-size:1.5rem;font-weight:600;color:var(--tblr-body-color,#333);'>App stopped</div>" +
+      "<div style='font-size:0.9rem;color:var(--tblr-secondary-color,#888);margin-top:0.5rem;'>" +
       "Reload the page once the app is restarted.</div>";
     document.body.appendChild(dialog);
   }

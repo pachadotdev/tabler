@@ -154,7 +154,7 @@ sliderInput <- function(inputId, label, min, max, value, step = 1, ...) {
 
   value_display <- span(
     id    = paste0(inputId, "_val"),
-    class = "badge bg-azure text-white ms-2",
+    class = "badge bg-primary text-white ms-2",
     if (is_range) paste(value, collapse = " - ") else value
   )
 
