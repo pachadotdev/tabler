@@ -35,9 +35,13 @@ layout_combo <- function(navbar, sidebar, body, footer, theme = "light", color =
         side_nav$attribs$class <- paste(side_nav$attribs$class, "navbar-expand-lg")
       }
     }
-    # Filter out theme toggle li if show_theme_button is FALSE
-    if (!isTRUE(show_theme_button)) {
-      side_nav <- filter_theme_li(side_nav)
+    # show_theme_button on page()/layout_combo() is the single source of
+    # truth: strip any toggle navbar_menu() may have built, then re-add the
+    # sidebar-style one if requested, so callers don't need to also pass
+    # show_theme_button to navbar_menu().
+    side_nav <- filter_theme_li(side_nav)
+    if (isTRUE(show_theme_button)) {
+      side_nav <- insert_theme_li(side_nav, theme_toggle_li(sidebar_style = TRUE))
     }
   }
 
@@ -66,13 +70,15 @@ layout_combo <- function(navbar, sidebar, body, footer, theme = "light", color =
       }
     }
 
-    # Filter out theme toggle items - they never go in the top navbar for combo layout
+    # Sidebar-style theme toggle items (mt-auto) never go in the top navbar
+    # for combo layout - strip them here; the topbar gets its own
+    # topbar-style toggle appended below if requested.
     regular_items <- list()
 
     for (item in nav_items) {
       if (inherits(item, "tabler.tag") && item$name == "li" &&
         !is.null(item$attribs$class) && grepl("mt-auto", item$attribs$class %||% "")) {
-        # This is a theme toggle item - skip it (only appears in sidebar)
+        # This is a sidebar-style theme toggle item - skip it here
       } else {
         regular_items <- c(regular_items, list(item))
       }
@@ -88,17 +94,22 @@ layout_combo <- function(navbar, sidebar, body, footer, theme = "light", color =
           id = "navbar-menu",
           ul(
             class = "navbar-nav",
-            # Regular nav items only (theme buttons never appear in top navbar for combo layout)
-            regular_items
+            regular_items,
+            if (isTRUE(show_theme_button)) theme_toggle_li(sidebar_style = FALSE)
           )
         )
       )
     )
   } else if (!is.null(top_nav) && inherits(top_nav, "tabler.tag")) {
-    # If top_nav is already a header tag, filter out theme buttons
+    # If top_nav is already a header tag: show_theme_button on
+    # page()/layout_combo() is the single source of truth here too - strip
+    # any toggle navbar_menu() may have built, then re-add the topbar-style
+    # one if requested.
     if (top_nav$name == "header") {
-      # Recursively remove theme toggle li items from the header
       header_tag <- filter_theme_li(top_nav)
+      if (isTRUE(show_theme_button)) {
+        header_tag <- insert_theme_li(header_tag, theme_toggle_li(sidebar_style = FALSE))
+      }
     } else {
       header_tag <- top_nav
     }

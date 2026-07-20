@@ -12,7 +12,9 @@
 #' @param theme Default theme: "light" (default) or "dark".
 #' @param color Color theme (optional): "blue" (default), "azure", "indigo", "purple", "pink",
 #'   "red", "orange", "yellow", "lime", "green", "teal", "cyan".
-#' @param show_theme_button Whether to show the theme toggle buttons (default: `FALSE`).
+#' @param show_theme_button Whether to show the theme toggle buttons in the
+#'   navbar and the floating theme settings customizer panel (color mode,
+#'   color scheme, font family, theme base and corner radius). Default `FALSE`.
 #' @examples
 #' ui <- page(
 #'   title = "Combo Dashboard",
@@ -135,9 +137,11 @@ page <- function(
     script(HTML(script_text))
   )
 
+  settings_panel <- if (isTRUE(show_theme_button)) theme_settings_panel(color = color %||% "blue") else NULL
+
   html_body <- do.call(body_tag, c(
     body_attrs,
-    list(page_content)
+    list(page_content, settings_panel)
   ))
 
   # Return head and body as a tag list with dependency link/script tags.
@@ -552,16 +556,7 @@ navbar_menu <- function(..., brand = NULL, show_theme_button = FALSE) {
   # Theme toggles (anchors only; the caller wraps them into the proper li)
   theme_toggles <- NULL
   if (isTRUE(show_theme_button)) {
-    theme_toggles <- list(
-      a(
-        href = "?theme=dark", class = "nav-link px-0 hide-theme-dark", title = "Enable dark mode", `data-bs-toggle` = "tooltip", `data-bs-placement` = "bottom",
-        HTML('<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-1"><path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z"/></svg>')
-      ),
-      a(
-        href = "?theme=light", class = "nav-link px-0 hide-theme-light", title = "Enable light mode", `data-bs-toggle` = "tooltip", `data-bs-placement` = "bottom",
-        HTML('<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-1"><path d="M12 12m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0"/><path d="M3 12h1m8 -9v1m8 8h1m-9 8v1m-6.4 -15.4l.7 .7m12.1 -.7l-.7 .7m0 11.4l.7 .7m-12.1 -.7l-.7 .7"/></svg>')
-      )
-    )
+    theme_toggles <- theme_toggle_anchors(sidebar_style = FALSE)
   }
 
   # If brand is a sidebar_brand-like list, render an <aside> suitable for
@@ -569,24 +564,7 @@ navbar_menu <- function(..., brand = NULL, show_theme_button = FALSE) {
   if (is.list(brand) && (!is.null(brand$img) || !is.null(brand$text))) {
     # For sidebar, modify theme toggles to have text labels and no px-0 class
     if (!is.null(theme_toggles)) {
-      theme_toggles <- list(
-        a(
-          href = "?theme=dark", class = "nav-link hide-theme-dark", title = "Enable dark mode", `data-bs-toggle` = "tooltip", `data-bs-placement` = "bottom", `aria-label` = "Enable dark mode",
-          span(
-            class = "nav-link-icon d-md-none d-lg-inline-block",
-            HTML('<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-1"><path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z"/></svg>')
-          ),
-          span(class = "nav-link-title", "Dark theme")
-        ),
-        a(
-          href = "?theme=light", class = "nav-link hide-theme-light", title = "Enable light mode", `data-bs-toggle` = "tooltip", `data-bs-placement` = "bottom", `aria-label` = "Enable light mode",
-          span(
-            class = "nav-link-icon d-md-none d-lg-inline-block",
-            HTML('<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-1"><path d="M12 12m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0"/><path d="M3 12h1m8 -9v1m8 8h1m-9 8v1m-6.4 -15.4l.7 .7m12.1 -.7l-.7 .7m0 11.4l.7 .7m-12.1 -.7l-.7 .7"/></svg>')
-          ),
-          span(class = "nav-link-title", "Light theme")
-        )
-      )
+      theme_toggles <- theme_toggle_anchors(sidebar_style = TRUE)
     }
 
     # build collapse body for sidebar

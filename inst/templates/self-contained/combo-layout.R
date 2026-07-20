@@ -51,7 +51,7 @@ histogram_section <- function(title, subtitle, col_input_id, col_choices, col_se
             card(
               title = "Controls",
               selectInput(col_input_id, "Column", choices = col_choices, selected = col_selected),
-              sliderInput(bins_input_id, "Number of bins:", min = 1, max = 50, value = 5),
+              sliderInput(bins_input_id, "Number of bins:", min = 1, max = 10, value = 5),
               downloadButton(download_output_id, label = "Download CSV")
             )
           ),
