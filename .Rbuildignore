@@ -26,3 +26,6 @@
 ^screenshot-fluid-geyser\.png$
 ^.*png$
 ^.*code-workspace$
+^src/.*\.so$
+^src/.*\.o$
+^src/.*\.dll$

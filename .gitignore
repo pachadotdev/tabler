@@ -13,3 +13,6 @@ package-lock.json
 package.json
 node_modules/
 tabler.code-workspace
+src/*.so
+src/*.o
+src/*.dll
