@@ -218,7 +218,7 @@ downloadButton <- function(outputId, label = "Download", class = "btn-primary", 
     id     = outputId,
     href   = paste0("/downloads/", outputId),
     class  = paste("btn", class),
-    target = "_blank",
+    `data-tabler-download` = outputId,
     icon_tag,
     label,
     ...
@@ -233,7 +233,7 @@ downloadLink <- function(outputId, label = "Download", class = NULL, icon = NULL
     id     = outputId,
     href   = paste0("/downloads/", outputId),
     class  = class,
-    target = "_blank",
+    `data-tabler-download` = outputId,
     icon_tag,
     label,
     ...

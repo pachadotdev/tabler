@@ -450,6 +450,26 @@
   }
 
   /* -----------------------------------------------------------------------
+   * Downloads — route downloadButton()/downloadLink() clicks through a
+   * hidden iframe instead of letting the browser navigate the current tab.
+   * Even with a Content-Disposition: attachment response, briefly starting
+   * a top-level navigation to decide "this is a download, not a page" is
+   * enough for some browsers to flash/blink the tab (and would tear down
+   * our live WebSocket). An invisible iframe never touches the visible
+   * document, so nothing blinks and the connection stays untouched.
+   * --------------------------------------------------------------------- */
+  var downloadFrame = null;
+
+  function triggerDownload(href) {
+    if (!downloadFrame) {
+      downloadFrame = document.createElement("iframe");
+      downloadFrame.style.display = "none";
+      document.body.appendChild(downloadFrame);
+    }
+    downloadFrame.src = href;
+  }
+
+  /* -----------------------------------------------------------------------
    * Initialise
    * --------------------------------------------------------------------- */
   function init() {
@@ -458,6 +478,13 @@
     }
     bindInputs();
     connect();
+
+    document.addEventListener("click", function (e) {
+      var a = e.target.closest && e.target.closest("[data-tabler-download]");
+      if (!a) return;
+      e.preventDefault();
+      triggerDownload(a.getAttribute("href"));
+    });
   }
 
   if (document.readyState === "loading") {

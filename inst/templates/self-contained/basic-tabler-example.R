@@ -22,13 +22,15 @@ sidebar_nav <- navbar_menu(
 )
 
 topbar_nav <- navbar_menu(
-  menu_item("Button 1", icon = NULL),
+  menu_item("Tabler docs", icon = NULL, href = "https://tabler.io/admin-template/preview"),
+  menu_item("Tabler R docs", icon = NULL, href = "https://pacha.dev/tabler"),
+  menu_item("Tabler Server docs", icon = NULL, href = "https://pacha.dev/tabler-server"),
   menu_dropdown(
-    "Button 2",
+    "Another button",
     icon = "layout-2",
     href = "./",
     items = list(
-      c("Button 3", "./")
+      c("Placeholder", "./")
     )
   )
 )
