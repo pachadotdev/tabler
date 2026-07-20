@@ -47,13 +47,15 @@ histogram_section <- function(title, subtitle, col_input_id, col_choices, col_se
       div(
         class = "container-xl",
         row(
-          col12(
+          col4(
             card(
               title = "Controls",
               selectInput(col_input_id, "Column", choices = col_choices, selected = col_selected),
               sliderInput(bins_input_id, "Number of bins:", min = 1, max = 50, value = 5),
               downloadButton(download_output_id, label = "Download CSV")
-            ),
+            )
+          ),
+          col8(
             card(
               title  = "Output",
               footer = "Histogram",

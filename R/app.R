@@ -73,7 +73,20 @@ addResourcePath <- function(prefix, directoryPath) {
   store   <- attr(rv, ".store")
   sources <- attr(rv, ".sources")
   value   <- .simplify_input_value(value)
+  # Skip invalidation when the incoming value is unchanged. The client
+  # resends every bound input's *current* value right after the WebSocket
+  # connects (sendCurrentInputs(), so a freshly injected uiOutput input
+  # isn't stuck at NULL server-side - see tabler-reactive.js), and re-sends
+  # on every reconnect. Without this check, that resend unconditionally
+  # invalidates every observer/output depending on the input even though
+  # nothing actually changed, which (among other things) fires
+  # observeEvent()/eventReactive() handlers gated on that input as if the
+  # user had just triggered them - e.g. a withProgress()-wrapped handler
+  # would show its overlay and run its "slow" work again on every reconnect.
+  unchanged <- exists(name, envir = store, inherits = FALSE) &&
+    identical(get(name, envir = store, inherits = FALSE), value)
   assign(name, value, envir = store)
+  if (unchanged) return(invisible(NULL))
   if (!exists(name, envir = sources, inherits = FALSE)) {
     assign(name, new_source(), envir = sources)
   }
