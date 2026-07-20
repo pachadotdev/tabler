@@ -99,6 +99,33 @@
   /* -----------------------------------------------------------------------
    * Output handling — update DOM when the server sends a value
    * --------------------------------------------------------------------- */
+
+  // Replacing an output's innerHTML wholesale on every update destroys any
+  // existing <img> (e.g. from plotOutput()) and creates a brand new one with
+  // no image data yet - it renders blank/broken until the new resource
+  // finishes loading over a fresh HTTP request, causing a visible flash on
+  // every re-render. If both the current and incoming content are a single
+  // <img>, update the existing element's attributes in place instead: the
+  // browser keeps showing the last decoded frame until the new .src has
+  // fully loaded, then swaps it in a single step with no flicker.
+  function updateOutputHtml(el, html) {
+    var existingImg = el.children.length === 1 && el.children[0].tagName === "IMG"
+      ? el.children[0] : null;
+    if (existingImg) {
+      var tmp = document.createElement("div");
+      tmp.innerHTML = html;
+      var newImg = tmp.children.length === 1 ? tmp.children[0] : null;
+      if (newImg && newImg.tagName === "IMG") {
+        for (var i = 0; i < newImg.attributes.length; i++) {
+          var attr = newImg.attributes[i];
+          existingImg.setAttribute(attr.name, attr.value);
+        }
+        return;
+      }
+    }
+    el.innerHTML = html;
+  }
+
   function handleMessage(msg) {
     if (msg.type === "reload") {
       location.reload();
@@ -110,7 +137,7 @@
     } else if (msg.type === "output") {
       var el = document.getElementById(msg.id);
       if (el) {
-        el.innerHTML = msg.html;
+        updateOutputHtml(el, msg.html);
         bindInputs(el);   // re-bind any newly-injected inputs (uiOutput)
       }
     } else if (msg.type === "custom") {
