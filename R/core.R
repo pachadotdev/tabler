@@ -356,12 +356,14 @@ menu_item <- function(text, tab_name = NULL, icon = NULL, href = NULL, badge = N
   # Link attributes
   link_attrs <- list(
     class = "nav-link",
-    href = href %||% "./"
+    href = href %||% if (!is.null(tab_name)) paste0("#", tab_name) else "./"
   )
 
   if (!is.null(tab_name)) {
-    link_attrs[["data-toggle"]] <- "tab"
-    link_attrs[["data-target"]] <- paste0("#", tab_name)
+    # Bootstrap 5 (bundled with Tabler) requires `data-bs-toggle`/`data-bs-target`
+    # (not the Bootstrap 4 `data-toggle`/`data-target`) for tab switching to work.
+    link_attrs[["data-bs-toggle"]] <- "tab"
+    link_attrs[["data-bs-target"]] <- paste0("#", tab_name)
   }
 
   li(

@@ -241,6 +241,39 @@
     return parts.join("&");
   }
 
+  // Returns a function that, when called repeatedly, only invokes `fn` once
+  // `wait` ms have elapsed since the last call. Used so dragging a range
+  // slider doesn't flood the server with a message (and a full re-render)
+  // for every single pixel moved - only the settled value is ever sent,
+  // which is what actually makes dragging feel smooth instead of choppy.
+  function debounce(fn, wait) {
+    var t = null;
+    return function () {
+      var args = arguments, self = this;
+      if (t) clearTimeout(t);
+      t = setTimeout(function () {
+        t = null;
+        fn.apply(self, args);
+      }, wait);
+    };
+  }
+
+  // Update a range/range2 slider's on-screen value badge immediately, without
+  // waiting for the debounced server round-trip - so the label the user sees
+  // while dragging never lags behind the thumb.
+  function updateRangeBadge(el) {
+    var id   = el.getAttribute("data-tabler-input");
+    var type = el.getAttribute("data-tabler-type") || "text";
+    var badge = document.getElementById(id + "_val");
+    if (!badge) return;
+    if (type === "range2") {
+      var pair = readRange2(el);
+      badge.textContent = pair.lo + " - " + pair.hi;
+    } else {
+      badge.textContent = el.value;
+    }
+  }
+
   /* -----------------------------------------------------------------------
    * Input binding — send value to R whenever an input changes
    * --------------------------------------------------------------------- */
@@ -336,8 +369,12 @@
 
         if (type === "range2") {
           // Native "input" events on either thumb bubble up to the wrapper.
+          // Debounce the actual send (server round-trip + re-render); the
+          // badge still updates on every tick for live visual feedback.
+          var sendRange2 = debounce(function () { sendInputValue(el); }, 100);
           el.addEventListener("input", function () {
-            sendInputValue(el);
+            updateRangeBadge(el);
+            sendRange2();
           });
           sendInputValue(el);   // push initial lo/hi values
           return;
@@ -353,9 +390,18 @@
           eventName = "input";   // text, number, ...
         }
 
-        el.addEventListener(eventName, function () {
-          sendInputValue(el);
-        });
+        if (type === "range") {
+          // Same debounce as range2 above - see that branch's comment.
+          var sendRange = debounce(function () { sendInputValue(el); }, 100);
+          el.addEventListener(eventName, function () {
+            updateRangeBadge(el);
+            sendRange();
+          });
+        } else {
+          el.addEventListener(eventName, function () {
+            sendInputValue(el);
+          });
+        }
 
         // Buttons' value is a click counter that must only advance on a
         // real click (see sendCurrentInputs()'s own comment) - never send
