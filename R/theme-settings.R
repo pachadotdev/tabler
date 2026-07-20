@@ -8,10 +8,14 @@
 #'   `tabler-theme.min.js`) and applied immediately via `data-bs-*` attributes
 #'   on `<html>`.
 #' @param color Initially-selected color scheme (default \code{"blue"}).
+#' @param theme Initially-selected color mode (default \code{"light"}).
+#' @param font Initially-selected font family (default \code{"sans-serif"}).
+#' @param base Initially-selected theme base/gray shade (default \code{"gray"}).
+#' @param radius Initially-selected corner radius factor (default \code{"1"}).
 #' @return A `tabler.tag` tagList to be inserted into the page body.
 #' @keywords internal
 #' @noRd
-theme_settings_panel <- function(color = "blue") {
+theme_settings_panel <- function(color = "blue", theme = "light", font = "sans-serif", base = "gray", radius = "1") {
   colors <- c(
     "blue", "azure", "indigo", "purple", "pink", "red",
     "orange", "yellow", "lime", "green", "teal", "cyan"
@@ -89,11 +93,11 @@ theme_settings_panel <- function(color = "blue") {
       div(
         class = "offcanvas-body d-flex flex-column",
         div(
-          section("Color mode", "Choose the color mode for your app.", radio_section("theme", c("light", "dark"), "light")),
+          section("Color mode", "Choose the color mode for your app.", radio_section("theme", c("light", "dark"), theme)),
           section("Color scheme", "The perfect color mode for your app.", color_section(color)),
-          section("Font family", "Choose the font family that fits your app.", radio_section("theme-font", fonts, "sans-serif")),
-          section("Theme base", "Choose the gray shade for your app.", radio_section("theme-base", bases, "gray")),
-          section("Corner Radius", "Choose the border radius factor for your app.", radio_section("theme-radius", radiuses, "1", label_fn = identity))
+          section("Font family", "Choose the font family that fits your app.", radio_section("theme-font", fonts, font)),
+          section("Theme base", "Choose the gray shade for your app.", radio_section("theme-base", bases, base)),
+          section("Corner Radius", "Choose the border radius factor for your app.", radio_section("theme-radius", radiuses, radius, label_fn = identity))
         ),
         div(
           class = "mt-auto space-y",
@@ -109,8 +113,8 @@ theme_settings_panel <- function(color = "blue") {
       ".settings{position:fixed;bottom:1rem;left:1rem;z-index:1030}"
     )),
     tags$script(HTML(theme_settings_script(defaults = list(
-      theme = "light", `theme-base` = "gray", `theme-font` = "sans-serif",
-      `theme-primary` = color, `theme-radius` = "1"
+      theme = theme, `theme-base` = base, `theme-font` = font,
+      `theme-primary` = color, `theme-radius` = radius
     ))))
   )
 }

@@ -487,6 +487,20 @@
       e.preventDefault();
       triggerDownload(a.getAttribute("href"));
     });
+
+    // Browsers keep focus on a range thumb after the drag ends, so its
+    // ":focus" box-shadow ring stays visible until something else is
+    // clicked. Blur the thumb as soon as the mouse/touch/pointer is
+    // released so the ring disappears immediately, like it does on the
+    // real Tabler demo site.
+    ["mouseup", "touchend", "pointerup"].forEach(function (evtName) {
+      document.addEventListener(evtName, function (e) {
+        var active = document.activeElement;
+        if (active && active.classList && active.classList.contains("form-range")) {
+          active.blur();
+        }
+      });
+    });
   }
 
   if (document.readyState === "loading") {

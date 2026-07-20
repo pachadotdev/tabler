@@ -73,11 +73,12 @@ histogram_section <- function(title, subtitle, col_input_id, col_choices, col_se
 ui <- page(
   theme = "light",
   color = "teal",
-  title = "Combo Layout",
+  base = "slate",
+  radius = 1,
   # layout = "fluid-vertical",
   layout = "combo",
   show_theme_button = TRUE,
-  # navbar = sidebar_nav,
+  title = "Combo Layout",
   navbar = list(side = sidebar_nav, top = topbar_nav),
   body = list(
     tab_items(

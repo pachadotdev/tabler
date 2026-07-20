@@ -12,6 +12,9 @@
 #' @param theme Default theme: "light" (default) or "dark".
 #' @param color Color theme (optional): "blue" (default), "azure", "indigo", "purple", "pink",
 #'   "red", "orange", "yellow", "lime", "green", "teal", "cyan".
+#' @param font Font family: "sans-serif" (default), "serif", "monospace", "comic".
+#' @param base Theme base/gray shade: "gray" (default), "slate", "zinc", "neutral", "stone".
+#' @param radius Corner radius factor: 1 (default), 0, 0.5, 1.5, 2.
 #' @param show_theme_button Whether to show the theme toggle buttons in the
 #'   navbar and the floating theme settings customizer panel (color mode,
 #'   color scheme, font family, theme base and corner radius). Default `FALSE`.
@@ -38,7 +41,8 @@
 #' @export
 page <- function(
     title = NULL, navbar = NULL, body = NULL, footer = NULL, layout = "boxed",
-    theme = "light", color = "blue", show_theme_button = FALSE) {
+    theme = "light", color = "blue", font = "sans-serif", base = "gray",
+    radius = "1", show_theme_button = FALSE) {
   # Validate layout
   valid_layouts <- c(
     "boxed",
@@ -96,6 +100,19 @@ page <- function(
   if (!is.null(color) && !color %in% allowed_colors) {
     stop("Invalid color. Must be one of: ", paste(allowed_colors, collapse = ", "))
   }
+  allowed_fonts <- c("sans-serif", "serif", "monospace", "comic")
+  if (!font %in% allowed_fonts) {
+    stop("Invalid font. Must be one of: ", paste(allowed_fonts, collapse = ", "))
+  }
+  allowed_bases <- c("slate", "gray", "zinc", "neutral", "stone")
+  if (!base %in% allowed_bases) {
+    stop("Invalid base. Must be one of: ", paste(allowed_bases, collapse = ", "))
+  }
+  radius <- as.character(radius)
+  allowed_radiuses <- c("0", "0.5", "1", "1.5", "2")
+  if (!radius %in% allowed_radiuses) {
+    stop("Invalid radius. Must be one of: ", paste(allowed_radiuses, collapse = ", "))
+  }
 
   # Prepare inline script to set Tabler theme keys in localStorage and
   # set the corresponding data attributes on <html> so CSS rules apply
@@ -108,6 +125,12 @@ page <- function(
   } else {
     script_lines <- c(script_lines, "try{localStorage.removeItem('tabler-theme-primary');document.documentElement.removeAttribute('data-bs-theme-primary')}catch(e){}")
   }
+  script_lines <- c(
+    script_lines,
+    sprintf("try{localStorage.setItem('tabler-theme-font','%s');document.documentElement.setAttribute('data-bs-theme-font','%s')}catch(e){}", font, font),
+    sprintf("try{localStorage.setItem('tabler-theme-base','%s');document.documentElement.setAttribute('data-bs-theme-base','%s')}catch(e){}", base, base),
+    sprintf("try{localStorage.setItem('tabler-theme-radius','%s');document.documentElement.setAttribute('data-bs-theme-radius','%s')}catch(e){}", radius, radius)
+  )
   # Small click handler so clicking theme links toggles theme without a hard reload.
   # Also optionally remove the theme buttons if show_theme_button is FALSE.
   script_lines <- c(
@@ -137,7 +160,11 @@ page <- function(
     script(HTML(script_text))
   )
 
-  settings_panel <- if (isTRUE(show_theme_button)) theme_settings_panel(color = color %||% "blue") else NULL
+  settings_panel <- if (isTRUE(show_theme_button)) {
+    theme_settings_panel(color = color %||% "blue", theme = theme, font = font, base = base, radius = radius)
+  } else {
+    NULL
+  }
 
   html_body <- do.call(body_tag, c(
     body_attrs,

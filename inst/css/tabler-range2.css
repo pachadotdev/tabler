@@ -61,3 +61,16 @@
   z-index: 2;
   pointer-events: auto;
 }
+
+/* Bootstrap's bundled .form-range thumb :active color is a hardcoded light
+ * blue baked in at CSS build time, not the --tblr-primary custom property,
+ * so it stays blue while dragging even when the app's theme color (page()'s
+ * `color=`/the theme settings panel) isn't blue. Override with the live
+ * theme variable so the dragged thumb always matches the active color. */
+.form-range::-webkit-slider-thumb:active {
+  background-color: var(--tblr-primary);
+}
+
+.form-range::-moz-range-thumb:active {
+  background-color: var(--tblr-primary);
+}
