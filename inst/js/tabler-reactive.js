@@ -241,26 +241,9 @@
     return parts.join("&");
   }
 
-  // Returns a function that, when called repeatedly, only invokes `fn` once
-  // `wait` ms have elapsed since the last call. Used so dragging a range
-  // slider doesn't flood the server with a message (and a full re-render)
-  // for every single pixel moved - only the settled value is ever sent,
-  // which is what actually makes dragging feel smooth instead of choppy.
-  function debounce(fn, wait) {
-    var t = null;
-    return function () {
-      var args = arguments, self = this;
-      if (t) clearTimeout(t);
-      t = setTimeout(function () {
-        t = null;
-        fn.apply(self, args);
-      }, wait);
-    };
-  }
-
   // Update a range/range2 slider's on-screen value badge immediately, without
-  // waiting for the debounced server round-trip - so the label the user sees
-  // while dragging never lags behind the thumb.
+  // waiting for the server round-trip - so the label the user sees while
+  // dragging never lags behind the thumb.
   function updateRangeBadge(el) {
     var id   = el.getAttribute("data-tabler-input");
     var type = el.getAttribute("data-tabler-type") || "text";
@@ -368,20 +351,23 @@
         var eventName;
 
         if (type === "range2") {
-          // Native "input" events on either thumb bubble up to the wrapper.
-          // Debounce the actual send (server round-trip + re-render); the
-          // badge still updates on every tick for live visual feedback.
-          var sendRange2 = debounce(function () { sendInputValue(el); }, 100);
+          // Native "input" events fire continuously while dragging (bubbling
+          // up from either thumb) - only update the badge for those, so the
+          // label tracks the thumb live without triggering a server re-render
+          // per pixel moved. "change" fires once, when the drag/keypress
+          // commits (e.g. on mouseup), which is when the value is sent.
           el.addEventListener("input", function () {
             updateRangeBadge(el);
-            sendRange2();
+          });
+          el.addEventListener("change", function () {
+            sendInputValue(el);
           });
           sendInputValue(el);   // push initial lo/hi values
           return;
         } else if (type === "select") {
           eventName = "change";
         } else if (type === "range") {
-          eventName = "input";
+          eventName = "change";
         } else if (type === "checkbox" || type === "checkbox-group" || type === "radio") {
           eventName = "change";
         } else if (type === "button") {
@@ -391,17 +377,16 @@
         }
 
         if (type === "range") {
-          // Same debounce as range2 above - see that branch's comment.
-          var sendRange = debounce(function () { sendInputValue(el); }, 100);
-          el.addEventListener(eventName, function () {
+          // Same reasoning as range2 above: live badge on "input", actual
+          // send only on "change" (drag release / keypress commit).
+          el.addEventListener("input", function () {
             updateRangeBadge(el);
-            sendRange();
-          });
-        } else {
-          el.addEventListener(eventName, function () {
-            sendInputValue(el);
           });
         }
+
+        el.addEventListener(eventName, function () {
+          sendInputValue(el);
+        });
 
         // Buttons' value is a click counter that must only advance on a
         // real click (see sendCurrentInputs()'s own comment) - never send
