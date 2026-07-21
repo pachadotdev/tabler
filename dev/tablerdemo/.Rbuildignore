@@ -1,0 +1,13 @@
+^.*\.Rproj$
+^\.Rproj\.user$
+^\.Renviron$
+^app\.R$
+^docs$
+^vignettes/images$
+^\.github$
+^\.vscode$
+^single-apps$
+^LICENSE\.md$
+^README$
+^README\.Rmd$
+^LICENSE\.txt$

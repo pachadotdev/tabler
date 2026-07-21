@@ -84,13 +84,6 @@ pkg_template <- function(path = NULL, pkgname = NULL) {
 
   writeLines(lines, con = paste0(path, "/app.R"))
 
-  # get roxygen version
-  if (!requireNamespace("roxygen2", quietly = TRUE)) {
-    stop("You must install the roxygen2 package to use this function", call. = FALSE)
-  } else {
-    roxyver <- as.character(utils::packageVersion("roxygen2"))
-  }
-
   lines <- c(
     paste("Package:", pkgname),
     "Type: Package",
@@ -105,9 +98,6 @@ pkg_template <- function(path = NULL, pkgname = NULL) {
     "        comment = c(ORCID = \"0000-0001-0002-0003\"))",
     "    )",
     "Suggests: ",
-    "    knitr,",
-    "    rmarkdown,",
-    "    roxygen2,",
     "    tinytest",
     "Depends: tabler, R(>= 4.1.0)",
     "Description: ADD DESCRIPTION. TWO OR MORE LINES",
@@ -116,8 +106,7 @@ pkg_template <- function(path = NULL, pkgname = NULL) {
     "URL: https://WEBSITE.COM",
     paste0("RoxygenNote: ", roxyver),
     "Encoding: UTF-8",
-    "NeedsCompilation: no",
-    "VignetteBuilder: knitr"
+    "NeedsCompilation: no"
   )
 
   writeLines(lines, con = paste0(path, "/DESCRIPTION"))

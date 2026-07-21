@@ -1,0 +1,19 @@
+Package: tablerdemo
+Type: Package
+Title: Test the 'tabler' template
+Version: 0.1
+Authors@R: c(
+        person("Mauricio", "Vargas Sepulveda", role = c("aut", "cre"), email = "m.vargas.sepulveda@gmail.com"),
+        person(family = "Tabler", role = c("ctb", "cph"), comment = "Tabler Dashboard")
+    )
+Suggests: 
+    tinytest
+Depends: tabler, R(>= 4.1.0)
+Description: Tests the package template and standalone apps provided in the 
+    'tabler' package templates.
+License: Apache License 2.0
+BugReports: https://github.com/pachadotdev/tabler/issues
+URL: https://pacha.dev/tabler
+RoxygenNote: 8.0.0
+Encoding: UTF-8
+NeedsCompilation: no
