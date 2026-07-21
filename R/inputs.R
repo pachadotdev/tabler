@@ -24,7 +24,7 @@
   out <- list()
   for (i in seq_along(choices)) {
     item <- choices[[i]]
-    nm   <- if (!is.null(nms)) nms[[i]] else NULL
+    nm <- if (!is.null(nms)) nms[[i]] else NULL
     if (length(item) > 1L) {
       sub_nms <- names(item)
       for (j in seq_along(item)) {
@@ -95,10 +95,10 @@ selectInput <- function(inputId, label, choices, selected = NULL, ..., searchabl
   select_class <- if (searchable) "form-select d-none" else "form-select"
   control <- do.call(tags$select, c(
     list(
-      id                 = inputId,
-      class              = select_class,
+      id = inputId,
+      class = select_class,
       `data-tabler-input` = inputId,
-      `data-tabler-type`  = "select"
+      `data-tabler-type` = "select"
     ),
     list(...),
     option_tags
@@ -160,10 +160,10 @@ sliderInput <- function(inputId, label, min, max, value, step = 1, ...) {
     lo_value <- base::min(value)
     hi_value <- base::max(value)
     control <- div(
-      class               = "tabler-range2",
-      id                  = inputId,
+      class = "tabler-range2",
+      id = inputId,
       `data-tabler-input` = inputId,
-      `data-tabler-type`  = "range2",
+      `data-tabler-type` = "range2",
       tags$input(
         type = "range", class = "form-range",
         min = min, max = max, step = step, value = lo_value,
@@ -177,21 +177,21 @@ sliderInput <- function(inputId, label, min, max, value, step = 1, ...) {
     )
   } else {
     control <- tags$input(
-      type               = "range",
-      id                 = inputId,
-      class              = "form-range",
-      min                = min,
-      max                = max,
-      step               = step,
-      value              = value,
+      type = "range",
+      id = inputId,
+      class = "form-range",
+      min = min,
+      max = max,
+      step = step,
+      value = value,
       `data-tabler-input` = inputId,
-      `data-tabler-type`  = "range",
+      `data-tabler-type` = "range",
       ...
     )
   }
 
   value_display <- span(
-    id    = paste0(inputId, "_val"),
+    id = paste0(inputId, "_val"),
     class = "badge bg-primary text-white ms-2",
     if (is_range) paste(value, collapse = " - ") else value
   )
@@ -219,8 +219,11 @@ sliderInput <- function(inputId, label, min, max, value, step = 1, ...) {
 # expansion so both stay in sync.
 .normalize_choices_for_update <- function(choices) {
   lapply(.expand_choices(choices), function(it) {
-    if (is.null(it$group)) list(value = it$value, label = it$label)
-    else list(value = it$value, label = it$label, group = it$group)
+    if (is.null(it$group)) {
+      list(value = it$value, label = it$label)
+    } else {
+      list(value = it$value, label = it$label, group = it$group)
+    }
   })
 }
 
@@ -241,7 +244,7 @@ sliderInput <- function(inputId, label, min, max, value, step = 1, ...) {
 #' @export
 updateSelectInput <- function(session, inputId, label = NULL, choices = NULL, selected = NULL, ...) {
   params <- list()
-  if (!is.null(choices))  params$choices  <- .normalize_choices_for_update(choices)
+  if (!is.null(choices)) params$choices <- .normalize_choices_for_update(choices)
   if (!is.null(selected)) params$selected <- selected
   .updateInputMessage(session, inputId, params)
 }
@@ -267,9 +270,9 @@ updateSelectizeInput <- updateSelectInput
 updateSliderInput <- function(session, inputId, label = NULL, value = NULL, min = NULL, max = NULL, step = NULL) {
   params <- list()
   if (!is.null(value)) params$value <- value
-  if (!is.null(min))   params$min   <- min
-  if (!is.null(max))   params$max   <- max
-  if (!is.null(step))  params$step  <- step
+  if (!is.null(min)) params$min <- min
+  if (!is.null(max)) params$max <- max
+  if (!is.null(step)) params$step <- step
   .updateInputMessage(session, inputId, params)
 }
 
@@ -285,13 +288,13 @@ updateSliderInput <- function(session, inputId, label = NULL, value = NULL, min 
 #' @export
 textInput <- function(inputId, label, value = "", placeholder = NULL, ...) {
   control <- tags$input(
-    type                = "text",
-    id                  = inputId,
-    class               = "form-control",
-    value               = value,
-    placeholder         = placeholder,
-    `data-tabler-input`  = inputId,
-    `data-tabler-type`   = "text",
+    type = "text",
+    id = inputId,
+    class = "form-control",
+    value = value,
+    placeholder = placeholder,
+    `data-tabler-input` = inputId,
+    `data-tabler-type` = "text",
     ...
   )
   .input_wrap(inputId, label, control)
@@ -311,15 +314,15 @@ textInput <- function(inputId, label, value = "", placeholder = NULL, ...) {
 #' @export
 numericInput <- function(inputId, label, value, min = NULL, max = NULL, step = 1, ...) {
   control <- tags$input(
-    type                = "number",
-    id                  = inputId,
-    class               = "form-control",
-    value               = value,
-    min                 = min,
-    max                 = max,
-    step                = step,
-    `data-tabler-input`  = inputId,
-    `data-tabler-type`   = "number",
+    type = "number",
+    id = inputId,
+    class = "form-control",
+    value = value,
+    min = min,
+    max = max,
+    step = step,
+    `data-tabler-input` = inputId,
+    `data-tabler-type` = "number",
     ...
   )
   .input_wrap(inputId, label, control)
@@ -340,12 +343,12 @@ checkboxInput <- function(inputId, label, value = FALSE, ...) {
     div(
       class = "form-check",
       tags$input(
-        class               = "form-check-input",
-        type                = "checkbox",
-        id                  = inputId,
-        checked             = isTRUE(value),
-        `data-tabler-input`  = inputId,
-        `data-tabler-type`   = "checkbox",
+        class = "form-check-input",
+        type = "checkbox",
+        id = inputId,
+        checked = isTRUE(value),
+        `data-tabler-input` = inputId,
+        `data-tabler-type` = "checkbox",
         ...
       ),
       tags$label(class = "form-check-label", `for` = inputId, label)
@@ -369,12 +372,12 @@ actionButton <- function(inputId, label, class = "btn-primary", icon = NULL, ...
     tags$i(class = paste0("ti ti-", icon, " me-1"))
   }
   tags$button(
-    id                  = inputId,
-    class               = paste("btn", class),
-    type                = "button",
-    `data-tabler-input`  = inputId,
-    `data-tabler-type`   = "button",
-    `data-click-count`   = "0",
+    id = inputId,
+    class = paste("btn", class),
+    type = "button",
+    `data-tabler-input` = inputId,
+    `data-tabler-type` = "button",
+    `data-click-count` = "0",
     icon_tag,
     label,
     ...
@@ -400,13 +403,13 @@ checkboxGroupInput <- function(inputId, label, choices, selected = NULL) {
     div(
       class = "form-check",
       tags$input(
-        class               = "form-check-input",
-        type                = "checkbox",
-        id                  = box_id,
-        value               = val,
-        checked             = val %in% selected,
-        `data-tabler-input`  = inputId,
-        `data-tabler-type`   = "checkbox-group"
+        class = "form-check-input",
+        type = "checkbox",
+        id = box_id,
+        value = val,
+        checked = val %in% selected,
+        `data-tabler-input` = inputId,
+        `data-tabler-type` = "checkbox-group"
       ),
       tags$label(class = "form-check-label", `for` = box_id, lbl)
     )
@@ -433,20 +436,20 @@ radioButtons <- function(inputId, label, choices, selected = NULL) {
   if (is.null(selected)) selected <- choices[[1L]]
 
   buttons <- lapply(seq_along(choices), function(i) {
-    val    <- choices[[i]]
-    lbl    <- names(choices)[[i]]
+    val <- choices[[i]]
+    lbl <- names(choices)[[i]]
     btn_id <- paste0(inputId, "_", i)
     div(
       class = "form-check",
       tags$input(
-        class               = "form-check-input",
-        type                = "radio",
-        name                = inputId,
-        id                  = btn_id,
-        value               = val,
-        checked             = identical(val, selected),
-        `data-tabler-input`  = inputId,
-        `data-tabler-type`   = "radio"
+        class = "form-check-input",
+        type = "radio",
+        name = inputId,
+        id = btn_id,
+        value = val,
+        checked = identical(val, selected),
+        `data-tabler-input` = inputId,
+        `data-tabler-type` = "radio"
       ),
       tags$label(class = "form-check-label", `for` = btn_id, lbl)
     )

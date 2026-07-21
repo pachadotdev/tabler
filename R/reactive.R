@@ -6,10 +6,10 @@
 # ---------------------------------------------------------------------------
 .domain <- local({
   e <- new.env(parent = emptyenv())
-  e$id_counter    <- 0L
-  e$context_stack <- list()   # currently-executing reactive contexts (stack)
-  e$pending       <- list()   # observers scheduled for next flush
-  e$flushing      <- FALSE
+  e$id_counter <- 0L
+  e$context_stack <- list() # currently-executing reactive contexts (stack)
+  e$pending <- list() # observers scheduled for next flush
+  e$flushing <- FALSE
   e
 })
 
@@ -47,15 +47,19 @@ new_source <- function() {
   # later observer that eagerly forces several earlier bindEvent()-wrapped
   # reactives to compute (for progress-bar bracketing) needs those reactives'
   # own dirty-flagging watchers to have already run.
-  deps      <- new.env(hash = TRUE, parent = emptyenv())
+  deps <- new.env(hash = TRUE, parent = emptyenv())
   dep_order <- character(0)
 
   list(
     depend = function() {
       ctx <- .current_context()
-      if (is.null(ctx)) return(invisible(NULL))
+      if (is.null(ctx)) {
+        return(invisible(NULL))
+      }
       id <- as.character(ctx$id)
-      if (exists(id, envir = deps, inherits = FALSE)) return(invisible(NULL))
+      if (exists(id, envir = deps, inherits = FALSE)) {
+        return(invisible(NULL))
+      }
       assign(id, ctx, envir = deps)
       dep_order <<- c(dep_order, id)
       ctx$on_invalidate(function() {
@@ -65,9 +69,9 @@ new_source <- function() {
       invisible(NULL)
     },
     invalidate_dependents = function() {
-      ids       <- dep_order
+      ids <- dep_order
       dep_order <<- character(0)
-      ctxs      <- mget(ids, envir = deps, ifnotfound = list(NULL))
+      ctxs <- mget(ids, envir = deps, ifnotfound = list(NULL))
       rm(list = ls(deps), envir = deps)
       for (ctx in ctxs) if (!is.null(ctx)) ctx$invalidate()
     }
@@ -78,16 +82,19 @@ new_source <- function() {
 # Reactive context - can be invalidated; runs cleanup callbacks on invalidation
 # ---------------------------------------------------------------------------
 new_context <- function(on_invalidate_fn) {
-  id          <- .new_id()
+  id <- .new_id()
   invalidated <- FALSE
-  cleanups    <- list()
+  cleanups <- list()
 
   list(
     id = id,
     invalidate = function() {
-      if (invalidated) return(invisible(NULL))
+      if (invalidated) {
+        return(invisible(NULL))
+      }
       invalidated <<- TRUE
-      fns <- cleanups; cleanups <<- list()
+      fns <- cleanups
+      cleanups <<- list()
       for (fn in fns) fn()
       on_invalidate_fn()
     },
@@ -107,7 +114,9 @@ new_context <- function(on_invalidate_fn) {
 }
 
 .flush_domain <- function() {
-  if (.domain$flushing) return(invisible(NULL))
+  if (.domain$flushing) {
+    return(invisible(NULL))
+  }
   .domain$flushing <- TRUE
   on.exit(.domain$flushing <- FALSE)
   while (length(.domain$pending) > 0L) {
@@ -170,16 +179,16 @@ reactiveVal <- function(value = NULL) {
 reactiveValues <- function(...) {
   initial <- list(...)
   sources <- new.env(hash = TRUE, parent = emptyenv())
-  store   <- new.env(hash = TRUE, parent = emptyenv())
+  store <- new.env(hash = TRUE, parent = emptyenv())
 
   for (nm in names(initial)) {
     assign(nm, initial[[nm]], envir = store)
-    assign(nm, new_source(),  envir = sources)
+    assign(nm, new_source(), envir = sources)
   }
 
   rv <- new.env(parent = emptyenv())
   attr(rv, ".sources") <- sources
-  attr(rv, ".store")   <- store
+  attr(rv, ".store") <- store
   class(rv) <- "ReactiveValues"
   rv
 }
@@ -209,7 +218,7 @@ reactiveValuesToList <- function(x, all.names = FALSE) {
 # Registered as S3 methods in .onLoad() (see tabler-package.R).
 .rv_dollar <- function(x, name) {
   sources <- attr(x, ".sources")
-  store   <- attr(x, ".store")
+  store <- attr(x, ".store")
   if (!exists(name, envir = sources, inherits = FALSE)) {
     assign(name, new_source(), envir = sources)
   }
@@ -219,7 +228,7 @@ reactiveValuesToList <- function(x, all.names = FALSE) {
 
 .rv_dollar_assign <- function(x, name, value) {
   sources <- attr(x, ".sources")
-  store   <- attr(x, ".store")
+  store <- attr(x, ".store")
   assign(name, value, envir = store)
   if (!exists(name, envir = sources, inherits = FALSE)) {
     assign(name, new_source(), envir = sources)
@@ -236,16 +245,18 @@ reactiveValuesToList <- function(x, all.names = FALSE) {
 #' @rdname reactive-primitives
 #' @export
 reactive <- function(expr) {
-  expr_q  <- substitute(expr)
-  env     <- parent.frame()
-  src     <- new_source()
-  cached  <- NULL
+  expr_q <- substitute(expr)
+  env <- parent.frame()
+  src <- new_source()
+  cached <- NULL
   invalid <- TRUE
   cur_ctx <- NULL
 
   function() {
     src$depend()
-    if (!invalid) return(cached)
+    if (!invalid) {
+      return(cached)
+    }
 
     # Reuse the current internal context across repeated evaluation attempts
     # made while still invalid (e.g. several req()-aborted attempts, each
@@ -266,7 +277,10 @@ reactive <- function(expr) {
     ctx <- cur_ctx
     .push_context(ctx)
     tryCatch(
-      { cached <<- eval(expr_q, env); invalid <<- FALSE },
+      {
+        cached <<- eval(expr_q, env)
+        invalid <<- FALSE
+      },
       finally = .pop_context()
     )
     cached
@@ -275,11 +289,19 @@ reactive <- function(expr) {
 
 # Internal: shiny-style "truthiness" check used by req().
 .is_truthy <- function(x) {
-  if (is.null(x) || length(x) == 0L) return(FALSE)
+  if (is.null(x) || length(x) == 0L) {
+    return(FALSE)
+  }
   if (length(x) == 1L) {
-    if (is.na(x)) return(FALSE)
-    if (is.character(x) && !nzchar(x)) return(FALSE)
-    if (is.logical(x) && !isTRUE(x)) return(FALSE)
+    if (is.na(x)) {
+      return(FALSE)
+    }
+    if (is.character(x) && !nzchar(x)) {
+      return(FALSE)
+    }
+    if (is.logical(x) && !isTRUE(x)) {
+      return(FALSE)
+    }
   }
   TRUE
 }
@@ -319,8 +341,8 @@ req <- function(..., cancelOutput = FALSE) {
 #' @export
 isolate <- function(expr) {
   expr_q <- substitute(expr)
-  env    <- parent.frame()
-  saved  <- .domain$context_stack
+  env <- parent.frame()
+  saved <- .domain$context_stack
   .domain$context_stack <- list()
   on.exit(.domain$context_stack <- saved)
   eval(expr_q, env)
@@ -334,8 +356,8 @@ isolate <- function(expr) {
 #' @rdname reactive-primitives
 #' @export
 observe <- function(expr) {
-  expr_q    <- substitute(expr)
-  env       <- parent.frame()
+  expr_q <- substitute(expr)
+  env <- parent.frame()
   suspended <- FALSE
 
   # Snapshot the reactive domain (session) that is active when this observer
@@ -350,7 +372,9 @@ observe <- function(expr) {
   captured_session <- .domain$current_session
 
   run <- function() {
-    if (suspended) return(invisible(NULL))
+    if (suspended) {
+      return(invisible(NULL))
+    }
     ctx <- new_context(function() {
       if (!suspended) .schedule(run)
     })
@@ -370,8 +394,13 @@ observe <- function(expr) {
   .schedule(run)
 
   invisible(list(
-    suspend = function() { suspended <<- TRUE },
-    resume  = function() { suspended <<- FALSE; .schedule(run) }
+    suspend = function() {
+      suspended <<- TRUE
+    },
+    resume = function() {
+      suspended <<- FALSE
+      .schedule(run)
+    }
   ))
 }
 
@@ -383,9 +412,9 @@ observe <- function(expr) {
 #' @rdname reactive-primitives
 #' @export
 observeEvent <- function(eventExpr, handlerExpr, ignoreInit = TRUE) {
-  event_q   <- substitute(eventExpr)
+  event_q <- substitute(eventExpr)
   handler_q <- substitute(handlerExpr)
-  env       <- parent.frame()
+  env <- parent.frame()
   # State is kept in an environment (reference semantics) rather than a plain
   # local, because the observer body below is eval()'d in this frame and a
   # `<<-` superassignment would skip the local binding and write to the global
@@ -394,7 +423,7 @@ observeEvent <- function(eventExpr, handlerExpr, ignoreInit = TRUE) {
   state$init_done <- !isTRUE(ignoreInit)
 
   observe({
-    eval(event_q, env)          # read to register dependency
+    eval(event_q, env) # read to register dependency
     if (!state$init_done) {
       state$init_done <- TRUE
       return(invisible(NULL))
@@ -421,14 +450,14 @@ observeEvent <- function(eventExpr, handlerExpr, ignoreInit = TRUE) {
 eventReactive <- function(eventExpr, valueExpr, ignoreNULL = TRUE, ignoreInit = TRUE) {
   event_q <- substitute(eventExpr)
   value_q <- substitute(valueExpr)
-  env     <- parent.frame()
+  env <- parent.frame()
 
-  src   <- new_source()
+  src <- new_source()
   state <- new.env(parent = emptyenv())
   state$init_done <- !isTRUE(ignoreInit)
   state$has_value <- FALSE
-  state$value     <- NULL
-  state$dirty     <- FALSE
+  state$value <- NULL
+  state$dirty <- FALSE
 
   # Eagerly track invalidation of the event expression (exactly like a plain
   # observe()) so the dependency is registered, and the once-only "init"
@@ -441,11 +470,15 @@ eventReactive <- function(eventExpr, valueExpr, ignoreNULL = TRUE, ignoreInit = 
   # *same* flush pass (observers run in scheduling order, not dependency
   # order) could still see its stale pre-event value.
   observe({
-    ev        <- eval(event_q, env)   # read to register dependency
+    ev <- eval(event_q, env) # read to register dependency
     first_run <- !state$init_done
     state$init_done <- TRUE
-    if (first_run && isTRUE(ignoreInit)) return(invisible(NULL))
-    if (isTRUE(ignoreNULL) && is.null(ev)) return(invisible(NULL))
+    if (first_run && isTRUE(ignoreInit)) {
+      return(invisible(NULL))
+    }
+    if (isTRUE(ignoreNULL) && is.null(ev)) {
+      return(invisible(NULL))
+    }
     state$dirty <- TRUE
     src$invalidate_dependents()
   })
@@ -453,11 +486,13 @@ eventReactive <- function(eventExpr, valueExpr, ignoreNULL = TRUE, ignoreInit = 
   function() {
     src$depend()
     if (state$dirty) {
-      state$value     <- isolate(eval(value_q, env))
+      state$value <- isolate(eval(value_q, env))
       state$has_value <- TRUE
-      state$dirty     <- FALSE
+      state$dirty <- FALSE
     }
-    if (!state$has_value) return(NULL)
+    if (!state$has_value) {
+      return(NULL)
+    }
     state$value
   }
 }
@@ -484,24 +519,28 @@ bindEvent <- function(x, ..., ignoreNULL = TRUE, ignoreInit = TRUE) {
     stop("bindEvent() only supports reactive expressions created by reactive()", call. = FALSE)
   }
   dots <- substitute(list(...))[-1]
-  env  <- parent.frame()
+  env <- parent.frame()
 
-  src   <- new_source()
+  src <- new_source()
   state <- new.env(parent = emptyenv())
   state$init_done <- !isTRUE(ignoreInit)
   state$has_value <- FALSE
-  state$value     <- NULL
-  state$dirty     <- FALSE
+  state$value <- NULL
+  state$dirty <- FALSE
 
   # See the comment in eventReactive() above: only invalidation-tracking is
   # eager here; the wrapped x() is pulled lazily on next read so that sibling
   # reactives gated by the same event always see each other's fresh values.
   observe({
-    evs       <- lapply(dots, function(e) eval(e, env))   # register dependencies
+    evs <- lapply(dots, function(e) eval(e, env)) # register dependencies
     first_run <- !state$init_done
     state$init_done <- TRUE
-    if (first_run && isTRUE(ignoreInit)) return(invisible(NULL))
-    if (isTRUE(ignoreNULL) && all(vapply(evs, is.null, logical(1L)))) return(invisible(NULL))
+    if (first_run && isTRUE(ignoreInit)) {
+      return(invisible(NULL))
+    }
+    if (isTRUE(ignoreNULL) && all(vapply(evs, is.null, logical(1L)))) {
+      return(invisible(NULL))
+    }
     state$dirty <- TRUE
     src$invalidate_dependents()
   })
@@ -509,11 +548,13 @@ bindEvent <- function(x, ..., ignoreNULL = TRUE, ignoreInit = TRUE) {
   function() {
     src$depend()
     if (state$dirty) {
-      state$value     <- isolate(x())
+      state$value <- isolate(x())
       state$has_value <- TRUE
-      state$dirty     <- FALSE
+      state$dirty <- FALSE
     }
-    if (!state$has_value) return(NULL)
+    if (!state$has_value) {
+      return(NULL)
+    }
     state$value
   }
 }
@@ -588,7 +629,7 @@ bindCache <- function(x, ...) {
     stop("bindCache() only supports reactive expressions created by reactive()", call. = FALSE)
   }
   key_q <- substitute(list(...))[-1]
-  env   <- parent.frame()
+  env <- parent.frame()
 
   # Every bindCache() call site gets its own namespace, folded into every key
   # it generates. Without this, two different reactives bound to the same
@@ -602,9 +643,9 @@ bindCache <- function(x, ...) {
   ns <- paste(deparse(substitute(x)), collapse = "\n")
 
   function() {
-    keys  <- lapply(key_q, function(e) eval(e, env))
+    keys <- lapply(key_q, function(e) eval(e, env))
     cache <- .tabler_cache()
-    key   <- .tabler_cache_key(c(list(ns), keys))
+    key <- .tabler_cache_key(c(list(ns), keys))
     if (cache$exists(key)) {
       return(cache$get(key))
     }
@@ -655,92 +696,100 @@ syncUrl <- function(session, exclude = character(0L)) {
   run <- function() {
     ctx <- new_context(function() .schedule(run))
     .push_context(ctx)
-    tryCatch({
-      if (inherits(render_obj, "tabler_render")) {
-        if (identical(render_obj$type, "plot")) {
-          # Render to SVG so the output is resolution-independent and works for
-          # base-R, tinyplot, ggplot2, lattice, and any other grid/base device.
-          tmp <- tempfile(fileext = ".svg")
-          on.exit(unlink(tmp), add = TRUE)
-          local({
-            grDevices::svg(tmp,
-                           width  = render_obj$width  / 96,  # px -> inches
-                           height = render_obj$height / 96)
-            on.exit(
-              if (grDevices::dev.cur() > 1L) grDevices::dev.off(),
-              add = TRUE
+    tryCatch(
+      {
+        if (inherits(render_obj, "tabler_render")) {
+          if (identical(render_obj$type, "plot")) {
+            # Render to SVG so the output is resolution-independent and works for
+            # base-R, tinyplot, ggplot2, lattice, and any other grid/base device.
+            tmp <- tempfile(fileext = ".svg")
+            on.exit(unlink(tmp), add = TRUE)
+            local({
+              grDevices::svg(tmp,
+                width  = render_obj$width / 96, # px -> inches
+                height = render_obj$height / 96
+              )
+              on.exit(
+                if (grDevices::dev.cur() > 1L) grDevices::dev.off(),
+                add = TRUE
+              )
+              eval(render_obj$expr, render_obj$env)
+            })
+            svg_txt <- paste(readLines(tmp, warn = FALSE), collapse = "\n")
+            if (!nzchar(svg_txt)) {
+              stop("renderPlot produced an empty graphic")
+            }
+            val <- svg_txt
+            type <- "plot_src"
+          } else if (identical(render_obj$type, "print")) {
+            # Capture printed output (cat(), print(), str(), ...) rather than
+            # the expression's return value, which is often invisible NULL.
+            val <- paste(
+              utils::capture.output(eval(render_obj$expr, render_obj$env)),
+              collapse = "\n"
             )
-            eval(render_obj$expr, render_obj$env)
-          })
-          svg_txt <- paste(readLines(tmp, warn = FALSE), collapse = "\n")
-          if (!nzchar(svg_txt))
-            stop("renderPlot produced an empty graphic")
-          val  <- svg_txt
-          type <- "plot_src"
-        } else if (identical(render_obj$type, "print")) {
-          # Capture printed output (cat(), print(), str(), ...) rather than
-          # the expression's return value, which is often invisible NULL.
-          val <- paste(
-            utils::capture.output(eval(render_obj$expr, render_obj$env)),
-            collapse = "\n"
-          )
-          type <- "print"
-        } else {
-          val  <- eval(render_obj$expr, render_obj$env)
-          type <- render_obj$type
-        }
-      } else if (is.function(render_obj)) {
-        # External render function from any htmlwidgets-based package
-        # (render_d3po, renderWidget, leaflet::renderLeaflet, ...).
-        # We never call Shiny internals directly.  Priority order:
-        #
-        #  1. tabler_expr / tabler_env attributes - explicit opt-in kept for
-        #     backward compatibility (e.g. renderWidget() in outputs.R).
-        #
-        #  2. origUserFunc - the un-wrapped user closure stored by
-        #     shiny::createRenderFunction (which htmlwidgets::shinyRenderWidget
-        #     delegates to).  It takes no arguments, evaluates the raw expression
-        #     in the original env, and reactive reads inside it are tracked
-        #     normally because our context is already pushed above.
-        #
-        #  3. Direct call - last resort; will fail for true Shiny render fns
-        #     that require a session, but works for simple zero-arg wrappers.
-        expr <- attr(render_obj, "tabler_expr", exact = TRUE)
-        env  <- attr(render_obj, "tabler_env",  exact = TRUE)
-        if (!is.null(expr)) {
-          val <- eval(expr, env)
-        } else {
-          ouf <- environment(render_obj)[["origUserFunc"]]
-          if (is.function(ouf)) {
-            val <- ouf()
+            type <- "print"
           } else {
-            val <- tryCatch(
-              render_obj(),
-              error = function(e) {
-                stop("Could not evaluate widget render function without a ",
-                     "Shiny session. Use renderWidget() or any render helper ",
-                     "built on htmlwidgets::shinyRenderWidget.\n",
-                     "Original error: ", conditionMessage(e))
-              }
-            )
+            val <- eval(render_obj$expr, render_obj$env)
+            type <- render_obj$type
           }
+        } else if (is.function(render_obj)) {
+          # External render function from any htmlwidgets-based package
+          # (render_d3po, renderWidget, leaflet::renderLeaflet, ...).
+          # We never call Shiny internals directly.  Priority order:
+          #
+          #  1. tabler_expr / tabler_env attributes - explicit opt-in kept for
+          #     backward compatibility (e.g. renderWidget() in outputs.R).
+          #
+          #  2. origUserFunc - the un-wrapped user closure stored by
+          #     shiny::createRenderFunction (which htmlwidgets::shinyRenderWidget
+          #     delegates to).  It takes no arguments, evaluates the raw expression
+          #     in the original env, and reactive reads inside it are tracked
+          #     normally because our context is already pushed above.
+          #
+          #  3. Direct call - last resort; will fail for true Shiny render fns
+          #     that require a session, but works for simple zero-arg wrappers.
+          expr <- attr(render_obj, "tabler_expr", exact = TRUE)
+          env <- attr(render_obj, "tabler_env", exact = TRUE)
+          if (!is.null(expr)) {
+            val <- eval(expr, env)
+          } else {
+            ouf <- environment(render_obj)[["origUserFunc"]]
+            if (is.function(ouf)) {
+              val <- ouf()
+            } else {
+              val <- tryCatch(
+                render_obj(),
+                error = function(e) {
+                  stop(
+                    "Could not evaluate widget render function without a ",
+                    "Shiny session. Use renderWidget() or any render helper ",
+                    "built on htmlwidgets::shinyRenderWidget.\n",
+                    "Original error: ", conditionMessage(e)
+                  )
+                }
+              )
+            }
+          }
+          type <- "widget"
+        } else {
+          stop("output must be a tabler render function")
         }
-        type <- "widget"
-      } else {
-        stop("output must be a tabler render function")
+        .pop_context()
+        send_fn(val, type)
+      },
+      tabler_req_stop = function(e) {
+        .pop_context()
+        invisible(NULL)
+      },
+      error = function(e) {
+        .pop_context()
+        send_fn(
+          paste0('<span class="text-danger">Error: ', html_escape(conditionMessage(e)), "</span>"),
+          "html"
+        )
       }
-      .pop_context()
-      send_fn(val, type)
-    }, tabler_req_stop = function(e) {
-      .pop_context()
-      invisible(NULL)
-    }, error = function(e) {
-      .pop_context()
-      send_fn(
-        paste0('<span class="text-danger">Error: ', html_escape(conditionMessage(e)), "</span>"),
-        "html"
-      )
-    })
+    )
   }
   .schedule(run)
   invisible(run)

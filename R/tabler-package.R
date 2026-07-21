@@ -6,14 +6,14 @@
 # entries in NAMESPACE, which R's parser rejects.
 .onLoad <- function(libname, pkgname) {
   ns <- asNamespace(pkgname)
-  registerS3method("$",            "ReactiveValues",  .rv_dollar,               envir = ns)
-  registerS3method("$<-",          "ReactiveValues",  .rv_dollar_assign,        envir = ns)
-  registerS3method("$",            "tabler.module.input",  .mi_dollar,          envir = ns)
-  registerS3method("$<-",          "tabler.module.input",  .mi_dollar_assign,   envir = ns)
-  registerS3method("$",            "tabler.module.output", .mo_dollar,          envir = ns)
-  registerS3method("$<-",          "tabler.module.output", .mo_dollar_assign,   envir = ns)
-  registerS3method("as.character", "tabler.tag",       .as_char_tag,      envir = ns)
-  registerS3method("as.character", "tabler.tag.list",  .as_char_tag_list, envir = ns)
+  registerS3method("$", "ReactiveValues", .rv_dollar, envir = ns)
+  registerS3method("$<-", "ReactiveValues", .rv_dollar_assign, envir = ns)
+  registerS3method("$", "tabler.module.input", .mi_dollar, envir = ns)
+  registerS3method("$<-", "tabler.module.input", .mi_dollar_assign, envir = ns)
+  registerS3method("$", "tabler.module.output", .mo_dollar, envir = ns)
+  registerS3method("$<-", "tabler.module.output", .mo_dollar_assign, envir = ns)
+  registerS3method("as.character", "tabler.tag", .as_char_tag, envir = ns)
+  registerS3method("as.character", "tabler.tag.list", .as_char_tag_list, envir = ns)
 }
 
 #' @title Add Tabler Dependencies
@@ -25,7 +25,7 @@
 #' @keywords internal
 #' @noRd
 add_deps <- function(layout = "default") {
-  is_rtl   <- layout == "rtl"
+  is_rtl <- layout == "rtl"
   css_file <- if (!is_rtl) "css/tabler.min.css" else "css/tabler.rtl.min.css"
 
   tagList(
@@ -64,25 +64,25 @@ add_deps <- function(layout = "default") {
 # Internal tag aliases used throughout the layout/component files.
 # All come from R/html.R (our pure-R tag system — no external dependency).
 #' @noRd
-ul         <- tags$ul
+ul <- tags$ul
 #' @noRd
-li         <- tags$li
+li <- tags$li
 #' @noRd
-aside      <- tags$aside
+aside <- tags$aside
 #' @noRd
-head       <- tags$head
+head <- tags$head
 #' @noRd
-script     <- tags$script
+script <- tags$script
 #' @noRd
-i          <- tags$i
+i <- tags$i
 #' @noRd
-meta       <- tags$meta
+meta <- tags$meta
 #' @noRd
-href       <- tags$href
+href <- tags$href
 #' @noRd
-nav        <- tags$nav
+nav <- tags$nav
 #' @noRd
-body_tag   <- tags$body
+body_tag <- tags$body
 #' @noRd
 footer_tag <- tags$footer
 #' @noRd

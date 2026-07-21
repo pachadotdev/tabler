@@ -109,7 +109,7 @@ withProgress <- function(session = getDefaultReactiveDomain(), text = "Loading..
     return(invisible(NULL))
   }
   expr_q <- substitute(expr)
-  env    <- parent.frame()
+  env <- parent.frame()
   showProgress(session, text)
   later2::later(function() {
     tryCatch(

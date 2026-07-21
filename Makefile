@@ -1,4 +1,4 @@
-.PHONY: install docs
+.PHONY: install docs format
 
 install:
 	@Rscript -e 'tinydev::pkg_install(".")'

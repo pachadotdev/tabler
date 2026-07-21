@@ -50,16 +50,16 @@
 #'   tablerApp(ui, server)
 #' }
 #' \dontrun{
-#'   # The function call in the above app can be replaced by any of the
-#'   # following examples to produce similar apps
-#'   toggle(session, id = "panel")
-#'   toggle(session, "panel", TRUE)
-#'   toggle(session, "panel", TRUE, "fade", 2)
-#'   toggle(session, id = "panel", time = 1, anim = TRUE, animType = "slide")
-#'   show(session, "panel")
-#'   show(session, id = "panel", anim = TRUE)
-#'   hide(session, "panel")
-#'   hide(session, id = "panel", anim = TRUE)
+#' # The function call in the above app can be replaced by any of the
+#' # following examples to produce similar apps
+#' toggle(session, id = "panel")
+#' toggle(session, "panel", TRUE)
+#' toggle(session, "panel", TRUE, "fade", 2)
+#' toggle(session, id = "panel", time = 1, anim = TRUE, animType = "slide")
+#' show(session, "panel")
+#' show(session, id = "panel", anim = TRUE)
+#' hide(session, "panel")
+#' hide(session, id = "panel", anim = TRUE)
 #' }
 #'
 #' ## toggle can be given an optional `condition` argument, which
@@ -105,8 +105,10 @@ NULL
 #' @rdname visibilityFuncs
 show <- function(session = getDefaultReactiveDomain(), id = NULL, anim = FALSE,
                  animType = "slide", time = 0.5, selector = NULL) {
-  params <- list(id = id, anim = anim, animType = animType,
-                 time = time, selector = selector)
+  params <- list(
+    id = id, anim = anim, animType = animType,
+    time = time, selector = selector
+  )
   .visibilityMessage(session, "show", params)
 }
 
@@ -118,8 +120,10 @@ showElement <- show
 #' @rdname visibilityFuncs
 hide <- function(session = getDefaultReactiveDomain(), id = NULL, anim = FALSE,
                  animType = "slide", time = 0.5, selector = NULL) {
-  params <- list(id = id, anim = anim, animType = animType,
-                 time = time, selector = selector)
+  params <- list(
+    id = id, anim = anim, animType = animType,
+    time = time, selector = selector
+  )
   .visibilityMessage(session, "hide", params)
 }
 
@@ -131,8 +135,10 @@ hideElement <- hide
 #' @rdname visibilityFuncs
 toggle <- function(session = getDefaultReactiveDomain(), id = NULL, anim = FALSE,
                    animType = "slide", time = 0.5, selector = NULL, condition = NULL) {
-  params <- list(id = id, anim = anim, animType = animType,
-                 time = time, selector = selector, condition = condition)
+  params <- list(
+    id = id, anim = anim, animType = animType,
+    time = time, selector = selector, condition = condition
+  )
   .visibilityMessage(session, "toggle", params)
 }
 

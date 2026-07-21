@@ -296,7 +296,7 @@ body <- function(..., title = NULL, subtitle = NULL, header_actions = NULL) {
   if (!is.null(title)) {
     header_tag <- header(title, subtitle, header_actions)
   }
-  
+
   # Build body
   body_tag <- div(
     class = "page-body",
@@ -308,7 +308,7 @@ body <- function(..., title = NULL, subtitle = NULL, header_actions = NULL) {
       )
     )
   )
-  
+
   # Return header + body or just body
   if (!is.null(header_tag)) {
     tagList(header_tag, body_tag)

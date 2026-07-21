@@ -87,10 +87,10 @@ moduleServer <- function(id, module, session = getDefaultReactiveDomain()) {
     class = "tabler.module.output"
   )
 
-  scoped_session         <- session
-  scoped_session$ns      <- ns
-  scoped_session$input   <- scoped_input
-  scoped_session$output  <- scoped_output
+  scoped_session <- session
+  scoped_session$ns <- ns
+  scoped_session$input <- scoped_input
+  scoped_session$output <- scoped_output
 
   # Make getDefaultReactiveDomain() (and functions defaulting to it, like
   # show()/hide()/showProgress()) resolve to this module's scoped session

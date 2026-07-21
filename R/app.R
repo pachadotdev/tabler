@@ -8,21 +8,21 @@
 .mime_type <- function(path) {
   ext <- tolower(tools::file_ext(path))
   switch(ext,
-    html  = "text/html; charset=utf-8",
-    css   = "text/css",
-    js    = "application/javascript",
-    json  = "application/json",
-    png   = "image/png",
-    jpg   =,
-    jpeg  = "image/jpeg",
-    gif   = "image/gif",
-    svg   = "image/svg+xml",
-    ico   = "image/x-icon",
-    woff  = "font/woff",
+    html = "text/html; charset=utf-8",
+    css = "text/css",
+    js = "application/javascript",
+    json = "application/json",
+    png = "image/png",
+    jpg = ,
+    jpeg = "image/jpeg",
+    gif = "image/gif",
+    svg = "image/svg+xml",
+    ico = "image/x-icon",
+    woff = "font/woff",
     woff2 = "font/woff2",
-    ttf   = "font/ttf",
-    eot   = "application/vnd.ms-fontobject",
-    otf   = "font/otf",
+    ttf = "font/ttf",
+    eot = "application/vnd.ms-fontobject",
+    otf = "font/otf",
     "application/octet-stream"
   )
 }
@@ -62,7 +62,7 @@ addResourcePath <- function(prefix, directoryPath) {
 # so unwrap any such "flat" list before it reaches input$<name>.
 .simplify_input_value <- function(x) {
   if (is.list(x) && length(x) > 0L &&
-      all(vapply(x, function(e) is.atomic(e) && length(e) == 1L, logical(1L)))) {
+    all(vapply(x, function(e) is.atomic(e) && length(e) == 1L, logical(1L)))) {
     return(unlist(x, use.names = FALSE))
   }
   x
@@ -70,9 +70,9 @@ addResourcePath <- function(prefix, directoryPath) {
 
 # Internal helper: set a reactive input value without going through $<-
 .rv_set <- function(rv, name, value) {
-  store   <- attr(rv, ".store")
+  store <- attr(rv, ".store")
   sources <- attr(rv, ".sources")
-  value   <- .simplify_input_value(value)
+  value <- .simplify_input_value(value)
   # Skip invalidation when the incoming value is unchanged. The client
   # resends every bound input's *current* value right after the WebSocket
   # connects (sendCurrentInputs(), so a freshly injected uiOutput input
@@ -86,7 +86,9 @@ addResourcePath <- function(prefix, directoryPath) {
   unchanged <- exists(name, envir = store, inherits = FALSE) &&
     identical(get(name, envir = store, inherits = FALSE), value)
   assign(name, value, envir = store)
-  if (unchanged) return(invisible(NULL))
+  if (unchanged) {
+    return(invisible(NULL))
+  }
   if (!exists(name, envir = sources, inherits = FALSE)) {
     assign(name, new_source(), envir = sources)
   }
@@ -134,23 +136,23 @@ tablerApp <- function(ui, server, host = "127.0.0.1", port = 3000L,
                       launch.browser = interactive()) {
   # Reset the global reactive domain so stale observers from a previous run
   # do not interfere with this new session.
-  .domain$pending       <- list()
-  .domain$flushing      <- FALSE
+  .domain$pending <- list()
+  .domain$flushing <- FALSE
   .domain$context_stack <- list()
 
   # Build the static page HTML once ----
   page_html <- paste0("<!DOCTYPE html><html>", render_html(ui), "</html>")
 
   # Shared app state ----
-  connections    <- new.env(hash = TRUE, parent = emptyenv())  # id -> ws
-  output_cache   <- new.env(hash = TRUE, parent = emptyenv())  # id -> html string
-  widget_store   <- new.env(hash = TRUE, parent = emptyenv())  # id -> widget HTML
-  plot_store     <- new.env(hash = TRUE, parent = emptyenv())  # id -> svg string
-  download_store <- new.env(hash = TRUE, parent = emptyenv())  # id -> tabler_render (type="download")
+  connections <- new.env(hash = TRUE, parent = emptyenv()) # id -> ws
+  output_cache <- new.env(hash = TRUE, parent = emptyenv()) # id -> html string
+  widget_store <- new.env(hash = TRUE, parent = emptyenv()) # id -> widget HTML
+  plot_store <- new.env(hash = TRUE, parent = emptyenv()) # id -> svg string
+  download_store <- new.env(hash = TRUE, parent = emptyenv()) # id -> tabler_render (type="download")
 
   # Input / output proxies ----
-  input_proxy  <- reactiveValues()          # $.ReactiveValues gives reactive reads
-  output_proxy <- new.env(parent = emptyenv())  # plain env; $<- is standard env assign
+  input_proxy <- reactiveValues() # $.ReactiveValues gives reactive reads
+  output_proxy <- new.env(parent = emptyenv()) # plain env; $<- is standard env assign
 
   # URL sync config — NULL means disabled; character() means enabled (empty exclude) ----
   url_sync_exclude <- NULL
@@ -163,9 +165,9 @@ tablerApp <- function(ui, server, host = "127.0.0.1", port = 3000L,
   }
 
   session <- list(
-    input  = input_proxy,
+    input = input_proxy,
     output = output_proxy,
-    ns     = function(id) id,
+    ns = function(id) id,
     sendCustomMessage = function(type, message) {
       send_all(jsonlite::toJSON(
         list(type = "custom", messageType = type, message = message),
@@ -209,7 +211,7 @@ tablerApp <- function(ui, server, host = "127.0.0.1", port = 3000L,
         # URL — no encoding needed and right-click "Save image as" works.
         assign(output_id, val, envir = plot_store)
         html <- paste0(
-          '<img src="/plots/', output_id, '?t=', as.integer(Sys.time()), '"',
+          '<img src="/plots/', output_id, "?t=", as.integer(Sys.time()), '"',
           ' style="max-width:100%;height:auto;display:block;" alt="plot">'
         )
       } else {
@@ -256,12 +258,14 @@ tablerApp <- function(ui, server, host = "127.0.0.1", port = 3000L,
 
     # Widget HTML endpoint — serve self-contained widget pages
     if (grepl("^/widgets/", path)) {
-      wid <- sub("^/widgets/", "", path)   # regex mode so ^ anchors correctly
+      wid <- sub("^/widgets/", "", path) # regex mode so ^ anchors correctly
       # Reject any path tricks
       if (grepl("..", wid, fixed = TRUE) || grepl("/", wid, fixed = TRUE)) {
-        return(list(status = 403L,
-                    headers = list("Content-Type" = "text/plain"),
-                    body    = "Forbidden"))
+        return(list(
+          status = 403L,
+          headers = list("Content-Type" = "text/plain"),
+          body = "Forbidden"
+        ))
       }
       if (exists(wid, envir = widget_store, inherits = FALSE)) {
         return(list(
@@ -270,50 +274,61 @@ tablerApp <- function(ui, server, host = "127.0.0.1", port = 3000L,
           body    = get(wid, envir = widget_store)
         ))
       }
-      return(list(status = 404L,
-                  headers = list("Content-Type" = "text/plain"),
-                  body    = "Widget not found"))
+      return(list(
+        status = 404L,
+        headers = list("Content-Type" = "text/plain"),
+        body = "Widget not found"
+      ))
     }
 
     # Download endpoint — evaluates a downloadHandler() on demand
     if (grepl("^/downloads/", path)) {
       did <- sub("^/downloads/([^?]*).*$", "\\1", path)
       if (grepl("..", did, fixed = TRUE) || grepl("/", did, fixed = TRUE)) {
-        return(list(status = 403L,
-                    headers = list("Content-Type" = "text/plain"),
-                    body    = "Forbidden"))
+        return(list(
+          status = 403L,
+          headers = list("Content-Type" = "text/plain"),
+          body = "Forbidden"
+        ))
       }
       if (!exists(did, envir = download_store, inherits = FALSE)) {
-        return(list(status = 404L,
-                    headers = list("Content-Type" = "text/plain"),
-                    body    = "Download not found"))
+        return(list(
+          status = 404L,
+          headers = list("Content-Type" = "text/plain"),
+          body = "Download not found"
+        ))
       }
       dh <- get(did, envir = download_store, inherits = FALSE)
-      result <- tryCatch({
-        fname <- isolate(if (is.function(dh$filename)) dh$filename() else dh$filename)
-        ext   <- tools::file_ext(fname)
-        tmp   <- if (nzchar(ext)) tempfile(fileext = paste0(".", ext)) else tempfile()
-        on.exit(unlink(tmp), add = TRUE)
-        isolate(dh$content(tmp))
-        if (!file.exists(tmp)) stop("downloadHandler's content() did not write to the given file path")
-        fsize   <- file.info(tmp)$size
-        con     <- file(tmp, "rb")
-        on.exit(close(con), add = TRUE)
-        content <- readBin(con, "raw", fsize)
-        ctype   <- if (!is.null(dh$contentType)) dh$contentType else .mime_type(fname)
-        list(
-          status  = 200L,
-          headers = list(
-            "Content-Type"        = ctype,
-            "Content-Disposition" = sprintf('attachment; filename="%s"', fname)
-          ),
-          body    = content
-        )
-      }, error = function(e) {
-        list(status = 500L,
-             headers = list("Content-Type" = "text/plain"),
-             body = paste("Download failed:", conditionMessage(e)))
-      })
+      result <- tryCatch(
+        {
+          fname <- isolate(if (is.function(dh$filename)) dh$filename() else dh$filename)
+          ext <- tools::file_ext(fname)
+          tmp <- if (nzchar(ext)) tempfile(fileext = paste0(".", ext)) else tempfile()
+          on.exit(unlink(tmp), add = TRUE)
+          isolate(dh$content(tmp))
+          if (!file.exists(tmp)) stop("downloadHandler's content() did not write to the given file path")
+          fsize <- file.info(tmp)$size
+          con <- file(tmp, "rb")
+          on.exit(close(con), add = TRUE)
+          content <- readBin(con, "raw", fsize)
+          ctype <- if (!is.null(dh$contentType)) dh$contentType else .mime_type(fname)
+          list(
+            status = 200L,
+            headers = list(
+              "Content-Type"        = ctype,
+              "Content-Disposition" = sprintf('attachment; filename="%s"', fname)
+            ),
+            body = content
+          )
+        },
+        error = function(e) {
+          list(
+            status = 500L,
+            headers = list("Content-Type" = "text/plain"),
+            body = paste("Download failed:", conditionMessage(e))
+          )
+        }
+      )
       return(result)
     }
 
@@ -321,21 +336,27 @@ tablerApp <- function(ui, server, host = "127.0.0.1", port = 3000L,
     if (grepl("^/plots/", path)) {
       pid <- sub("^/plots/([^?]*).*$", "\\1", path)
       if (grepl("..", pid, fixed = TRUE) || grepl("/", pid, fixed = TRUE)) {
-        return(list(status = 403L,
-                    headers = list("Content-Type" = "text/plain"),
-                    body    = "Forbidden"))
+        return(list(
+          status = 403L,
+          headers = list("Content-Type" = "text/plain"),
+          body = "Forbidden"
+        ))
       }
       if (exists(pid, envir = plot_store, inherits = FALSE)) {
         return(list(
-          status  = 200L,
-          headers = list("Content-Type"  = "image/svg+xml; charset=utf-8",
-                         "Cache-Control" = "no-cache, no-store, must-revalidate"),
-          body    = get(pid, envir = plot_store)
+          status = 200L,
+          headers = list(
+            "Content-Type" = "image/svg+xml; charset=utf-8",
+            "Cache-Control" = "no-cache, no-store, must-revalidate"
+          ),
+          body = get(pid, envir = plot_store)
         ))
       }
-      return(list(status = 404L,
-                  headers = list("Content-Type" = "text/plain"),
-                  body    = "Plot not found"))
+      return(list(
+        status = 404L,
+        headers = list("Content-Type" = "text/plain"),
+        body = "Plot not found"
+      ))
     }
 
     # Static assets — resolve via system.file() for path-traversal safety
@@ -343,26 +364,28 @@ tablerApp <- function(ui, server, host = "127.0.0.1", port = 3000L,
 
     # Block anything that looks dangerous before hitting system.file
     if (grepl("..", rel, fixed = TRUE) || grepl("^~", rel)) {
-      return(list(status = 403L,
-                  headers = list("Content-Type" = "text/plain"),
-                  body = "Forbidden"))
+      return(list(
+        status = 403L,
+        headers = list("Content-Type" = "text/plain"),
+        body = "Forbidden"
+      ))
     }
 
     # Registered app resource paths (see addResourcePath()) take priority
     seg <- sub("/.*$", "", rel)
     if (exists(seg, envir = .resource_paths, inherits = FALSE)) {
-      base_dir  <- get(seg, envir = .resource_paths, inherits = FALSE)
-      file_rel  <- sub(paste0("^", seg, "/?"), "", rel)
+      base_dir <- get(seg, envir = .resource_paths, inherits = FALSE)
+      file_rel <- sub(paste0("^", seg, "/?"), "", rel)
       file_path <- if (nzchar(file_rel)) {
         normalizePath(file.path(base_dir, file_rel), mustWork = FALSE)
       } else {
         ""
       }
       if (nzchar(file_rel) &&
-          startsWith(file_path, base_dir) &&
-          file.exists(file_path) && !dir.exists(file_path)) {
-        fsize   <- file.info(file_path)$size
-        con     <- file(file_path, "rb")
+        startsWith(file_path, base_dir) &&
+        file.exists(file_path) && !dir.exists(file_path)) {
+        fsize <- file.info(file_path)$size
+        con <- file(file_path, "rb")
         content <- readBin(con, "raw", fsize)
         close(con)
         return(list(
@@ -371,20 +394,24 @@ tablerApp <- function(ui, server, host = "127.0.0.1", port = 3000L,
           body    = content
         ))
       }
-      return(list(status = 404L,
-                  headers = list("Content-Type" = "text/plain"),
-                  body = "Not found"))
+      return(list(
+        status = 404L,
+        headers = list("Content-Type" = "text/plain"),
+        body = "Not found"
+      ))
     }
 
     file_path <- system.file(rel, package = "tabler")
     if (!nzchar(file_path) || !file.exists(file_path) || dir.exists(file_path)) {
-      return(list(status = 404L,
-                  headers = list("Content-Type" = "text/plain"),
-                  body = "Not found"))
+      return(list(
+        status = 404L,
+        headers = list("Content-Type" = "text/plain"),
+        body = "Not found"
+      ))
     }
 
-    fsize   <- file.info(file_path)$size
-    con     <- file(file_path, "rb")
+    fsize <- file.info(file_path)$size
+    con <- file(file_path, "rb")
     content <- readBin(con, "raw", fsize)
     close(con)
 
@@ -416,8 +443,10 @@ tablerApp <- function(ui, server, host = "127.0.0.1", port = 3000L,
     if (!is.null(url_sync_exclude)) {
       tryCatch(
         ws$send(jsonlite::toJSON(
-          list(type = "custom", messageType = "tablerSyncUrl",
-               message = list(exclude = as.list(url_sync_exclude))),
+          list(
+            type = "custom", messageType = "tablerSyncUrl",
+            message = list(exclude = as.list(url_sync_exclude))
+          ),
           auto_unbox = TRUE
         )),
         error = function(e) NULL
@@ -425,14 +454,16 @@ tablerApp <- function(ui, server, host = "127.0.0.1", port = 3000L,
     }
 
     ws$onMessage(function(binary, message) {
-      tryCatch({
-        msg <- jsonlite::fromJSON(message, simplifyVector = FALSE)
-        if (identical(msg[["type"]], "input")) {
-          .rv_set(input_proxy, msg[["name"]], msg[["value"]])
-          .flush_domain()
-
-        }
-      }, error = function(e) NULL)
+      tryCatch(
+        {
+          msg <- jsonlite::fromJSON(message, simplifyVector = FALSE)
+          if (identical(msg[["type"]], "input")) {
+            .rv_set(input_proxy, msg[["name"]], msg[["value"]])
+            .flush_domain()
+          }
+        },
+        error = function(e) NULL
+      )
     })
 
     ws$onClose(function() {
@@ -447,18 +478,21 @@ tablerApp <- function(ui, server, host = "127.0.0.1", port = 3000L,
     call      = http_handler,
     onWSOpen  = ws_handler
   ))
-  on.exit({
-    # Notify all connected browsers the app is stopping, then give httpuv a
-    # moment to flush the outgoing message before closing the socket.
-    stop_msg <- jsonlite::toJSON(list(type = "stop"), auto_unbox = TRUE)
-    for (.ws in as.list(connections)) {
-      tryCatch(.ws$send(stop_msg), error = function(e) NULL)
-    }
-    # Catch interrupt as well: if Ctrl+C fired inside service() above, an
-    # unhandled interrupt here would skip stopServer() and leave the port bound.
-    tryCatch(httpuv2::service(500L), error = function(e) NULL, interrupt = function(e) NULL)
-    httpuv2::stopServer(srv)
-  }, add = TRUE)
+  on.exit(
+    {
+      # Notify all connected browsers the app is stopping, then give httpuv a
+      # moment to flush the outgoing message before closing the socket.
+      stop_msg <- jsonlite::toJSON(list(type = "stop"), auto_unbox = TRUE)
+      for (.ws in as.list(connections)) {
+        tryCatch(.ws$send(stop_msg), error = function(e) NULL)
+      }
+      # Catch interrupt as well: if Ctrl+C fired inside service() above, an
+      # unhandled interrupt here would skip stopServer() and leave the port bound.
+      tryCatch(httpuv2::service(500L), error = function(e) NULL, interrupt = function(e) NULL)
+      httpuv2::stopServer(srv)
+    },
+    add = TRUE
+  )
 
   url <- sprintf("http://%s:%d", host, as.integer(port))
   message("Tabler app running at ", url, "\nPress Ctrl+C to stop.")
@@ -468,7 +502,7 @@ tablerApp <- function(ui, server, host = "127.0.0.1", port = 3000L,
   # Event loop ----
   tryCatch(
     repeat {
-      httpuv2::service(1000L)   # poll for 1 s then yield
+      httpuv2::service(1000L) # poll for 1 s then yield
       # Run any due later2::later() callbacks (e.g. work deferred by
       # withProgress() so the "show" message can reach the browser first)
       # before flushing reactive observers that they may have scheduled. An
@@ -479,7 +513,7 @@ tablerApp <- function(ui, server, host = "127.0.0.1", port = 3000L,
           message("tabler: error in later callback: ", conditionMessage(e))
         }
       )
-      .flush_domain()          # process any queued reactive work
+      .flush_domain() # process any queued reactive work
     },
     interrupt = function(e) invisible(NULL)
   )

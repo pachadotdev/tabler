@@ -104,9 +104,11 @@ renderUI <- function(expr) {
 #' @rdname tabler-outputs
 #' @export
 plotOutput <- function(outputId, width = "100%", height = "400px") {
-  div(id    = outputId,
-      class = "tabler-out-ui",
-      style = paste0("width:", width, ";min-height:", height, ";"))
+  div(
+    id = outputId,
+    class = "tabler-out-ui",
+    style = paste0("width:", width, ";min-height:", height, ";")
+  )
 }
 
 #' @title Render a Plot
@@ -123,8 +125,10 @@ plotOutput <- function(outputId, width = "100%", height = "400px") {
 #' @export
 renderPlot <- function(expr, width = 800, height = 400) {
   structure(
-    list(expr = substitute(expr), env = parent.frame(), type = "plot",
-         width = width, height = height),
+    list(
+      expr = substitute(expr), env = parent.frame(), type = "plot",
+      width = width, height = height
+    ),
     class = "tabler_render"
   )
 }
@@ -141,9 +145,11 @@ renderPlot <- function(expr, width = 800, height = 400) {
 #' @rdname tabler-outputs
 #' @export
 widgetOutput <- function(outputId, width = "100%", height = "400px") {
-  div(id    = outputId,
-      class = "tabler-out-ui",
-      style = paste0("width:", width, ";min-height:", height, ";"))
+  div(
+    id = outputId,
+    class = "tabler-out-ui",
+    style = paste0("width:", width, ";min-height:", height, ";")
+  )
 }
 
 #' @title Render an HTML Widget
@@ -169,11 +175,11 @@ widgetOutput <- function(outputId, width = "100%", height = "400px") {
 #' @rdname tabler-outputs
 #' @export
 renderWidget <- function(expr) {
-  e   <- substitute(expr)
+  e <- substitute(expr)
   env <- parent.frame()
-  fn  <- function() eval(e, env)
+  fn <- function() eval(e, env)
   attr(fn, "tabler_expr") <- e
-  attr(fn, "tabler_env")  <- env
+  attr(fn, "tabler_env") <- env
   fn
 }
 
@@ -215,9 +221,9 @@ downloadHandler <- function(filename, content, contentType = NULL) {
 downloadButton <- function(outputId, label = "Download", class = "btn-primary", icon = "download", ...) {
   icon_tag <- if (!is.null(icon)) tags$i(class = paste0("ti ti-", icon, " me-1"))
   tags$a(
-    id     = outputId,
-    href   = paste0("/downloads/", outputId),
-    class  = paste("btn", class),
+    id = outputId,
+    href = paste0("/downloads/", outputId),
+    class = paste("btn", class),
     `data-tabler-download` = outputId,
     icon_tag,
     label,
@@ -230,9 +236,9 @@ downloadButton <- function(outputId, label = "Download", class = "btn-primary", 
 downloadLink <- function(outputId, label = "Download", class = NULL, icon = NULL, ...) {
   icon_tag <- if (!is.null(icon)) tags$i(class = paste0("ti ti-", icon, " me-1"))
   tags$a(
-    id     = outputId,
-    href   = paste0("/downloads/", outputId),
-    class  = class,
+    id = outputId,
+    href = paste0("/downloads/", outputId),
+    class = class,
     `data-tabler-download` = outputId,
     icon_tag,
     label,
@@ -243,11 +249,11 @@ downloadLink <- function(outputId, label = "Download", class = NULL, icon = NULL
 # Serialise a render result to an HTML string
 .serialise_output <- function(val, type) {
   switch(type,
-    text  = html_escape(paste(as.character(val), collapse = " ")),
+    text = html_escape(paste(as.character(val), collapse = " ")),
     # `val` is already the captured printed text (see .observe_output).
-    print  = html_escape(as.character(val)),
-    ui     = render_html(val),
-    html   = as.character(val),          # already-escaped error strings
+    print = html_escape(as.character(val)),
+    ui = render_html(val),
+    html = as.character(val), # already-escaped error strings
     html_escape(as.character(val))
   )
 }

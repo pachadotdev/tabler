@@ -40,9 +40,10 @@
 ## NOTE: exported names intentionally short (no `tabler_` prefix)
 #' @export
 page <- function(
-    title = NULL, navbar = NULL, body = NULL, footer = NULL, layout = "boxed",
-    theme = "light", color = "blue", font = "sans-serif", base = "gray",
-    radius = "1", show_theme_button = FALSE) {
+  title = NULL, navbar = NULL, body = NULL, footer = NULL, layout = "boxed",
+  theme = "light", color = "blue", font = "sans-serif", base = "gray",
+  radius = "1", show_theme_button = FALSE
+) {
   # Validate layout
   valid_layouts <- c(
     "boxed",
@@ -294,7 +295,7 @@ sidebar_menu <- function(..., title = NULL) {
   # Attach brand metadata as data-* attributes so layout builders can extract
   # them and so as.character() includes the values in the HTML.
   if (!is.null(title)) {
-    if (!is.null(title$img))  ul$attribs[["data-brand-img"]]  <- title$img
+    if (!is.null(title$img)) ul$attribs[["data-brand-img"]] <- title$img
     if (!is.null(title$text)) ul$attribs[["data-brand-text"]] <- title$text
     if (!is.null(title$href)) ul$attribs[["data-brand-href"]] <- title$href
   }

@@ -21,6 +21,14 @@
   color: var(--tblr-dropdown-link-hover-color, inherit);
 }
 
+/* The currently-selected item's background (--tblr-dropdown-link-active-bg)
+ * is a darker tint than a regular row, but the default active text color
+ * (--tblr-dropdown-link-active-color, a light primary blue) reads poorly
+ * against it. Use the normal body text color instead for better contrast. */
+.tabler-select-search-menu .dropdown-item.active {
+  color: var(--tblr-body-color);
+}
+
 .tabler-select-search-menu .dropdown-header {
   padding-top: 0.5rem;
   padding-bottom: 0.25rem;
