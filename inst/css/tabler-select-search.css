@@ -1,0 +1,27 @@
+/* Searchable select combobox for selectInput(searchable = TRUE).
+ *
+ * Reuses Bootstrap's .dropdown-menu/.dropdown-item styling (bundled in
+ * tabler.min.css) so the popup looks consistent with the rest of the theme,
+ * but is shown/hidden purely by toggling the "show" class from plain JS
+ * (see tabler-searchable-select.js) - no Bootstrap Dropdown/Popper.js
+ * instance is created, so no data-bs-toggle wiring is needed.
+ */
+.tabler-select-search {
+  position: relative;
+}
+
+.tabler-select-search-menu {
+  width: 100%;
+  max-height: 15rem;
+  overflow-y: auto;
+}
+
+.tabler-select-search-menu .dropdown-item.tabler-select-search-hl {
+  background-color: var(--tblr-dropdown-link-hover-bg, rgba(0, 0, 0, 0.05));
+  color: var(--tblr-dropdown-link-hover-color, inherit);
+}
+
+.tabler-select-search-menu .dropdown-header {
+  padding-top: 0.5rem;
+  padding-bottom: 0.25rem;
+}

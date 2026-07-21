@@ -30,7 +30,7 @@ pkg_template <- function(path = NULL, pkgname = NULL) {
   # copy files
   file.copy(
     list.files(
-      system.file("extdata/pkg-template", "", package = "cpp4r"),
+      system.file("extdata/pkg-template", "", package = "tabler"),
       full.names = TRUE
     ),
     path,
@@ -39,7 +39,7 @@ pkg_template <- function(path = NULL, pkgname = NULL) {
 
   file.copy(
     list.files(
-      system.file("extdata/app-template", "", package = "cpp4r"),
+      system.file("extdata/app-template", "", package = "tabler"),
       pattern = "*.R",
       full.names = TRUE
     ),

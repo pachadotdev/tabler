@@ -72,13 +72,14 @@ compute once immediately on creation, before any click).}
 \item{ignoreNULL}{If \code{TRUE} (default), do not (re)compute while all
 event expressions evaluate to \code{NULL}.}
 
-\item{cache}{A \pkg{cachem} cache object (e.g. \code{cachem::cache_disk(dir
-= "/path/to/cache")} or \code{cachem::cache_mem()}) used to store
-\code{\link{bindCache}} values. If never set, an in-memory
-\code{cachem::cache_mem()} is created and used automatically - which
-(like a plain \code{\link{reactive}}) does not survive an R restart.
-Pass a \code{cache_disk()} object to persist values across app restarts
-and sessions.}
+\item{cache}{A \pkg{tinycache} cache object (e.g.
+\code{tinycache::dcache(dir = "/path/to/cache")} or
+\code{tinycache::mcache()}) used to store \code{\link{bindCache}}
+values. If never set, an in-memory \code{tinycache::mcache()} is
+created and used automatically - which (like a plain
+\code{\link{reactive}}) does not survive an R restart. Pass a
+\code{dcache()} object to persist values across app restarts and
+sessions.}
 
 \item{session}{The \code{session} object passed by \code{\link{tablerApp}}
 to the server function.}
@@ -160,7 +161,7 @@ Persistently caches a reactive expression's value, keyed by
   Unlike \code{\link{reactive}}'s built-in caching (in-memory, lost as
   soon as its dependencies change), \code{bindCache()} stores values in
   the cache backend configured via \code{\link{tablerOptions}} (e.g.
-  \code{cachem::cache_disk()}), so identical key combinations are served
+  \code{tinycache::dcache()}), so identical key combinations are served
   instantly - even across app restarts or different sessions - without
   re-running \code{x}. Typically used with the pipe:
   \code{reactive({...}) |> bindCache(key1, key2) |> bindEvent(input$go)}.

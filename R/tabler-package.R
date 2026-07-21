@@ -1,4 +1,3 @@
-#' @useDynLib tabler, .registration = TRUE
 #' @keywords internal
 "_PACKAGE"
 
@@ -36,12 +35,14 @@ add_deps <- function(layout = "default") {
     tags$link(rel = "stylesheet", href = "/tabler-1.4.0/css/tabler-themes.min.css"),
     tags$link(rel = "stylesheet", href = "/css/tabler-progress.css"),
     tags$link(rel = "stylesheet", href = "/css/tabler-range2.css"),
+    tags$link(rel = "stylesheet", href = "/css/tabler-select-search.css"),
     tags$script(src = "/tabler-1.4.0/js/tabler.min.js"),
     tags$script(src = "/tabler-1.4.0/js/tabler-theme.min.js"),
     tags$script(src = "/js/tabler-tabs.js"),
     tags$script(src = "/js/tabler-reactive.js"),
     tags$script(src = "/js/tabler-visibility.js"),
     tags$script(src = "/js/tabler-update-input.js"),
+    tags$script(src = "/js/tabler-searchable-select.js"),
     tags$script(src = "/js/tabler-progress.js")
   )
 }

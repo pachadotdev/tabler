@@ -522,13 +522,14 @@ bindEvent <- function(x, ..., ignoreNULL = TRUE, ignoreInit = TRUE) {
 #' @description Configure package-wide options for tabler. Currently this
 #'   only sets the cache backend used by \code{\link{bindCache}}, mirroring
 #'   \code{shiny::shinyOptions(cache = ...)}.
-#' @param cache A \pkg{cachem} cache object (e.g. \code{cachem::cache_disk(dir
-#'   = "/path/to/cache")} or \code{cachem::cache_mem()}) used to store
-#'   \code{\link{bindCache}} values. If never set, an in-memory
-#'   \code{cachem::cache_mem()} is created and used automatically - which
-#'   (like a plain \code{\link{reactive}}) does not survive an R restart.
-#'   Pass a \code{cache_disk()} object to persist values across app restarts
-#'   and sessions.
+#' @param cache A \pkg{tinycache} cache object (e.g.
+#'   \code{tinycache::dcache(dir = "/path/to/cache")} or
+#'   \code{tinycache::mcache()}) used to store \code{\link{bindCache}}
+#'   values. If never set, an in-memory \code{tinycache::mcache()} is
+#'   created and used automatically - which (like a plain
+#'   \code{\link{reactive}}) does not survive an R restart. Pass a
+#'   \code{dcache()} object to persist values across app restarts and
+#'   sessions.
 #' @return Invisibly, the previous options (as a named list, for restoring
 #'   later).
 #' @rdname reactive-primitives
@@ -546,22 +547,22 @@ tablerOptions <- function(cache) {
 # via tablerOptions(cache = ...).
 .tabler_cache <- function() {
   if (is.null(.tabler_opts$cache)) {
-    .tabler_opts$cache <- cachem::cache_mem()
+    .tabler_opts$cache <- tinycache::mcache()
   }
   .tabler_opts$cache
 }
 
-# Internal: build a valid cachem cache key (lowercase hex hash) from a list
-# of evaluated key expression values. cachem's cache_disk/cache_mem require
-# keys matching a filesystem-safe, lowercase-alphanumeric pattern, so the
+# Internal: build a valid tinycache cache key (lowercase hex hash) from a
+# list of evaluated key expression values. tinycache's dcache()/mcache()
+# require keys matching a filesystem-safe, lowercase-alphanumeric pattern, so the
 # key expressions' values (which can be arbitrary R objects) must be hashed
-# rather than used as a literal string. serialize(x, connection = NULL) gives
-# the same in-memory raw bytes rlang::hash()/digest() would hash; those raw
-# bytes are then mixed by tabler_hash_raw() (src/00_cache_hash.h, via cpp4r),
-# a small compiled 128-bit hash, avoiding both the rlang dependency and any
-# disk I/O (unlike tools::md5sum(), which only hashes files).
+# rather than used as a literal string. tinycache::hash() walks the object's
+# type, length, data bytes, and attributes directly - unlike
+# rlang::hash()/digest(), it avoids that dependency, and unlike
+# tools::md5sum() (which only hashes files), it never touches disk or allocates
+# a serialized byte buffer.
 .tabler_cache_key <- function(keys) {
-  tabler_hash_raw(serialize(keys, connection = NULL))
+  tinycache::hash(keys)
 }
 
 #' @title Cache a Reactive Expression's Value
@@ -570,7 +571,7 @@ tablerOptions <- function(cache) {
 #'   Unlike \code{\link{reactive}}'s built-in caching (in-memory, lost as
 #'   soon as its dependencies change), \code{bindCache()} stores values in
 #'   the cache backend configured via \code{\link{tablerOptions}} (e.g.
-#'   \code{cachem::cache_disk()}), so identical key combinations are served
+#'   \code{tinycache::dcache()}), so identical key combinations are served
 #'   instantly - even across app restarts or different sessions - without
 #'   re-running \code{x}. Typically used with the pipe:
 #'   \code{reactive({...}) |> bindCache(key1, key2) |> bindEvent(input$go)}.

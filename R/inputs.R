@@ -2,11 +2,11 @@
 # attributes so the browser JS can bind them to the WebSocket session.
 
 # Helper: wrap a control with a Tabler-styled label
-.input_wrap <- function(inputId, label, control, hint = NULL) {
+.input_wrap <- function(inputId, label, control, hint = NULL, label_for = inputId) {
   div(
     class = "mb-3",
     if (!is.null(label)) {
-      tags$label(class = "form-label", `for` = inputId, label)
+      tags$label(class = "form-label", `for` = label_for, label)
     },
     control,
     if (!is.null(hint)) {
@@ -50,11 +50,17 @@
 #'   \code{<optgroup>} (its name becomes the group label), matching Shiny's
 #'   grouped-choices convention.
 #' @param selected Initially-selected value (defaults to the first choice).
+#' @param searchable If \code{TRUE} (the default), overlay the dropdown with
+#'   a text box that filters choices by substring match anywhere in the
+#'   label as the user types (e.g. typing "Korea" narrows the list to
+#'   "South Korea", "North Korea", ...), instead of relying on the browser's
+#'   native jump-to-prefix \code{<select>} behavior. Set to \code{FALSE} to
+#'   render a plain native dropdown.
 #' @param ... Additional HTML attributes passed to the \code{<select>} element.
 #' @return An HTML tag.
 #' @rdname tabler-inputs
 #' @export
-selectInput <- function(inputId, label, choices, selected = NULL, ...) {
+selectInput <- function(inputId, label, choices, selected = NULL, ..., searchable = TRUE) {
   flat <- .expand_choices(choices)
   if (is.null(selected) && length(flat)) selected <- flat[[1L]]$value
   selected <- if (!is.null(selected)) as.character(selected) else NULL
@@ -86,10 +92,11 @@ selectInput <- function(inputId, label, choices, selected = NULL, ...) {
     }
   }
 
+  select_class <- if (searchable) "form-select d-none" else "form-select"
   control <- do.call(tags$select, c(
     list(
       id                 = inputId,
-      class              = "form-select",
+      class              = select_class,
       `data-tabler-input` = inputId,
       `data-tabler-type`  = "select"
     ),
@@ -97,7 +104,38 @@ selectInput <- function(inputId, label, choices, selected = NULL, ...) {
     option_tags
   ))
 
-  .input_wrap(inputId, label, control)
+  if (!searchable) {
+    return(.input_wrap(inputId, label, control))
+  }
+
+  selected_label <- NULL
+  for (it in flat) {
+    if (identical(it$value, selected)) selected_label <- it$label
+  }
+  if (is.null(selected_label) && length(flat)) selected_label <- flat[[1L]]$label
+
+  search_id <- paste0(inputId, "_search")
+  control <- div(
+    class = "tabler-select-search",
+    tags$input(
+      type                        = "text",
+      class                       = "form-control",
+      id                          = search_id,
+      role                        = "combobox",
+      autocomplete                = "off",
+      spellcheck                  = "false",
+      `aria-expanded`             = "false",
+      `data-tabler-select-search` = inputId,
+      value                       = selected_label
+    ),
+    tags$ul(
+      class = "dropdown-menu tabler-select-search-menu",
+      id    = paste0(inputId, "_search_menu")
+    ),
+    control
+  )
+
+  .input_wrap(inputId, label, control, label_for = search_id)
 }
 
 #' @title Slider Input
