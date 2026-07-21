@@ -1,6 +1,7 @@
 #' @title UI Dispatcher
 #' @noRd
-ui <- page(
+#' @export
+app_ui <- page(
   theme = "light",
   color = "teal",
   base = "slate",

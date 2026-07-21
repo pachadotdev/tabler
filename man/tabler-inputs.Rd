@@ -14,7 +14,7 @@
 \alias{radioButtons}
 \title{Select Input}
 \usage{
-selectInput(inputId, label, choices, selected = NULL, ...)
+selectInput(inputId, label, choices, selected = NULL, ..., searchable = TRUE)
 
 sliderInput(inputId, label, min, max, value, step = 1, ...)
 
@@ -68,6 +68,13 @@ radioButtons(inputId, label, choices, selected = NULL)
 \item{selected}{Initially-selected value (defaults to first choice).}
 
 \item{...}{Additional HTML attributes.}
+
+\item{searchable}{If \code{TRUE} (the default), overlay the dropdown with
+a text box that filters choices by substring match anywhere in the
+label as the user types (e.g. typing "Korea" narrows the list to
+"South Korea", "North Korea", ...), instead of relying on the browser's
+native jump-to-prefix \code{<select>} behavior. Set to \code{FALSE} to
+render a plain native dropdown.}
 
 \item{min}{Minimum (optional).}
 

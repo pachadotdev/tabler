@@ -124,16 +124,16 @@ if (interactive()) {
   tablerApp(ui, server)
 }
 \dontrun{
-  # The function call in the above app can be replaced by any of the
-  # following examples to produce similar apps
-  toggle(session, id = "panel")
-  toggle(session, "panel", TRUE)
-  toggle(session, "panel", TRUE, "fade", 2)
-  toggle(session, id = "panel", time = 1, anim = TRUE, animType = "slide")
-  show(session, "panel")
-  show(session, id = "panel", anim = TRUE)
-  hide(session, "panel")
-  hide(session, id = "panel", anim = TRUE)
+# The function call in the above app can be replaced by any of the
+# following examples to produce similar apps
+toggle(session, id = "panel")
+toggle(session, "panel", TRUE)
+toggle(session, "panel", TRUE, "fade", 2)
+toggle(session, id = "panel", time = 1, anim = TRUE, animType = "slide")
+show(session, "panel")
+show(session, id = "panel", anim = TRUE)
+hide(session, "panel")
+hide(session, id = "panel", anim = TRUE)
 }
 
 ## toggle can be given an optional `condition` argument, which

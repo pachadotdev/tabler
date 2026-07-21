@@ -74,7 +74,15 @@ pkg_template <- function(path = NULL, pkgname = NULL) {
 
   writeLines(lines, con = paste0(path, "/R/", pkgname, "-package.R"))
 
-  writeLines(paste0(pkgname, "::run_app()"), con = paste0(path, "/app.R"))
+  lines <- c(
+    sprintf("ui <- %s::app_ui()", pkgname),
+    sprintf("server <- %s::app_server", pkgname),
+    "",
+    "# test the app (not for tabler-server)",
+    sprintf("%s::run_app()", pkgname)
+  )
+
+  writeLines(lines, con = paste0(path, "/app.R"))
 
   # get roxygen version
   if (!requireNamespace("roxygen2", quietly = TRUE)) {

@@ -1,4 +1,7 @@
-server <- function(input, output, session) {
+#' @title UI Dispatcher
+#' @noRd
+#' @export
+app_server <- function(input, output, session) {
   output$mtcars_plot <- render_histogram(
     mtcars,
     reactive(input$mtcars_col %||% "mpg"),
