@@ -502,9 +502,9 @@ eventReactive <- function(eventExpr, valueExpr, ignoreNULL = TRUE, ignoreInit = 
 #'   so that it only (re)executes when the given event expression(s) change,
 #'   similar to \code{shiny::bindEvent()}. Typically used with the pipe:
 #'   \code{reactive({...}) |> bindEvent(input$go)}.
-#' @param x A reactive expression created by \code{\link{reactive}}.
-#' @param ... One or more (unevaluated) event expressions. The reactive fires
-#'   whenever any of them change.
+#' @param ... The reactive expression (created by \code{\link{reactive}}),
+#'   followed by one or more (unevaluated) event expressions. The reactive
+#'   fires whenever any of the event expressions change.
 #' @param ignoreNULL If \code{TRUE} (default), do not (re)compute while all
 #'   event expressions evaluate to \code{NULL}.
 #' @param ignoreInit If \code{TRUE} (default), \code{x} is not computed until
@@ -514,12 +514,17 @@ eventReactive <- function(eventExpr, valueExpr, ignoreNULL = TRUE, ignoreInit = 
 #' @return A new zero-argument function returning the cached value.
 #' @rdname reactive-primitives
 #' @export
-bindEvent <- function(x, ..., ignoreNULL = TRUE, ignoreInit = TRUE) {
+bindEvent <- function(..., ignoreNULL = TRUE, ignoreInit = TRUE) {
+  dots <- substitute(list(...))[-1]
+  env <- parent.frame()
+  if (length(dots) < 2L) {
+    stop("bindEvent() requires a reactive expression and at least one event expression", call. = FALSE)
+  }
+  x <- eval(dots[[1L]], env)
   if (!is.function(x)) {
     stop("bindEvent() only supports reactive expressions created by reactive()", call. = FALSE)
   }
-  dots <- substitute(list(...))[-1]
-  env <- parent.frame()
+  dots <- dots[-1L]
 
   src <- new_source()
   state <- new.env(parent = emptyenv())

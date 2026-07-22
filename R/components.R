@@ -25,13 +25,13 @@ row <- function(..., class = NULL, equal_height = TRUE) {
 #' @description Wraps content in a Bootstrap column of the given width.
 #'   Must be placed directly inside a \code{\link{row}()} to lay out
 #'   side-by-side with sibling columns.
-#' @param width Integer 1–12 (number of columns in a 12-column grid).
 #' @param ... Child elements.
+#' @param width Integer 1–12 (number of columns in a 12-column grid).
 #' @param class Additional CSS classes.
 #' @rdname tabler-components
 #' @return An HTML tag.
 #' @export
-column <- function(width, ..., class = NULL) {
+column <- function(..., width = 12, class = NULL) {
   div(class = paste(c(paste0("col-", as.integer(width)), class), collapse = " "), ...)
 }
 
@@ -41,84 +41,84 @@ column <- function(width, ..., class = NULL) {
 #' @param ... Arguments passed to `column()`
 #' @export
 col12 <- function(...) {
-  column(12, ...)
+  column(..., width = 12)
 }
 
 #' @title Shorthand for column of width 11
 #' @rdname col_shorthands
 #' @export
 col11 <- function(...) {
-  column(11, ...)
+  column(..., width = 11)
 }
 
 #' @title Shorthand for column of width 10
 #' @rdname col_shorthands
 #' @export
 col10 <- function(...) {
-  column(10, ...)
+  column(..., width = 10)
 }
 
 #' @title Shorthand for column of width 9
 #' @rdname col_shorthands
 #' @export
 col9 <- function(...) {
-  column(9, ...)
+  column(..., width = 9)
 }
 
 #' @title Shorthand for column of width 8
 #' @rdname col_shorthands
 #' @export
 col8 <- function(...) {
-  column(8, ...)
+  column(..., width = 8)
 }
 
 #' @title Shorthand for column of width 7
 #' @rdname col_shorthands
 #' @export
 col7 <- function(...) {
-  column(7, ...)
+  column(..., width = 7)
 }
 
 #' @title Shorthand for column of width 6
 #' @rdname col_shorthands
 #' @export
 col6 <- function(...) {
-  column(6, ...)
+  column(..., width = 6)
 }
 
 #' @title Shorthand for column of width 5
 #' @rdname col_shorthands
 #' @export
 col5 <- function(...) {
-  column(5, ...)
+  column(..., width = 5)
 }
 
 #' @title Shorthand for column of width 4
 #' @rdname col_shorthands
 #' @export
 col4 <- function(...) {
-  column(4, ...)
+  column(..., width = 4)
 }
 
 #' @title Shorthand for column of width 3
 #' @rdname col_shorthands
 #' @export
 col3 <- function(...) {
-  column(3, ...)
+  column(..., width = 3)
 }
 
 #' @title Shorthand for column of width 2
 #' @rdname col_shorthands
 #' @export
 col2 <- function(...) {
-  column(2, ...)
+  column(..., width = 10)
 }
 
 #' @title Shorthand for column of width 1
 #' @rdname col_shorthands
 #' @export
 col1 <- function(...) {
-  column(1, ...)
+  column(..., width = 10)
 }
 
 #' @title  Create a Tabler Card

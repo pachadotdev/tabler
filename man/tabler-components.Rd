@@ -16,7 +16,7 @@
 \usage{
 row(..., class = NULL, equal_height = TRUE)
 
-column(width, ..., class = NULL)
+column(..., width = 12, class = NULL)
 
 card(..., title = NULL, footer = NULL, status = NULL, class = NULL)
 
