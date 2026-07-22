@@ -74,3 +74,26 @@
 .form-range::-moz-range-thumb:active {
   background-color: var(--tblr-primary);
 }
+
+/* Bootstrap's bundled .form-range thumb border and focus ring are hardcoded
+ * to a light color (#fff / #f9fafb) at CSS build time, so in dark mode the
+ * thumb keeps a bright white ring instead of blending with the track. Match
+ * it to the track's own color (--tblr-border-color, also used by
+ * ::-webkit-slider-runnable-track and the .tabler-range2::before line)
+ * instead of the page background, so the ring reads as part of the slider
+ * line rather than a clashing outline. */
+.form-range::-webkit-slider-thumb {
+  border-color: var(--tblr-border-color);
+}
+
+.form-range::-moz-range-thumb {
+  border-color: var(--tblr-border-color);
+}
+
+.form-range:focus::-webkit-slider-thumb {
+  box-shadow: 0 0 0 1px var(--tblr-border-color), 0 0 0 0.25rem rgba(var(--tblr-primary-rgb), 0.25);
+}
+
+.form-range:focus::-moz-range-thumb {
+  box-shadow: 0 0 0 1px var(--tblr-border-color), 0 0 0 0.25rem rgba(var(--tblr-primary-rgb), 0.25);
+}
