@@ -1,0 +1,92 @@
+[
+  {
+    "title": "addResourcePath",
+    "url": "reference/addResourcePath.html",
+    "content": "addResourcePath Register a Directory of Static Resources addResourcePath(prefix, directoryPath) prefixThe URL prefix (e.g. \"www\" serves files at /www/...). directoryPath Absolute path to the directory to serve. Invisibly, NULL.  Serves files under directoryPath at URLs beginning with /prefix/, mirroring shiny::addResourcePath(). Use this to serve an app's own CSS/JS/image assets (e.g. from inst/app/www) without depending on shiny or golem.",
+    "type": "function"
+  },
+  {
+    "title": "tablerApp",
+    "url": "reference/tablerApp.html",
+    "content": "tablerApp Run a Tabler Application tablerApp( ui, server, host = \"127.0.0.1\", port = 3000L, launch.browser = interactive() ) uiThe UI definition — typically a call to page(). server A function with signature function(input, output, session). host Host to listen on (default \"127.0.0.1\"). port Port number (default 3000L). launch.browser Open a browser automatically when in an interactive session. Invisibly, after the server is stopped. Launches a self-contained web application using httpuv for HTTP and WebSocket transport. Protocol The browser and server exchange plain JSON messages over a WebSocket at /ws: Browser → R: \\\"type\":\"input\",\"name\":\"\",\"value\":\\ R → Browser: \\\"type\":\"output\",\"id\":\"\",\"html\":\"\"\\ Reactive system Uses tabler's own dependency-tracking reactive system (see \">reactive, \">observe, \">reactiveVal, \">observeEvent). Render functions (renderText, renderUI, renderPrint) are assigned to output inside server.",
+    "type": "function"
+  },
+  {
+    "title": "sidebar_brand",
+    "url": "reference/sidebar_brand.html",
+    "content": "sidebar_brand Create a Sidebar Brand sidebar_brand(text = NULL, img = NULL, href = \"#\") textBrand text/label img Optional image URL/path for brand logo href Optional link URL for the brand (defaults to \"#\") A named list suitable to pass to `sidebar_menu(title = )` Helper to build a brand structure for `sidebar_menu(title = ...)`. sidebar_brand(\"My App\", img = \"logo.png\")",
+    "type": "function"
+  },
+  {
+    "title": "menu_dropdown",
+    "url": "reference/menu_dropdown.html",
+    "content": "menu_dropdown Create a Dropdown Menu Item menu_dropdown(text, icon = NULL, href = NULL, items = list()) textTitle of the dropdown icon Icon name (optional) href Link for the dropdown toggle (optional) items A list of character vectors or tags representing dropdown links; each element can be a character vector of length 2: c(text, href) An HTML tag representing the dropdown nav item Create a nav-item with a dropdown menu using columns like the example",
+    "type": "function"
+  },
+  {
+    "title": "navbar_menu",
+    "url": "reference/navbar_menu.html",
+    "content": "navbar_menu Build a standard navbar/header navbar_menu(..., brand = NULL, show_theme_button = FALSE) ...Additional nodes to include (typically `menu_item()` elements) brand Optional brand for the navbar; either a string (text title), `sidebar_brand(...)` or a named list with elements `text` and `img` (URL/path). show_theme_button Whether to show the theme toggle buttons (default: `FALSE``). An HTML tag for the header Create the top header used in boxed layout. This function accepts raw `li` items (created by `menu_item`) or a `sidebar_brand()` attached as `title` attribute on a `ul`.",
+    "type": "function"
+  },
+  {
+    "title": "tagAppendAttributes",
+    "url": "reference/tagAppendAttributes.html",
+    "content": "tagAppendAttributes Append Attributes to an Existing Tag tagAppendAttributes(tag, ...) tagA tabler.tag object. ... Named attributes to add/overwrite. The class attribute is appended (space-separated) rather than replaced. The modified tag. Append Attributes to an Existing Tag",
+    "type": "function"
+  },
+  {
+    "title": "tagList",
+    "url": "reference/tagList.html",
+    "content": "tagList Create an Ordered Collection of Tags tagList(...) ...Tags or other HTML content. A tabler.tag.list object. Create an Ordered Collection of Tags",
+    "type": "function"
+  },
+  {
+    "title": "HTML",
+    "url": "reference/HTML.html",
+    "content": "HTML Mark a String as Raw HTML (Do Not Escape) HTML(text) textCharacter string of literal HTML. An object of class \"tabler.html\".  Mark a String as Raw HTML (Do Not Escape)",
+    "type": "function"
+  },
+  {
+    "title": "NS",
+    "url": "reference/NS.html",
+    "content": "NS Namespace an Id NS(namespace, id = NULL) namespaceNamespace prefix. id Id to namespace. If missing, returns a function that namespaces any id it is given (as shiny::NS() does). If id is given, a namespaced id (character string). Otherwise, a function that namespaces any id passed to it.  Prefixes an id with a namespace, mirroring the id-prefixing behaviour of shiny::NS() without depending on shiny or its module system. ns <- NS(\"mymodule\") ns(\"button\") # \"mymodule-button\" NS(\"mymodule\", \"button\") # \"mymodule-button\"",
+    "type": "function"
+  },
+  {
+    "title": "getDefaultReactiveDomain",
+    "url": "reference/getDefaultReactiveDomain.html",
+    "content": "getDefaultReactiveDomain The Currently Running tablerApp Session getDefaultReactiveDomain() A tablerApp session object, or NULL. Returns the session object of the tablerApp server function currently executing, or NULL if none is running. Used as the default session argument of \">moduleServer.",
+    "type": "function"
+  },
+  {
+    "title": "moduleServer",
+    "url": "reference/moduleServer.html",
+    "content": "moduleServer Create a Namespaced Module Server moduleServer(id, module, session = getDefaultReactiveDomain()) idThe module's namespace id (must match the id used to call the module's *_ui function). module A function with signature function(input, output, session). session The parent session object. Defaults to the currently running  session (see getDefaultReactiveDomain\">tablerApp session (see getDefaultReactiveDomain). The return value of module, invisibly.  Dependency-free equivalent of shiny::moduleServer(). Wraps input/output so that unprefixed names accessed inside module are automatically namespaced with id, matching the ids produced by NS(id) in the module's UI function.",
+    "type": "function"
+  },
+  {
+    "title": "showProgress",
+    "url": "reference/showProgress.html",
+    "content": "showProgress Show/Hide a Full-Page Progress Overlay showProgress(session = getDefaultReactiveDomain(), text = \"Loading...\") hideProgress(session = getDefaultReactiveDomain()) sessionThe session object passed by \">tablerApp to the server function. Defaults to ()\">getDefaultReactiveDomain(). text The message displayed above the progress bar. Invisibly, NULL.  Displays (or hides) a full-page loading overlay with an animated progress bar in a running . Useful for indicating that a long-running computation (e.g. a database query) is in progress. \">tablerApp. Useful for indicating that a long-running computation (e.g. a database query) is in progress.  This is a dependency-free replacement for ad-hoc waiter/custom JS overlay setups. It works the same way as \">show/\">hide: the server sends a small message over the WebSocket connection and the browser-side JS (tabler-progress.js) creates/reveals or hides the overlay. \">tablerApp's event loop only writes queued WebSocket messages to the socket in between iterations of its repeat \\ tinyhttpserver::service(); ... \\ loop. If showProgress() is immediately followed by a long, blocking computation in the same observer, the \"show\" message sits in the queue - never reaching the browser - until that observer (and thus the slow computation) finishes, making the overlay flash on right at the end instead of before the work starts. Calling tinyhttpserver::service() again from inside the observer to force an early flush is unsafe here: it re-enters httpuv's event loop while it is still dispatching the current WebSocket message, which can cause that message (and the input it carries) to be processed more than once. Use \">withProgress instead, which defers the slow computation with later2::later() so control returns to the event loop (flushing the \"show\" message) before the work actually runs. if (interactive()) ui \">tablerApp, \">withProgress",
+    "type": "function"
+  },
+  {
+    "title": "withProgress",
+    "url": "reference/withProgress.html",
+    "content": "withProgress Run a Long Computation with a Progress Overlay withProgress(session = getDefaultReactiveDomain(), text = \"Loading...\", expr) sessionThe session object passed by \">tablerApp to the server function. Defaults to ()\">getDefaultReactiveDomain(). text The message displayed above the progress bar. expr The (potentially slow) expression to run once the overlay is visible. Invisibly, NULL. expr runs asynchronously, after withProgress() itself has already returned. Shows the full-page progress overlay (see ), then runs expr, then hides the overlay again - but unlike calling showProgress\">showProgress), then runs expr, then hides the overlay again - but unlike calling showProgress/\">hideProgress directly around a blocking computation, expr is deferred with later2::later() so that \">tablerApp's event loop gets a chance to actually flush the \"show\" message to the browser before the slow work begins. if (interactive()) ui \">showProgress, \">tablerApp",
+    "type": "function"
+  },
+  {
+    "title": "pkg_template",
+    "url": "reference/pkg_template.html",
+    "content": "pkg_template Start a new project with the tabler package template pkg_template(path = NULL, pkgname = NULL) pathPath to the new project pkgname Name of the new package The file path to the copied template (invisibly). Copies a package template into a new directory. The template includes a DESCRIPTION file, a minimal R/ directory and placeholders with instructions. You can then edit these files to customize your new package. # create a new directory dir <- tempdir() dir.create(dir) # copy the package template into the directory pkg_template(dir, \"mynewpkg\")",
+    "type": "function"
+  },
+  {
+    "title": "hidden",
+    "url": "reference/hidden.html",
+    "content": "hidden Initialize a Tag as Hidden hidden(...) ...Tag (or tagList or list of tags) to make invisible. The tag (or tags) that were given as an argument, in a hidden state. Create a tag (or tag list) that is invisible when the page first loads. It can be made visible later with  or show\">toggle or show. if (interactive()) ui \">show, \">hide, \">toggle",
+    "type": "function"
+  }
+]

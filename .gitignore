@@ -16,3 +16,5 @@ tabler.code-workspace
 src/*.so
 src/*.o
 src/*.dll
+dev/tabler-core*
+dev/tabler-icons*

@@ -2,21 +2,36 @@
 % Please edit documentation in R/inputs.R
 \name{selectInput}
 \alias{selectInput}
+\alias{selectMultipleInput}
 \alias{sliderInput}
 \alias{updateSelectInput}
 \alias{updateSelectizeInput}
 \alias{updateSliderInput}
 \alias{textInput}
 \alias{numericInput}
+\alias{dateInput}
 \alias{checkboxInput}
 \alias{actionButton}
 \alias{checkboxGroupInput}
 \alias{radioButtons}
 \title{Select Input}
 \usage{
-selectInput(inputId, label, choices, selected = NULL, ..., searchable = TRUE)
+selectInput(inputId, label, choices, selected = NULL, searchable = TRUE, ...)
 
-sliderInput(inputId, label, min, max, value, step = 1, ...)
+selectMultipleInput(inputId, label, choices, selected = NULL, ...)
+
+sliderInput(
+  inputId,
+  label,
+  min,
+  max,
+  value,
+  step = 1,
+  thumbSize = NULL,
+  fill = FALSE,
+  color = NULL,
+  ...
+)
 
 updateSelectInput(
   session,
@@ -46,17 +61,35 @@ updateSliderInput(
   step = NULL
 )
 
-textInput(inputId, label, value = "", placeholder = NULL, ...)
+textInput(inputId, label, value = "", placeholder = NULL, mask = NULL, ...)
 
 numericInput(inputId, label, value, min = NULL, max = NULL, step = 1, ...)
 
-checkboxInput(inputId, label, value = FALSE, ...)
+dateInput(
+  inputId,
+  label,
+  value = Sys.Date(),
+  min = NULL,
+  max = NULL,
+  icon = c("none", "left", "right"),
+  inline = FALSE,
+  ...
+)
+
+checkboxInput(
+  inputId,
+  label,
+  value = FALSE,
+  description = NULL,
+  inline = FALSE,
+  ...
+)
 
 actionButton(inputId, label, class = "btn-primary", icon = NULL, ...)
 
 checkboxGroupInput(inputId, label, choices, selected = NULL)
 
-radioButtons(inputId, label, choices, selected = NULL)
+radioButtons(inputId, label, choices, selected = NULL, inline = FALSE)
 }
 \arguments{
 \item{inputId}{The input identifier.}
@@ -67,8 +100,6 @@ radioButtons(inputId, label, choices, selected = NULL)
 
 \item{selected}{Initially-selected value (defaults to first choice).}
 
-\item{...}{Additional HTML attributes.}
-
 \item{searchable}{If \code{TRUE} (the default), overlay the dropdown with
 a text box that filters choices by substring match anywhere in the
 label as the user types (e.g. typing "Korea" narrows the list to
@@ -76,30 +107,63 @@ label as the user types (e.g. typing "Korea" narrows the list to
 native jump-to-prefix \code{<select>} behavior. Set to \code{FALSE} to
 render a plain native dropdown.}
 
-\item{min}{Minimum (optional).}
+\item{...}{Additional HTML attributes.}
 
-\item{max}{Maximum (optional).}
+\item{min}{Minimum selectable date (\code{Date} or \code{"yyyy-mm-dd"}).}
+
+\item{max}{Maximum selectable date (\code{Date} or \code{"yyyy-mm-dd"}).}
 
 \item{value}{Initial checked state (\code{FALSE}).}
 
 \item{step}{Step size (default \code{1}).}
 
+\item{thumbSize}{Optional numeric multiplier of the default handle size
+(\code{1rem}), e.g. \code{1} for the normal size, \code{2} for double
+size, \code{2.5} for 250\%. Defaults to \code{NULL} (Tabler's built-in
+size).}
+
+\item{fill}{If \code{TRUE}, paint the track from the minimum up to the
+current value (single slider) or between the two handles (range
+slider), instead of leaving the whole track a flat color.}
+
+\item{color}{Optional accent color for the handle(s) and, when
+\code{fill = TRUE}, the filled track. Either one of Tabler's named
+theme colors (\code{"blue"}, \code{"azure"}, \code{"indigo"},
+\code{"purple"}, \code{"pink"}, \code{"red"}, \code{"orange"},
+\code{"yellow"}, \code{"lime"}, \code{"green"}, \code{"teal"},
+\code{"cyan"}) or any other valid CSS color. Defaults to \code{NULL},
+which uses the app's current primary/theme color (see \code{page()}).}
+
 \item{session}{The session object.}
 
-\item{placeholder}{Placeholder text.}
+\item{placeholder}{Placeholder text (defaults to \code{mask}, if given).}
 
-\item{class}{Additional CSS classes (default \code{"btn-primary"}).}
+\item{mask}{Optional input mask made of \code{"0"} digit placeholders
+and literal separator characters, e.g. \code{"00/00/0000"} for a date
+or \code{"(00) 0000-0000"} for a phone number. As the user types
+digits, the literal characters are inserted automatically.}
 
 \item{icon}{Optional icon name to prepend.}
+
+\item{inline}{If \code{TRUE}, lay the radio buttons out left-to-right
+instead of the default top-to-bottom stack.}
+
+\item{description}{Optional secondary text shown below the label.}
+
+\item{class}{Additional CSS classes (default \code{"btn-primary"}).}
 }
 \value{
 An HTML tag.
 
 An HTML tag.
 
+An HTML tag.
+
 Invisibly, \code{NULL}.
 
 Invisibly, \code{NULL}.
+
+An HTML tag.
 
 An HTML tag.
 
@@ -116,6 +180,12 @@ An HTML tag.
 \description{
 A dropdown that lets the user pick one item from a list.
 
+A searchable multi-select dropdown: type to filter the
+  choices, click (or press Enter on) one to add it as a removable tag,
+  click a tag's "x" (or press Backspace in the empty search box) to
+  remove it. The server receives the current selection as a character
+  vector.
+
 A horizontal range slider. When \code{value} has length 2,
   two thumbs are rendered (a "from"/"to" range slider) and the server
   receives a length-2 numeric vector, e.g. \code{c(2018, 2022)}.
@@ -128,9 +198,18 @@ Change the value/min/max/step of a \code{\link{sliderInput}}
   already displayed in the browser, similar to
   \code{shiny::updateSliderInput()}.
 
-A single-line text field.
+A single-line text field, optionally with an input mask
+  (e.g. for dates or phone numbers).
 
-A numeric input field.
+A numeric input field with up/down stepper buttons (the
+  browser's native number spinner is hidden by Tabler's form styling, so
+  these buttons are rendered explicitly and adjust the value by
+  \code{step}, clamped to \code{min}/\code{max}).
+
+A date picker built on the browser's native date field: it
+  shows a calendar picker (click the icon) and also accepts a typed date
+  in \code{yyyy-mm-dd} order. Alternatively, \code{inline = TRUE} renders
+  an always-visible month calendar instead of a text field.
 
 A boolean on/off checkbox.
 
@@ -140,4 +219,9 @@ A clickable button.  Its value in \code{input} is an integer that
 A set of checkboxes for selecting multiple values.
 
 A group of mutually-exclusive radio buttons.
+}
+\note{
+The value received in \code{input[[inputId]]} on the server is a
+  \code{"yyyy-mm-dd"} character string; wrap it in \code{as.Date()} if you
+  need a \code{Date} object.
 }

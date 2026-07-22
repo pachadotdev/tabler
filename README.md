@@ -44,17 +44,17 @@ can be adjusted from the code or the theme setting icon that can be hidden. See 
 [here](https://github.com/pachadotdev/tabler/blob/main/inst/extdata/app-template/combo-layout.R).
 
 <figure>
-<img src="combo-layout-light.png" title="Light theme + teal colour + zinc base"
+<img src="screenshots/combo-layout-light.png" title="Light theme + teal colour + zinc base"
 alt="layout-geyser" />
 </figure>
 
 <figure>
-<img src="combo-layout-dark.png" title="Dark theme + cyan colour + slate base"
+<img src="screenshots/combo-layout-dark.png" title="Dark theme + cyan colour + slate base"
 alt="layout-geyser" />
 </figure>
 
 <figure>
-<img src="theme-selection.png" title="Theme selection"
+<img src="screenshots/theme-selection.png" title="Theme selection"
 alt="layout-geyser" />
 </figure>
 

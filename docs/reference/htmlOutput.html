@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>htmlOutput • tabler</title><link rel="stylesheet" href="../menu.css"><link rel="stylesheet" href="../content.css"><!-- MathJax Configuration --><script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)'], ['$', '$']],
+        displayMath: [['\\[', '\\]'], ['$$', '$$']],
+        processEscapes: true,
+        processEnvironments: true,
+        packages: {'[+]': ['ams', 'newcommand', 'configmacros']}
+      },
+      options: {
+        ignoreHtmlClass: 'tex2jax_ignore',
+        processHtmlClass: 'tex2jax_process'
+      }
+    };
+  </script><script id="MathJax-script" async src="../js/tex-svg.js"></script></head><body>
+<div class="main-container">
+<div id="menu">
+  <div>
+    <img src="../man/figures/logo.svg" align="center" height="139" alt="tabler logo"></div>
+
+  <div class="search-container">
+    <input type="text" id="search-box" placeholder="Search..."></div>
+
+  <div class="search-container">
+    <button id="theme-toggle" title="Toggle dark mode" aria-label="Toggle dark mode">Toggle theme</button>
+    <button id="font-decrease" title="Decrease font size" aria-label="Decrease font size">A-</button>
+    <button id="font-increase" title="Increase font size" aria-label="Increase font size">A+</button>
+  </div>
+
+  <div class="submenu">
+    <label style="border-bottom: 0;"><a style="padding-left: 0;" href="../index.html">Home 🏠</a></label>
+  </div>
+
+
+  <div class="submenu">
+    <label>Functions</label>
+    <a href="../reference/addResourcePath.html">addResourcePath</a>
+    <a href="../reference/tablerApp.html">tablerApp</a>
+    <a href="../reference/row.html">row</a>
+    <a href="../reference/column.html">column</a>
+    <a href="../reference/col12.html">col12</a>
+    <a href="../reference/col11.html">col11</a>
+    <a href="../reference/col10.html">col10</a>
+    <a href="../reference/col9.html">col9</a>
+    <a href="../reference/col8.html">col8</a>
+    <a href="../reference/col7.html">col7</a>
+    <a href="../reference/col6.html">col6</a>
+    <a href="../reference/col5.html">col5</a>
+    <a href="../reference/col4.html">col4</a>
+    <a href="../reference/col3.html">col3</a>
+    <a href="../reference/col2.html">col2</a>
+    <a href="../reference/col1.html">col1</a>
+    <a href="../reference/card.html">card</a>
+    <a href="../reference/pre_title.html">pre_title</a>
+    <a href="../reference/title.html">title</a>
+    <a href="../reference/header.html">header</a>
+    <a href="../reference/body.html">body</a>
+    <a href="../reference/value_box.html">value_box</a>
+    <a href="../reference/icon.html">icon</a>
+    <a href="../reference/alert.html">alert</a>
+    <a href="../reference/button.html">button</a>
+    <a href="../reference/page.html">page</a>
+    <a href="../reference/topbar.html">topbar</a>
+    <a href="../reference/footer.html">footer</a>
+    <a href="../reference/sidebar_menu.html">sidebar_menu</a>
+    <a href="../reference/sidebar_brand.html">sidebar_brand</a>
+    <a href="../reference/horizontal_menu.html">horizontal_menu</a>
+    <a href="../reference/menu_item.html">menu_item</a>
+    <a href="../reference/menu_dropdown.html">menu_dropdown</a>
+    <a href="../reference/tab_items.html">tab_items</a>
+    <a href="../reference/tab_item.html">tab_item</a>
+    <a href="../reference/navbar_menu.html">navbar_menu</a>
+    <a href="../reference/tagAppendAttributes.html">tagAppendAttributes</a>
+    <a href="../reference/tagList.html">tagList</a>
+    <a href="../reference/HTML.html">HTML</a>
+    <a href="../reference/div.html">div</a>
+    <a href="../reference/span.html">span</a>
+    <a href="../reference/p.html">p</a>
+    <a href="../reference/a.html">a</a>
+    <a href="../reference/img.html">img</a>
+    <a href="../reference/ul.html">ul</a>
+    <a href="../reference/li.html">li</a>
+    <a href="../reference/aside.html">aside</a>
+    <a href="../reference/h1.html">h1</a>
+    <a href="../reference/h2.html">h2</a>
+    <a href="../reference/h3.html">h3</a>
+    <a href="../reference/h4.html">h4</a>
+    <a href="../reference/h5.html">h5</a>
+    <a href="../reference/h6.html">h6</a>
+    <a href="../reference/hr.html">hr</a>
+    <a href="../reference/br.html">br</a>
+    <a href="../reference/selectInput.html">selectInput</a>
+    <a href="../reference/selectMultipleInput.html">selectMultipleInput</a>
+    <a href="../reference/sliderInput.html">sliderInput</a>
+    <a href="../reference/updateSelectInput.html">updateSelectInput</a>
+    <a href="../reference/updateSliderInput.html">updateSliderInput</a>
+    <a href="../reference/textInput.html">textInput</a>
+    <a href="../reference/numericInput.html">numericInput</a>
+    <a href="../reference/dateInput.html">dateInput</a>
+    <a href="../reference/checkboxInput.html">checkboxInput</a>
+    <a href="../reference/actionButton.html">actionButton</a>
+    <a href="../reference/checkboxGroupInput.html">checkboxGroupInput</a>
+    <a href="../reference/radioButtons.html">radioButtons</a>
+    <a href="../reference/NS.html">NS</a>
+    <a href="../reference/getDefaultReactiveDomain.html">getDefaultReactiveDomain</a>
+    <a href="../reference/moduleServer.html">moduleServer</a>
+    <a href="../reference/textOutput.html">textOutput</a>
+    <a href="../reference/verbatimTextOutput.html">verbatimTextOutput</a>
+    <a href="../reference/uiOutput.html">uiOutput</a>
+    <a href="../reference/renderText.html">renderText</a>
+    <a href="../reference/renderPrint.html">renderPrint</a>
+    <a href="../reference/renderUI.html">renderUI</a>
+    <a href="../reference/plotOutput.html">plotOutput</a>
+    <a href="../reference/renderPlot.html">renderPlot</a>
+    <a href="../reference/widgetOutput.html">widgetOutput</a>
+    <a href="../reference/renderWidget.html">renderWidget</a>
+    <a href="../reference/downloadHandler.html">downloadHandler</a>
+    <a href="../reference/downloadButton.html">downloadButton</a>
+    <a href="../reference/downloadLink.html">downloadLink</a>
+    <a href="../reference/showProgress.html">showProgress</a>
+    <a href="../reference/hideProgress.html">hideProgress</a>
+    <a href="../reference/withProgress.html">withProgress</a>
+    <a href="../reference/reactiveVal.html">reactiveVal</a>
+    <a href="../reference/reactiveValues.html">reactiveValues</a>
+    <a href="../reference/reactiveValuesToList.html">reactiveValuesToList</a>
+    <a href="../reference/reactive.html">reactive</a>
+    <a href="../reference/req.html">req</a>
+    <a href="../reference/isolate.html">isolate</a>
+    <a href="../reference/observe.html">observe</a>
+    <a href="../reference/observeEvent.html">observeEvent</a>
+    <a href="../reference/eventReactive.html">eventReactive</a>
+    <a href="../reference/bindEvent.html">bindEvent</a>
+    <a href="../reference/tablerOptions.html">tablerOptions</a>
+    <a href="../reference/bindCache.html">bindCache</a>
+    <a href="../reference/syncUrl.html">syncUrl</a>
+    <a href="../reference/pkg_template.html">pkg_template</a>
+    <a href="../reference/show.html">show</a>
+    <a href="../reference/hide.html">hide</a>
+    <a href="../reference/toggle.html">toggle</a>
+    <a href="../reference/hidden.html">hidden</a>
+  </div>
+
+
+  <div class="submenu">
+    <label>News</label>
+    <a href="../news/index.html">Changelog</a>
+  </div>
+</div>
+<div id="content">
+<div class="content-wrapper">
+        <div class="content-main">
+
+<table style="width: 100%;"><tr><td>textOutput {tabler}</td><td style="text-align: right;">R Documentation</td></tr></table><h2>Text Output Placeholder</h2>
+
+<h3>Description</h3>
+
+<p>Places a <code>&lt;span&gt;</code> in the UI whose content is updated by
+<code>renderText</code> in the server.
+</p>
+<p>Places a <code>&lt;pre&gt;</code> in the UI for monospace/printed output.
+</p>
+<p>Places a tag (by default a <code>&lt;div&gt;</code>) whose inner HTML is
+replaced wholesale by <code>renderUI</code> output.
+</p>
+<p>Returns a character string that is HTML-escaped and injected as
+the inner HTML of the matching <code>textOutput</code> placeholder.
+</p>
+<p>Captures the <code>print()</code> representation of the result and
+shows it verbatim (HTML-escaped).
+</p>
+<p>Returns an HTML tag tree that replaces the inner HTML of the
+matching <code>uiOutput</code> placeholder.
+</p>
+<p>Places a <code>&lt;div&gt;</code> in the UI whose content is replaced by a
+base-R plot rendered server-side via <code>renderPlot</code>.
+</p>
+<p>Evaluates <code>expr</code> inside an SVG graphics device, and
+injects the resulting inline SVG into the matching <code>plotOutput</code>
+placeholder.  Works with base-R graphics, <span class="pkg">tinyplot</span>, <span class="pkg">ggplot2</span>,
+<span class="pkg">lattice</span>, and any other graphics system that honours the active
+device.
+</p>
+<p>Places a <code>&lt;div&gt;</code> in the UI whose content is replaced by an
+htmlwidget (e.g. from <span class="pkg">d3po</span>, <span class="pkg">leaflet</span>, <span class="pkg">plotly</span>) rendered by
+a matching server-side call.  The widget is served inside a sandboxed
+<code>&lt;iframe&gt;</code> so its own JS/CSS cannot conflict with the page.
+</p>
+<p>Generic render function for any <span class="pkg">htmlwidgets</span>-based widget.
+Captures the expression <em>without</em> evaluating it and stores the calling
+environment, so <code>tablerApp</code> can evaluate it inside a reactive context
+without requiring a live Shiny session.  Reactive values referenced inside
+<code>expr</code> are tracked automatically.
+</p>
+<p>Assigned to <code>output$id</code>, serves a file for download when
+the browser requests the matching <code>downloadButton</code>'s link,
+similar to <code>shiny::downloadHandler()</code>. Unlike other outputs, the
+file is generated fresh (not cached/pushed) each time it is requested.
+</p>
+<p>Creates a link that triggers a file download from the
+matching <code>downloadHandler</code>, similar to
+<code>shiny::downloadButton()</code>/<code>shiny::downloadLink()</code>.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre><code class="language-R">textOutput(outputId, inline = FALSE)
+
+verbatimTextOutput(outputId)
+
+uiOutput(outputId, container = div, ...)
+
+htmlOutput(outputId, container = div, ...)
+
+renderText(expr)
+
+renderPrint(expr)
+
+renderUI(expr)
+
+plotOutput(outputId, width = "100%", height = "400px")
+
+renderPlot(expr, width = 800, height = 400)
+
+widgetOutput(outputId, width = "100%", height = "400px")
+
+renderWidget(expr)
+
+downloadHandler(filename, content, contentType = NULL)
+
+downloadButton(
+  outputId,
+  label = "Download",
+  class = "btn-primary",
+  icon = "download",
+  ...
+)
+
+downloadLink(outputId, label = "Download", class = NULL, icon = NULL, ...)
+</code></pre>
+
+
+<h3>Arguments</h3>
+
+<table role="presentation"><tr><td><code id="outputId">outputId</code></td>
+<td>
+The output identifier (must match the server-side
+<code>downloadHandler</code> assigned to <code>output[[outputId]]</code>).
+</td></tr><tr><td><code id="inline">inline</code></td>
+<td>
+If <code>TRUE</code>, use <code>&lt;span&gt;</code>; otherwise <code>&lt;div&gt;</code>.
+</td></tr><tr><td><code id="container">container</code></td>
+<td>
+A tag-building function used to create the placeholder
+element, e.g. <code>tags$h1</code>. Defaults to <code>div</code>.
+</td></tr><tr><td><code id="...">...</code></td>
+<td>
+Additional HTML attributes.
+</td></tr><tr><td><code id="expr">expr</code></td>
+<td>
+Expression that returns an <code>htmlwidget</code> object (e.g.
+<code>d3po(...)</code>, <code>leaflet(...)</code>).
+</td></tr><tr><td><code id="width">width</code></td>
+<td>
+CSS width string (default <code>"100%"</code>).
+</td></tr><tr><td><code id="height">height</code></td>
+<td>
+CSS height string (default <code>"400px"</code>).
+</td></tr><tr><td><code id="filename">filename</code></td>
+<td>
+A string, or a zero-argument function returning a string,
+giving the filename offered to the browser (e.g. <code>"data.csv"</code>).
+</td></tr><tr><td><code id="content">content</code></td>
+<td>
+A one-argument function <code>function(file) {...}</code> that
+writes the file's contents to the path given by <code>file</code>.
+</td></tr><tr><td><code id="contentType">contentType</code></td>
+<td>
+Optional MIME type string. If <code>NULL</code> (default), it
+is guessed from the filename's extension.
+</td></tr><tr><td><code id="label">label</code></td>
+<td>
+Link/button text.
+</td></tr><tr><td><code id="class">class</code></td>
+<td>
+Additional CSS classes (default <code>"btn-primary"</code> for
+<code>downloadButton</code>, none for <code>downloadLink</code>).
+</td></tr><tr><td><code id="icon">icon</code></td>
+<td>
+Optional icon name to prepend.
+</td></tr></table><h3>Details</h3>
+
+<p>Package authors who ship their own <code>render_*()</code> helpers can make them
+tabler-compatible by attaching the same two attributes:
+</p>
+<pre>
+  attr(fn, "tabler_expr") &lt;- substitute(expr)
+  attr(fn, "tabler_env")  &lt;- parent.frame()
+</pre>
+<p>This is exactly what <code>render_d3po()</code> in <span class="pkg">d3po</span> already does.
+</p>
+
+
+<h3>Value</h3>
+
+<p>An HTML tag.
+</p>
+<p>An HTML tag.
+</p>
+<p>An HTML tag.
+</p>
+<p>A <code>tabler_render</code> object for use with <code>tablerApp</code>.
+</p>
+<p>A <code>tabler_render</code> object.
+</p>
+<p>A <code>tabler_render</code> object.
+</p>
+<p>An HTML tag.
+</p>
+<p>A <code>tabler_render</code> object.
+</p>
+<p>An HTML tag.
+</p>
+<p>A zero-argument function with <code>tabler_expr</code> and
+<code>tabler_env</code> attributes recognised by <code>tablerApp</code>.
+</p>
+<p>A <code>tabler_render</code> object for use with <code>tablerApp</code>.
+</p>
+<p>An HTML tag.
+</p>
+
+
+</div>
+        </div>
+        <footer><p id="last-updated">Loading...</p>
+</footer><script src="../js/footer.js"></script><script src="../js/theme.js"></script><script src="../js/search.js"></script><script src="../js/fontsize.js"></script></div>
+</div>
+
+</body></html>
+
