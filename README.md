@@ -42,7 +42,8 @@ Please see the documentation: <https://pacha.dev/tabler/>.
 ### Single-script app
 
 The following example uses the "combo" layout to recreate Shiny's geyser example. The theme options
-can be adjusted from the code or the theme setting icon that can be hidden.
+can be adjusted from the code or the theme setting icon that can be hidden. See the example
+[here](https://github.com/pachadotdev/tabler/blob/main/inst/extdata/app-template/combo-layout.R).
 
 <figure>
 <img src="combo-layout-light.png" title="Light theme + teal colour + zinc base"
@@ -54,7 +55,10 @@ alt="layout-geyser" />
 alt="layout-geyser" />
 </figure>
 
-See the code [here](https://github.com/pachadotdev/tabler/blob/main/inst/extdata/app-template/combo-layout.R).
+<figure>
+<img src="theme-selection.png" title="Theme selection"
+alt="layout-geyser" />
+</figure>
 
 ### Modular R package app
 
