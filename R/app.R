@@ -474,7 +474,7 @@ tablerApp <- function(ui, server, host = "127.0.0.1", port = 3000L,
   }
 
   # Start server ----
-  srv <- httpuv2::startServer(host, as.integer(port), list(
+  srv <- tinyhttpserver::startServer(host, as.integer(port), list(
     call      = http_handler,
     onWSOpen  = ws_handler
   ))
@@ -488,8 +488,8 @@ tablerApp <- function(ui, server, host = "127.0.0.1", port = 3000L,
       }
       # Catch interrupt as well: if Ctrl+C fired inside service() above, an
       # unhandled interrupt here would skip stopServer() and leave the port bound.
-      tryCatch(httpuv2::service(500L), error = function(e) NULL, interrupt = function(e) NULL)
-      httpuv2::stopServer(srv)
+      tryCatch(tinyhttpserver::service(500L), error = function(e) NULL, interrupt = function(e) NULL)
+      tinyhttpserver::stopServer(srv)
     },
     add = TRUE
   )
@@ -502,7 +502,7 @@ tablerApp <- function(ui, server, host = "127.0.0.1", port = 3000L,
   # Event loop ----
   tryCatch(
     repeat {
-      httpuv2::service(1000L) # poll for 1 s then yield
+      tinyhttpserver::service(1000L) # poll for 1 s then yield
       # Run any due later2::later() callbacks (e.g. work deferred by
       # withProgress() so the "show" message can reach the browser first)
       # before flushing reactive observers that they may have scheduled. An

@@ -36,6 +36,8 @@ add_deps <- function(layout = "default") {
     tags$link(rel = "stylesheet", href = "/css/tabler-progress.css"),
     tags$link(rel = "stylesheet", href = "/css/tabler-range2.css"),
     tags$link(rel = "stylesheet", href = "/css/tabler-select-search.css"),
+    tags$link(rel = "stylesheet", href = "/css/tabler-multi-select.css"),
+    tags$link(rel = "stylesheet", href = "/css/tabler-datepicker-inline.css"),
     tags$script(src = "/tabler-1.4.0/js/tabler.min.js"),
     tags$script(src = "/tabler-1.4.0/js/tabler-theme.min.js"),
     tags$script(src = "/js/tabler-tabs.js"),
@@ -43,6 +45,9 @@ add_deps <- function(layout = "default") {
     tags$script(src = "/js/tabler-visibility.js"),
     tags$script(src = "/js/tabler-update-input.js"),
     tags$script(src = "/js/tabler-searchable-select.js"),
+    tags$script(src = "/js/tabler-multi-select.js"),
+    tags$script(src = "/js/tabler-input-mask.js"),
+    tags$script(src = "/js/tabler-datepicker-inline.js"),
     tags$script(src = "/js/tabler-progress.js")
   )
 }

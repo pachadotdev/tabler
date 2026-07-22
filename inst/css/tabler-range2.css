@@ -97,3 +97,70 @@
 .form-range:focus::-moz-range-thumb {
   box-shadow: 0 0 0 1px var(--tblr-border-color), 0 0 0 0.25rem rgba(var(--tblr-primary-rgb), 0.25);
 }
+
+/* sliderInput(thumbSize=) - overrides Tabler's hardcoded 1rem thumb size.
+ * Set via the --tabler-range-thumb-size custom property (inline style),
+ * defaulting to the original 1rem when not overridden. margin-top keeps the
+ * (webkit-only) thumb vertically centered on the 0.25rem track regardless
+ * of size. */
+.form-range {
+  --tabler-range-thumb-size: 1rem;
+}
+
+.form-range::-webkit-slider-thumb {
+  width: var(--tabler-range-thumb-size);
+  height: var(--tabler-range-thumb-size);
+  margin-top: calc((0.25rem - var(--tabler-range-thumb-size)) / 2);
+}
+
+.form-range::-moz-range-thumb {
+  width: var(--tabler-range-thumb-size);
+  height: var(--tabler-range-thumb-size);
+}
+
+/* sliderInput(fill=TRUE) - paints the track from the minimum up to the
+ * current value (single slider) or between the two handles (range2). The
+ * percentages are set inline server-side on first render and kept in sync
+ * on drag by tabler-reactive.js's updateRangeFill(). Attribute selectors
+ * give these rules higher specificity than the plain-class rules above, so
+ * they always win regardless of stylesheet load order. */
+input[type="range"].form-range[data-tabler-range-fill] {
+  --tabler-range-fill: 0%;
+}
+
+input[type="range"].form-range[data-tabler-range-fill]::-webkit-slider-runnable-track {
+  background: linear-gradient(
+    to right,
+    var(--tblr-primary) 0%,
+    var(--tblr-primary) var(--tabler-range-fill),
+    var(--tblr-border-color) var(--tabler-range-fill),
+    var(--tblr-border-color) 100%
+  );
+}
+
+input[type="range"].form-range[data-tabler-range-fill]::-moz-range-track {
+  background: linear-gradient(
+    to right,
+    var(--tblr-primary) 0%,
+    var(--tblr-primary) var(--tabler-range-fill),
+    var(--tblr-border-color) var(--tabler-range-fill),
+    var(--tblr-border-color) 100%
+  );
+}
+
+.tabler-range2[data-tabler-range-fill] {
+  --tabler-range2-fill-lo: 0%;
+  --tabler-range2-fill-hi: 100%;
+}
+
+.tabler-range2[data-tabler-range-fill]::before {
+  background: linear-gradient(
+    to right,
+    var(--tblr-border-color) 0%,
+    var(--tblr-border-color) var(--tabler-range2-fill-lo),
+    var(--tblr-primary) var(--tabler-range2-fill-lo),
+    var(--tblr-primary) var(--tabler-range2-fill-hi),
+    var(--tblr-border-color) var(--tabler-range2-fill-hi),
+    var(--tblr-border-color) 100%
+  );
+}

@@ -32,12 +32,12 @@ over the WebSocket connection and the browser-side JS
 
 \code{\link{tablerApp}}'s event loop only writes queued WebSocket messages
 to the socket in between iterations of its
-\code{repeat \{ httpuv2::service(); ... \}} loop. If \code{showProgress()}
+\code{repeat \{ tinyhttpserver::service(); ... \}} loop. If \code{showProgress()}
 is immediately followed by a long, blocking computation in the same
 observer, the "show" message sits in the queue - never reaching the
 browser - until that observer (and thus the slow computation) finishes,
 making the overlay flash on right at the end instead of before the work
-starts. Calling \code{httpuv2::service()} again from inside the observer to
+starts. Calling \code{tinyhttpserver::service()} again from inside the observer to
 force an early flush is unsafe here: it re-enters \pkg{httpuv}'s event
 loop while it is still dispatching the current WebSocket message, which
 can cause that message (and the input it carries) to be processed more

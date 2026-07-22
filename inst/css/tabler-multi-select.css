@@ -1,0 +1,76 @@
+/* Multi-select combobox for selectMultipleInput() - a searchable dropdown
+ * where each choice becomes a removable tag, built the same vanilla-JS way
+ * as tabler-select-search.css/tabler-searchable-select.js (no tom-select or
+ * other third-party JS dependency).
+ */
+.tabler-multi-select {
+  position: relative;
+}
+
+.tabler-multi-select-control {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem;
+  cursor: text;
+}
+
+.tabler-multi-select-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.tabler-multi-select-tags:empty {
+  display: none;
+}
+
+.tabler-multi-select-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.125rem 0.25rem 0.125rem 0.5rem;
+  font-size: 0.75rem;
+  line-height: 1.25rem;
+  color: var(--tblr-primary);
+  background-color: rgba(var(--tblr-primary-rgb), 0.1);
+  border-radius: var(--tblr-border-radius);
+  white-space: nowrap;
+}
+
+.tabler-multi-select-tag-remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1rem;
+  height: 1rem;
+  padding: 0;
+  font-size: 0.75rem;
+  color: inherit;
+  background: transparent;
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+  opacity: 0.7;
+}
+
+.tabler-multi-select-tag-remove:hover {
+  opacity: 1;
+  background-color: rgba(var(--tblr-primary-rgb), 0.2);
+}
+
+.tabler-multi-select-input {
+  flex: 1 1 6rem;
+  min-width: 6rem;
+  padding: 0;
+  color: var(--tblr-body-color);
+  background: transparent;
+  border: 0;
+  outline: 0;
+}
+
+.tabler-multi-select-menu {
+  width: 100%;
+  max-height: 15rem;
+  overflow-y: auto;
+}

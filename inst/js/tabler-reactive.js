@@ -215,6 +215,14 @@
       var vals = raw.split(",");
       for (var j = 0; j < els.length; j++) els[j].checked = vals.indexOf(els[j].value) !== -1;
       val = vals;
+    } else if (type === "select-multiple") {
+      var wanted = raw === "" ? [] : raw.split(",");
+      var opts = els[0].querySelectorAll("option");
+      for (var o = 0; o < opts.length; o++) opts[o].selected = wanted.indexOf(opts[o].value) !== -1;
+      val = wanted;
+    } else if (type === "date-inline") {
+      els[0].setAttribute("data-value", raw);
+      val = raw;
     } else {
       els[0].value = raw;
       val = raw;
@@ -250,6 +258,13 @@
       } else if (type === "radio") {
         var sel = document.querySelector('[data-tabler-input="' + id + '"]:checked');
         if (sel) params[id] = sel.value;
+      } else if (type === "select-multiple") {
+        var selOptsUrl = el.selectedOptions || el.querySelectorAll("option:checked");
+        var vals2 = [];
+        for (var u = 0; u < selOptsUrl.length; u++) vals2.push(selOptsUrl[u].value);
+        if (vals2.length) params[id] = vals2.join(",");
+      } else if (type === "date-inline") {
+        params[id] = el.getAttribute("data-value") || "";
       } else {
         params[id] = el.value;
       }
@@ -276,6 +291,7 @@
   function updateRangeBadge(el) {
     var id   = el.getAttribute("data-tabler-input");
     var type = el.getAttribute("data-tabler-type") || "text";
+    updateRangeFill(el, type);
     var badge = document.getElementById(id + "_val");
     if (!badge) return;
     if (type === "range2") {
@@ -285,6 +301,34 @@
       badge.textContent = el.value;
     }
   }
+
+  // Keep a sliderInput(fill = TRUE)'s filled-track CSS variables in sync
+  // with the current value(s), for sliders opted in via
+  // data-tabler-range-fill="true" (the initial fill is rendered server-side
+  // so there's no flash before this first runs).
+  function updateRangeFill(el, type) {
+    if (el.getAttribute("data-tabler-range-fill") !== "true") return;
+    if (type === "range2") {
+      var lo = el.querySelector('[data-tabler-range-role="lo"]');
+      var hi = el.querySelector('[data-tabler-range-role="hi"]');
+      if (!lo || !hi) return;
+      var min = parseFloat(lo.min);
+      var max = parseFloat(lo.max);
+      if (isNaN(min) || isNaN(max) || max === min) return;
+      var pair = readRange2(el);
+      var loPct = ((pair.lo - min) / (max - min)) * 100;
+      var hiPct = ((pair.hi - min) / (max - min)) * 100;
+      el.style.setProperty("--tabler-range2-fill-lo", loPct + "%");
+      el.style.setProperty("--tabler-range2-fill-hi", hiPct + "%");
+    } else if (type === "range") {
+      var minV = parseFloat(el.min);
+      var maxV = parseFloat(el.max);
+      if (isNaN(minV) || isNaN(maxV) || maxV === minV) return;
+      var pct = ((parseFloat(el.value) - minV) / (maxV - minV)) * 100;
+      el.style.setProperty("--tabler-range-fill", pct + "%");
+    }
+  }
+
 
   /* -----------------------------------------------------------------------
    * Input binding — send value to R whenever an input changes
@@ -308,6 +352,12 @@
       for (var i = 0; i < all.length; i++) {
         if (all[i].checked) val.push(all[i].value);
       }
+    } else if (type === "select-multiple") {
+      val = [];
+      var selOpts = el.selectedOptions || el.querySelectorAll("option:checked");
+      for (var s = 0; s < selOpts.length; s++) val.push(selOpts[s].value);
+    } else if (type === "date-inline") {
+      val = el.getAttribute("data-value") || "";
     } else if (type === "radio") {
       val = el.value;
     } else if (type === "range" || type === "number") {
@@ -393,7 +443,7 @@
           });
           sendInputValue(el);   // push initial lo/hi values
           return;
-        } else if (type === "select") {
+        } else if (type === "select" || type === "select-multiple") {
           eventName = "change";
         } else if (type === "range") {
           eventName = "change";
@@ -486,6 +536,33 @@
       if (!a) return;
       e.preventDefault();
       triggerDownload(a.getAttribute("href"));
+    });
+
+    // numericInput() up/down stepper buttons: adjust the target <input
+    // type=number> by its step, clamp to min/max, then dispatch the same
+    // "input" event the number field's own listener (added in bindInputs())
+    // reacts to - so the change is sent to R exactly as if the user had
+    // typed it.
+    document.addEventListener("click", function (e) {
+      var btn = e.target.closest && e.target.closest("[data-tabler-number-step]");
+      if (!btn) return;
+      var input = document.getElementById(btn.getAttribute("data-tabler-number-target"));
+      if (!input || input.disabled) return;
+
+      var step    = parseFloat(input.step) || 1;
+      var dir     = btn.getAttribute("data-tabler-number-step") === "up" ? 1 : -1;
+      var current = parseFloat(input.value);
+      if (isNaN(current)) current = 0;
+      var next = current + dir * step;
+
+      if (input.min !== "" && !isNaN(parseFloat(input.min))) next = Math.max(next, parseFloat(input.min));
+      if (input.max !== "" && !isNaN(parseFloat(input.max))) next = Math.min(next, parseFloat(input.max));
+
+      // Avoid floating-point artifacts (e.g. 0.1 + 0.2 -> 0.30000000000000004)
+      next = Math.round(next * 1e10) / 1e10;
+
+      input.value = next;
+      input.dispatchEvent(new Event("input", { bubbles: true }));
     });
 
     // Browsers keep focus on a range thumb after the drag ends, so its

@@ -26,14 +26,22 @@
     var el   = els[0];
     var type = el.getAttribute("data-tabler-type") || "text";
 
-    if (type === "select" && p.choices) {
+    if ((type === "select" || type === "select-multiple") && p.choices) {
+      var selectedSet = null;
+      if (p.selected !== undefined && p.selected !== null) {
+        var selectedArr = Array.isArray(p.selected) ? p.selected : [p.selected];
+        selectedSet = {};
+        for (var s = 0; s < selectedArr.length; s++) selectedSet[String(selectedArr[s])] = true;
+      }
       var html       = "";
       var currentGrp = null;
       var inGroup    = false;
       for (var i = 0; i < p.choices.length; i++) {
         var choice     = p.choices[i];
-        var isSelected = p.selected !== undefined && p.selected !== null &&
-                         String(choice.value) === String(p.selected);
+        var isSelected = selectedSet
+          ? !!selectedSet[String(choice.value)]
+          : (type === "select" && p.selected !== undefined && p.selected !== null &&
+             String(choice.value) === String(p.selected));
         var optionHtml = '<option value="' + escapeHtml(choice.value) + '"' +
                           (isSelected ? " selected" : "") + ">" +
                           escapeHtml(choice.label) + "</option>";

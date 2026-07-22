@@ -1,0 +1,64 @@
+/* Inline month calendar used by dateInput(inline = TRUE). */
+
+.tabler-datepicker-inline {
+  display: inline-block;
+  border: 1px solid var(--tblr-border-color, #e6e7e9);
+  border-radius: var(--tblr-border-radius, 4px);
+  padding: 0.75rem;
+  background: var(--tblr-bg-surface, #fff);
+  user-select: none;
+}
+
+.tabler-datepicker-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.tabler-datepicker-title {
+  font-weight: var(--tblr-font-weight-bold, 600);
+  font-size: 0.9rem;
+}
+
+.tabler-datepicker-weekdays,
+.tabler-datepicker-days {
+  display: grid;
+  grid-template-columns: repeat(7, 2rem);
+  gap: 2px;
+  text-align: center;
+}
+
+.tabler-datepicker-weekdays > div {
+  font-size: 0.7rem;
+  color: var(--tblr-secondary-color, #6c7a91);
+  padding: 0.25rem 0;
+}
+
+.tabler-datepicker-days > div {
+  font-size: 0.8rem;
+  line-height: 2rem;
+  height: 2rem;
+  border-radius: var(--tblr-border-radius, 4px);
+  cursor: pointer;
+}
+
+.tabler-datepicker-days > div.day-item:hover {
+  background: var(--tblr-active-bg, rgba(0, 0, 0, 0.06));
+}
+
+.tabler-datepicker-days > div.is-today {
+  font-weight: var(--tblr-font-weight-bold, 600);
+  box-shadow: inset 0 0 0 1px var(--tblr-primary, #206bc4);
+}
+
+.tabler-datepicker-days > div.is-selected {
+  background: var(--tblr-primary, #206bc4);
+  color: #fff;
+}
+
+.tabler-datepicker-days > div.is-disabled {
+  color: var(--tblr-secondary-color, #6c7a91);
+  opacity: 0.35;
+  cursor: not-allowed;
+}
