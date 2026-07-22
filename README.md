@@ -37,8 +37,6 @@ remotes::install_github("pachadotdev/tabler")
 
 ## Quick Start
 
-Please see the documentation: <https://pacha.dev/tabler/>.
-
 ### Single-script app
 
 The following example uses the "combo" layout to recreate Shiny's geyser example. The theme options
@@ -71,6 +69,8 @@ pkg_template("mydashboard")
 ```
 
 See the package skeleton [here](https://github.com/pachadotdev/tabler/tree/main/inst/extdata/pkg-template). `pkg_template()` adds a `DESCRIPTION` and other components required for an R package to work.
+
+I built a full dashboard that uses environment variables, SQL connections, caching, and D3 plots [here](https://github.com/pachadotdev/tradestatistics-dashboard).
 
 ## Available Layouts
 
