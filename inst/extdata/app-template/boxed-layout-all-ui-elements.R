@@ -1,53 +1,30 @@
 library(tabler)
 
-# Pizza party planner ----
+# Inputs showcase --
 #
-# One page, three tabs, showcasing most of inputs.R against a single
-# "planning a pizza party" theme:
-#   - Ingredients: all 12 sliderInput() theme colours (one per topping)
-#   - Party details: numericInput, selectInput, dateInput (popup + inline
-#     calendar), radioButtons, selectMultipleInput, checkboxGroupInput,
-#     checkboxInput
-#   - Contact & actions: textInput (with an input mask), actionButton, and a
-#     gallery of components.R's button() variants (colour/outline/pill/
-#     square/size/loading/disabled/icon/link), plus alert() and value_box()
+# Pure UI, no server logic - just every input widget from inputs.R side by
+# side with its main variants, so you can see what each option looks like:
+#   - Select: plain <select> vs searchable "selectize" style, grouped choices
+#   - Select multiple (tag-style, searchable)
+#   - Slider: single vs range, with vs without fill, a few theme colours
+#   - Date: popup (icon left/right/none) vs always-visible inline calendar
+#   - Radio buttons: stacked vs inline
+#   - Checkbox group, single checkbox (block vs inline), text (with mask),
+#     numeric, action button
 
-# Approximate hex values of Tabler's 12 named theme colours, used only to
-# colour the base-R shopping-list bar chart to match the sliders above it.
-tabler_palette <- c(
-  blue = "#206bc4", azure = "#4299e1", indigo = "#4263eb", purple = "#ae3ec9",
-  pink = "#d6336c", red = "#d63939", orange = "#f76707", yellow = "#f59f00",
-  lime = "#74b816", green = "#2fb344", teal = "#0ca678", cyan = "#17a2b8"
-)
-
-# Default topping quantities, one per Tabler theme colour
-ingredient_defaults <- c(
-  "Dough (kg)"          = 2,
-  "Tomato sauce (dl)"   = 4,
-  "Mozzarella (kg)"     = 1.5,
-  "Parmesan (kg)"       = 0.3,
-  "Pepperoni (slices)"  = 20,
-  "Chili flakes (g)"    = 10,
-  "Bell peppers (g)"    = 100,
-  "Pineapple chunks (g)" = 0,
-  "Basil leaves (count)" = 10,
-  "Olives (g)"          = 50,
-  "Mushrooms (g)"       = 80,
-  "Onions (g)"          = 60
-)
-
-# Navbar ----
+# Navbar --
 #
 # The tab_item()s below are only reachable by clicking a menu_item() that
-# targets their tab_name - without this navbar the "party" and "contact"
-# tabs (calendars, buttons, text/phone inputs) would never become visible.
+# targets their tab_name.
 top_nav <- navbar_menu(
-  menu_item("Ingredients", tab_name = "ingredients", icon = "pizza"),
-  menu_item("Party details", tab_name = "party", icon = "calendar-event"),
-  menu_item("Contact & actions", tab_name = "contact", icon = "phone")
+  menu_item("Select & multi-select", tab_name = "selects", icon = "list"),
+  menu_item("Sliders", tab_name = "sliders", icon = "adjustments"),
+  menu_item("Dates", tab_name = "dates", icon = "calendar-event"),
+  menu_item("Radio & checkboxes", tab_name = "choices", icon = "checkbox"),
+  menu_item("Text, numeric & buttons", tab_name = "misc", icon = "forms")
 )
 
-# UI ----
+# UI --
 
 ui <- page(
   theme = "light",
@@ -56,55 +33,61 @@ ui <- page(
   radius = 1,
   layout = "boxed",
   show_theme_button = TRUE,
-  title = "Pizza Party Planner",
+  title = "Inputs Showcase",
   navbar = top_nav,
   body = list(
     tab_items(
       tab_item(
-        "ingredients",
-        header(title = "Pizza ingredients", subtitle = "One slider colour per topping"),
+        "selects",
+        header(title = "Select & multi-select", subtitle = "Plain vs searchable dropdowns"),
         div(
           class = "page-body",
           div(
             class = "container-xl",
             row(
-              col12(
+              col6(
                 card(
-                  title = "Ingredient sliders (all 12 theme colours)",
-                  row(
-                    col3(sliderInput("dough_kg", "Dough (kg)", min = 0, max = 5, value = 2, step = 0.5, color = "blue", fill = TRUE)),
-                    col3(sliderInput("tomato_dl", "Tomato sauce (dl)", min = 0, max = 10, value = 4, color = "azure", fill = TRUE)),
-                    col3(sliderInput("mozzarella_kg", "Mozzarella (kg)", min = 0, max = 5, value = 1.5, step = 0.1, color = "indigo", fill = TRUE)),
-                    col3(sliderInput("parmesan_kg", "Parmesan (kg)", min = 0, max = 2, value = 0.3, step = 0.1, color = "purple", fill = TRUE))
-                  ),
-                  row(
-                    col3(sliderInput("pepperoni_slices", "Pepperoni (slices)", min = 0, max = 40, value = 20, color = "pink", fill = TRUE)),
-                    col3(sliderInput("chili_g", "Chili flakes (g)", min = 0, max = 50, value = 10, color = "red", fill = TRUE)),
-                    col3(sliderInput("peppers_g", "Bell peppers (g)", min = 0, max = 300, value = 100, step = 10, color = "orange", fill = TRUE)),
-                    col3(sliderInput("pineapple_g", "Pineapple chunks (g)", min = 0, max = 300, value = 0, step = 10, color = "yellow", fill = TRUE))
-                  ),
-                  row(
-                    col3(sliderInput("basil_count", "Basil leaves (count)", min = 0, max = 30, value = 10, color = "lime", fill = TRUE)),
-                    col3(sliderInput("olives_g", "Olives (g)", min = 0, max = 200, value = 50, step = 10, color = "green", fill = TRUE)),
-                    col3(sliderInput("mushrooms_g", "Mushrooms (g)", min = 0, max = 300, value = 80, step = 10, color = "teal", fill = TRUE)),
-                    col3(sliderInput("onions_g", "Onions (g)", min = 0, max = 200, value = 60, step = 10, color = "cyan", fill = TRUE))
+                  title = "selectInput() - searchable (selectize style)",
+                  selectInput(
+                    "country_selectize", "Country",
+                    choices  = c("Chile", "Peru", "Colombia"),
+                    selected = "Chile"
+                  )
+                )
+              ),
+              col6(
+                card(
+                  title = "selectInput() - non-searchable (plain native select)",
+                  selectInput(
+                    "country_plain", "Country",
+                    choices    = c("Chile", "Peru", "Colombia"),
+                    selected   = "Chile",
+                    searchable = FALSE
                   )
                 )
               )
             ),
             row(
-              col8(
+              col6(
                 card(
-                  title  = "Shopping list preview",
-                  footer = "Quantities update live as you move the sliders",
-                  plotOutput("shopping_plot")
+                  title = "selectInput() - grouped choices",
+                  selectInput(
+                    "country_grouped", "Country",
+                    choices = list(
+                      "South America" = c("Chile", "Peru", "Colombia"),
+                      "Europe"        = c("United Kingdom", "Spain", "France")
+                    )
+                  )
                 )
               ),
-              col4(
+              col6(
                 card(
-                  title = "Export",
-                  p("Download the current quantities as a shopping list."),
-                  downloadButton("shopping_download", label = "Download shopping list (CSV)")
+                  title = "selectMultipleInput() - searchable, tag-style multi-select",
+                  selectMultipleInput(
+                    "country_tag", "Country",
+                    choices  = c("Chile", "Peru", "Colombia"),
+                    selected = "Chile"
+                  )
                 )
               )
             )
@@ -112,8 +95,8 @@ ui <- page(
         )
       ),
       tab_item(
-        "party",
-        header(title = "Party details", subtitle = "Who, when and how"),
+        "sliders",
+        header(title = "Sliders", subtitle = "Single vs range, with vs without fill"),
         div(
           class = "page-body",
           div(
@@ -121,64 +104,167 @@ ui <- page(
             row(
               col6(
                 card(
-                  title = "Guests & schedule",
-                  numericInput("num_guests", "Number of guests", value = 8, min = 1, max = 50),
-                  selectInput(
-                    "planned_day", "Planned day",
-                    choices  = c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"),
-                    selected = "Saturday"
-                  ),
-                  dateInput("planned_date", "Planned date", value = Sys.Date() + 7, icon = "left"),
-                  radioButtons("crust", "Crust type", choices = c("Thin", "Thick", "Stuffed"), inline = TRUE),
-                  selectMultipleInput(
-                    "extra_toppings", "Extra add-ons",
-                    choices  = c("Extra cheese", "Garlic butter crust", "Truffle oil", "Spicy honey"),
-                    selected = "Extra cheese"
-                  ),
-                  checkboxGroupInput("dietary", "Dietary options", choices = c("Vegetarian", "Vegan", "Gluten-free")),
-                  checkboxInput("rsvp", "RSVP confirmed", value = TRUE, description = "All guests have replied")
+                  title = "Single value - no fill",
+                  sliderInput("single_nofill", "Value", min = 0, max = 100, value = 40)
                 )
               ),
               col6(
                 card(
-                  title = "Pick the date on a calendar",
-                  dateInput("planned_date_inline", NULL, value = Sys.Date() + 7, inline = TRUE)
+                  title = "Single value - fill -  blue",
+                  sliderInput("single_fill", "Value", min = 0, max = 100, value = 40, fill = TRUE, color = "blue")
                 )
               )
             ),
-            uiOutput("party_summary")
-          )
-        )
-      ),
-      tab_item(
-        "contact",
-        header(
-          title = "Contact & actions", subtitle = "Confirm the order",
-          header_actions = button("Call now", icon = "phone", color = "success")
-        ),
-        div(
-          class = "page-body",
-          div(
-            class = "container-xl",
             row(
               col6(
                 card(
-                  title = "Call the customer",
-                  textInput("customer_name", "Customer name", value = "Jane Doe"),
-                  textInput("customer_phone", "Phone number", mask = "(00) 0000-0000"),
-                  actionButton("call_customer", "Call customer", icon = "phone"),
-                  tags$hr(),
-                  verbatimTextOutput("call_log")
+                  title = "Range (two thumbs) - no fill",
+                  sliderInput("range_nofill", "Year range", min = 2000, max = 2025, value = c(2010, 2020))
                 )
               ),
               col6(
-                uiOutput("kitchen_status")
+                card(
+                  title = "Range (two thumbs) - fill - teal",
+                  sliderInput("range_fill", "Year range", min = 2000, max = 2025, value = c(2010, 2020), fill = TRUE, color = "teal")
+                )
               )
             ),
             row(
               col12(
                 card(
-                  title = "Button gallery (components.R button())",
+                  sliderInput("c_purple", "Purple - thumbSize 2", min = 0, max = 10, value = 6, color = "purple", fill = TRUE, thumbSize = 2),
+                  sliderInput("c_azure", "Azure", min = 0, max = 10, value = 3, color = "azure", fill = TRUE),
+                  sliderInput("c_indigo", "Indigo", min = 0, max = 10, value = 3, color = "indigo", fill = TRUE),
+                  sliderInput("c_red", "Red", min = 0, max = 10, value = 3, color = "red", fill = TRUE),
+                  sliderInput("c_orange", "Orange", min = 0, max = 10, value = 3, color = "orange", fill = TRUE),
+                  sliderInput("c_yellow", "Yellow", min = 0, max = 10, value = 3, color = "yellow", fill = TRUE),
+                  sliderInput("c_lime", "Lime", min = 0, max = 10, value = 8, color = "lime", fill = TRUE),
+                  sliderInput("c_pink", "Pink", min = 0, max = 10, value = 5, color = "pink", fill = TRUE)
+                )
+              )
+            )
+          )
+        )
+      ),
+      tab_item(
+        "dates",
+        header(title = "Dates", subtitle = "Popup field vs inline calendar"),
+        div(
+          class = "page-body",
+          div(
+            class = "container-xl",
+            row(
+              col4(
+                card(
+                  title = "dateInput() - no icon",
+                  dateInput("date_none", "Date", value = Sys.Date())
+                )
+              ),
+              col4(
+                card(
+                  title = "dateInput() - icon to the left",
+                  dateInput("date_left", "Date", value = Sys.Date(), icon = "left")
+                )
+              ),
+              col4(
+                card(
+                  title = "dateInput() - icon to the right",
+                  dateInput("date_right", "Date", value = Sys.Date(), icon = "right")
+                )
+              )
+            ),
+            row(
+              col12(
+                card(
+                  title = "dateInput() - inline (always-visible calendar)",
+                  dateInput("date_inline", NULL, value = Sys.Date(), inline = TRUE)
+                )
+              )
+            )
+          )
+        )
+      ),
+      tab_item(
+        "choices",
+        header(title = "Radio & checkboxes", subtitle = "Stacked vs inline layout"),
+        div(
+          class = "page-body",
+          div(
+            class = "container-xl",
+            row(
+              col6(
+                card(
+                  title = "radioButtons() - no inline (default, stacked)",
+                  radioButtons("crust_stacked", "Crust type", choices = c("Thin", "Thick", "Stuffed"))
+                )
+              ),
+              col6(
+                card(
+                  title = "radioButtons() - inline",
+                  radioButtons("crust_inline", "Crust type", choices = c("Thin", "Thick", "Stuffed"), inline = TRUE)
+                )
+              )
+            ),
+            row(
+              col6(
+                card(
+                  title = "checkboxGroupInput()",
+                  checkboxGroupInput("dietary", "Dietary options", choices = c("Vegetarian", "Vegan", "Gluten-free"), selected = "Vegetarian")
+                )
+              ),
+              col6(
+                card(
+                  title = "checkboxInput() - block vs inline",
+                  checkboxInput("rsvp1", "RSVP confirmed", value = TRUE, description = "Block layout (default)"),
+                  div(
+                    class = "d-flex gap-3",
+                    checkboxInput("opt_a", "Option A", inline = TRUE),
+                    checkboxInput("opt_b", "Option B", value = TRUE, inline = TRUE),
+                    checkboxInput("opt_c", "Option C", inline = TRUE)
+                  )
+                )
+              )
+            )
+          )
+        )
+      ),
+      tab_item(
+        "misc",
+        header(title = "Text, numeric & buttons", subtitle = "Remaining inputs.R widgets"),
+        div(
+          class = "page-body",
+          div(
+            class = "container-xl",
+            row(
+              col4(
+                card(
+                  title = "textInput() - plain",
+                  textInput("customer_name", "Customer name", value = "Jane Doe")
+                )
+              ),
+              col4(
+                card(
+                  title = "textInput() - with mask",
+                  textInput("customer_phone", "Phone number", mask = "(000) 0000-0000")
+                )
+              ),
+              col4(
+                card(
+                  title = "numericInput() - with stepper buttons",
+                  numericInput("num_guests", "Number of guests", value = 8, min = 1, max = 50)
+                )
+              )
+            ),
+            row(
+              col4(
+                card(
+                  title = "actionButton()",
+                  actionButton("call_customer", "Call customer", icon = "phone")
+                )
+              ),
+              col8(
+                card(
+                  title = "button()",
                   div(
                     class = "d-flex flex-wrap gap-2",
                     button("Primary"),
@@ -194,16 +280,6 @@ ui <- page(
                   )
                 )
               )
-            ),
-            row(
-              col12(
-                alert("Order confirmed - the pizzas are on their way!", type = "success", title = "Success", dismissible = TRUE)
-              )
-            ),
-            row(
-              col12(
-                card(title = "Export order", downloadButton("order_download", label = "Download order summary (CSV)"))
-              )
             )
           )
         )
@@ -216,105 +292,4 @@ ui <- page(
   )
 )
 
-# Server ----
-
-server <- function(input, output, session) {
-  # Current ingredient quantities, read live from the sliders. Called both
-  # from a reactive context (renderPlot -> tracked) and a non-reactive one
-  # (downloadHandler content -> just reads the current value).
-  get_quantities <- function() {
-    d <- ingredient_defaults
-    stats::setNames(
-      c(
-        input$dough_kg %||% d[["Dough (kg)"]],
-        input$tomato_dl %||% d[["Tomato sauce (dl)"]],
-        input$mozzarella_kg %||% d[["Mozzarella (kg)"]],
-        input$parmesan_kg %||% d[["Parmesan (kg)"]],
-        input$pepperoni_slices %||% d[["Pepperoni (slices)"]],
-        input$chili_g %||% d[["Chili flakes (g)"]],
-        input$peppers_g %||% d[["Bell peppers (g)"]],
-        input$pineapple_g %||% d[["Pineapple chunks (g)"]],
-        input$basil_count %||% d[["Basil leaves (count)"]],
-        input$olives_g %||% d[["Olives (g)"]],
-        input$mushrooms_g %||% d[["Mushrooms (g)"]],
-        input$onions_g %||% d[["Onions (g)"]]
-      ),
-      names(d)
-    )
-  }
-
-  output$shopping_plot <- renderPlot({
-    qty <- get_quantities()
-    graphics::barplot(
-      qty,
-      col    = unname(tabler_palette),
-      border = "white",
-      las    = 2,
-      main   = NULL,
-      cex.names = 0.8
-    )
-  })
-
-  output$shopping_download <- downloadHandler(
-    filename = "shopping-list.csv",
-    content  = function(file) {
-      qty <- get_quantities()
-      utils::write.csv(data.frame(ingredient = names(qty), quantity = qty), file, row.names = FALSE)
-    }
-  )
-
-  output$party_summary <- renderUI({
-    total_cheese <- (input$mozzarella_kg %||% 1.5) + (input$parmesan_kg %||% 0.3)
-    days_away    <- as.integer(as.Date(input$planned_date %||% Sys.Date()) - Sys.Date())
-
-    row(
-      value_box(input$num_guests %||% 8, "Guests", icon = "users", color = "azure"),
-      value_box(paste0(round(total_cheese, 1), " kg"), "Total cheese", icon = "cheese", color = "yellow"),
-      value_box(days_away, "Days until the party", icon = "calendar-event", color = "teal")
-    )
-  })
-
-  output$kitchen_status <- renderUI({
-    if (isTRUE(input$rsvp)) {
-      card(title = "Kitchen status", "RSVP confirmed - start cooking!", status = "success")
-    } else {
-      card(title = "Kitchen status", "Waiting for RSVP confirmation...", status = "warning")
-    }
-  })
-
-  output$call_log <- renderText({
-    n <- input$call_customer %||% 0
-    if (n == 0) {
-      "Press \"Call customer\" to place the call."
-    } else {
-      sprintf(
-        "Calling %s at %s... (attempt %d)",
-        input$customer_name %||% "the customer",
-        input$customer_phone %||% "unknown number",
-        n
-      )
-    }
-  })
-
-  output$order_download <- downloadHandler(
-    filename = "order-summary.csv",
-    content  = function(file) {
-      order <- data.frame(
-        field = c("customer_name", "customer_phone", "num_guests", "planned_day", "planned_date", "crust"),
-        value = c(
-          input$customer_name %||% "",
-          input$customer_phone %||% "",
-          input$num_guests %||% 8,
-          input$planned_day %||% "Saturday",
-          as.character(input$planned_date %||% Sys.Date()),
-          input$crust %||% "Thin"
-        )
-      )
-      utils::write.csv(order, file, row.names = FALSE)
-    }
-  )
-
-  syncUrl(session, exclude = c("parameters", "to", "not", "show"))
-}
-
-tablerApp(ui, server)
+tablerApp(ui, function(input, output, session) {})

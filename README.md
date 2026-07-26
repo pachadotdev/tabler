@@ -58,6 +58,33 @@ alt="layout-geyser" />
 alt="layout-geyser" />
 </figure>
 
+I added a UI-only example to cover the different input elements nand their options [here](https://github.com/pachadotdev/tabler/blob/main/inst/extdata/app-template/boxed-layout-all-ui-elements.R).
+
+<figure>
+<img src="screenshots/select.png" title="Select & Multi-Select"
+alt="select" />
+</figure>
+
+<figure>
+<img src="screenshots/sliders.png" title="Sliders"
+alt="sliders" />
+</figure>
+
+<figure>
+<img src="screenshots/dates.png" title="Dates"
+alt="dates" />
+</figure>
+
+<figure>
+<img src="screenshots/radio-checkboxes.png" title="Radio & Checkboxes"
+alt="radio-checkboxes" />
+</figure>
+
+<figure>
+<img src="screenshots/text-numeric-buttons.png" title="Text, Numeric & buttons"
+alt="text-numeric-buttons" />
+</figure>
+
 ### Modular R package app
 
 Create an R package with modular components:
