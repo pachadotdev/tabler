@@ -1,0 +1,158 @@
+❯ R
+
+R version 4.6.0 (2026-04-24) -- "Because it was There"
+Copyright (C) 2026 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> tinydev::pkg_check()
+* checking for file ‘/home/pacha/.cache/R/tinydev/pkgsrc-2f8b258db73c/DESCRIPTION’ ... OK
+* preparing ‘tabler’:
+* checking DESCRIPTION meta-information ... OK
+* checking for LF line-endings in source and make files and shell scripts
+* checking for empty or unneeded directories
+* building ‘tabler_1.4.0.tar.gz’
+
+* using log directory ‘/home/pacha/.cache/R/tinydev/file2f8b752ead7c/tabler.Rcheck’
+* using R version 4.6.0 (2026-04-24)
+* using platform: x86_64-pc-linux-gnu
+* R was compiled by
+    gcc (GCC) 15.2.1 20260209
+    GNU Fortran (GCC) 15.2.1 20260209
+* running under: Manjaro Linux
+* using session charset: UTF-8
+* current time: 2026-07-26 05:10:25 UTC
+* using option ‘--as-cran’
+* checking for file ‘tabler/DESCRIPTION’ ... OK
+* this is package ‘tabler’ version ‘1.4.0’
+* package encoding: UTF-8
+Maintainer: ‘Mauricio Vargas Sepulveda <m.vargas.sepulveda@gmail.com>’
+
+Strong dependencies not in the CRAN or BioC software repositories:
+  httpserver, later2, tinycache
+* checking package namespace information ... OK
+* checking package dependencies ... OK
+* checking if this is a source package ... OK
+* checking if there is a namespace ... OK
+* checking for executable files ... OK
+* checking for hidden files and directories ... OK
+* checking for portable file names ... OK
+* checking for sufficient/correct file permissions ... OK
+* checking whether package ‘tabler’ can be installed ... OK
+* checking installed package size ... INFO
+  installed size is  9.7Mb
+  sub-directories of 1Mb or more:
+    tabler-1.4.0          4.5Mb
+    tabler-icons-3.55.0   4.6Mb
+* checking package directory ... OK
+* checking for future file timestamps ... OK
+* checking DESCRIPTION meta-information ... OK
+* checking top-level files ... OK
+* checking for left-over files ... OK
+* checking index information ... OK
+* checking package subdirectories ... OK
+* checking code files for non-ASCII characters ... OK
+* checking R files for syntax errors ... OK
+* checking whether the package can be loaded ... OK
+* checking whether the package can be loaded with stated dependencies ... OK
+* checking whether the package can be unloaded cleanly ... OK
+* checking whether the namespace can be loaded with stated dependencies ... OK
+* checking whether the namespace can be unloaded cleanly ... OK
+* checking whether startup messages can be suppressed ... OK
+* checking use of S3 registration ... OK
+* checking dependencies in R code ... OK
+* checking S3 generic/method consistency ... OK
+* checking replacement functions ... OK
+* checking foreign function calls ... OK
+* checking R code for possible problems ... [14s/14s] NOTE
+pkg_template: no visible binding for global variable ‘roxyver’
+Undefined global functions or variables:
+  roxyver
+* checking Rd files ... OK
+* checking Rd metadata ... OK
+* checking Rd line widths ... OK
+* checking Rd cross-references ... WARNING
+Missing link(s) in Rd file 'tabler-outputs.Rd':
+  ‘div’
+
+See section 'Cross-references' in the 'Writing R Extensions' manual.
+
+Found the following Rd file(s) with Rd \link{} targets missing package
+anchors:
+  tabler-outputs.Rd: div
+Please provide package anchors for all Rd \link{} targets not in the
+package itself and the base packages.
+* checking for missing documentation entries ... WARNING
+Undocumented code objects:
+  ‘div’
+All user-level objects in a package should have documentation entries.
+See chapter ‘Writing R documentation files’ in the ‘Writing R
+Extensions’ manual.
+* checking for code/documentation mismatches ... OK
+* checking Rd \usage sections ... WARNING
+Objects in \usage without \alias in Rd file 'html-tags.Rd':
+  ‘div’
+
+Bad \usage lines found in Rd file 'tabler-outputs.Rd':
+  plotOutput(outputId, width = "100
+  widgetOutput(outputId, width = "100
+
+Functions with \usage entries need to have the appropriate \alias
+entries, and all their arguments documented.
+The \usage entries must correspond to syntactically valid R code.
+See chapter ‘Writing R documentation files’ in the ‘Writing R
+Extensions’ manual.
+* checking Rd contents ... OK
+* checking for unstated dependencies in examples ... OK
+* checking contents of ‘data’ directory ... OK
+* checking data for non-ASCII characters ... OK
+* checking LazyData ... OK
+* checking data for ASCII and uncompressed saves ... OK
+* checking examples ... ERROR
+Running examples in ‘tabler-Ex.R’ failed
+The error most likely occurred in:
+
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+> ### Name: pkg_template
+> ### Title: Start a new project with the tabler package template
+> ### Aliases: pkg_template
+> 
+> ### ** Examples
+> 
+> # create a new directory
+> dir <- tempdir()
+> dir.create(dir)
+Warning in dir.create(dir) :
+  '/home/pacha/.cache/R/tinydev/RtmpsYIni9/working_dir/RtmpIZ8l5d' already exists
+> 
+> # copy the package template into the directory
+> pkg_template(dir, "mynewpkg")
+Error in pkg_template(dir, "mynewpkg") : object 'roxyver' not found
+Calls: pkg_template -> paste0
+Execution halted
+* checking for unstated dependencies in ‘tests’ ... OK
+* checking tests ...
+  Running ‘tinytest.R’
+ OK
+* checking PDF version of manual ... OK
+* checking HTML version of manual ...Warning: tabler-outputs.Rd:47: missing link ‘div’
+ OK
+* checking for non-standard things in the check directory ... OK
+* checking for detritus in the temp directory ... OK
+* DONE
+
+Status: 1 ERROR, 4 WARNINGs, 1 NOTE
+See
+  ‘/home/pacha/.cache/R/tinydev/file2f8b752ead7c/tabler.Rcheck/00check.log’
+for details.

@@ -16,15 +16,13 @@ Depends:
     R (>= 3.5.0)
 License: Apache License (>= 2)
 Imports: 
-    tinyhttpserver,
+    httpserver,
     jsonlite,
     later2,
     tinycache
 Suggests: 
     DT,
     htmlwidgets,
-    roxygen2,
     tinytest
 Encoding: UTF-8
 LazyData: true
-Config/roxygen2/version: 8.0.0

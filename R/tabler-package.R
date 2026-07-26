@@ -1,4 +1,9 @@
-#' @keywords internal
+#' @title Create Dashboards with 'Tabler'
+#' @description Provides functions to build interactive dashboards using the 'Tabler', making it
+#'  easy to create professional-looking web applications. 'Tabler' is fully responsive and compatible with all modern
+#'  browsers. Offers customizable layouts and components built with 'HTML5' and 'CSS3'. The underlying 'Tabler'
+#'  (<https://github.com/tabler/tabler>) and 'Tabler Icons' (<https://github.com/tabler/tabler-icons>)
+#'  were pre-built from source to eliminate the need for 'Node.js' and 'NPM' on package installation.
 "_PACKAGE"
 
 # Register S3 methods for operator generics at load time.

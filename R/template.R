@@ -104,7 +104,6 @@ pkg_template <- function(path = NULL, pkgname = NULL) {
     "License: ADD LICENSE",
     "BugReports: https://github.com/USERNAME/PKGNAME/issues",
     "URL: https://WEBSITE.COM",
-    paste0("RoxygenNote: ", roxyver),
     "Encoding: UTF-8",
     "NeedsCompilation: no"
   )

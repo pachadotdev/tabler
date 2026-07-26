@@ -154,6 +154,10 @@ HTML <- function(text) {
   structure(list(html = text), class = "tabler.html")
 }
 
+#' Convert Raw HTML to Character
+#' @param x A \code{"tabler.html"} object created by \code{\link{HTML}}.
+#' @param ... Unused.
+#' @return The underlying character string.
 #' @exportS3Method as.character tabler.html
 as.character.tabler.html <- function(x, ...) x$html
 
