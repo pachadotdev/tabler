@@ -58,7 +58,7 @@ alt="layout-geyser" />
 alt="layout-geyser" />
 </figure>
 
-I added a UI-only example to cover the different input elements nand their options [here](https://github.com/pachadotdev/tabler/blob/main/inst/extdata/app-template/boxed-layout-all-ui-elements.R).
+I added a UI-only example to cover the different input elements and their options [here](https://github.com/pachadotdev/tabler/blob/main/inst/extdata/app-template/boxed-layout-all-ui-elements.R).
 
 <figure>
 <img src="screenshots/select.png" title="Select & Multi-Select"
