@@ -102,8 +102,9 @@ I built a full dashboard that uses environment variables, SQL connections, cachi
 ## Login page
 
 This R package provides a login page that you can connect to a database or another system. The
-example [here](https://github.com/pachadotdev/tabler/blob/main/inst/extdata/app-template/combo-layout-with-progress-bar.R) shows the dashboard after correctly typing the user "SpaceMariner"
-and password "IDDQD".
+example [here](https://github.com/pachadotdev/tabler/blob/main/inst/extdata/app-template/combo-layout-with-login.R) shows the
+dashboard after correctly typing the user "SpaceMariner" and password "IDDQD". There is an example using RSQLite
+[here](https://github.com/pachadotdev/tabler/blob/main/inst/extdata/app-template/combo-layout-with-login-sqlite.R).
 
 I was thinking about adding a Google/Outlook/GitHub account login but I have no idea how to. If
 you know how and would like to contribute, please comment [here](https://github.com/pachadotdev/tabler/issues/2).
