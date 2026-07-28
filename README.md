@@ -99,6 +99,35 @@ See the package skeleton [here](https://github.com/pachadotdev/tabler/tree/main/
 
 I built a full dashboard that uses environment variables, SQL connections, caching, and D3 plots [here](https://github.com/pachadotdev/tradestatistics-dashboard).
 
+## Login page
+
+This R package provides a login page that you can connect to a database or another system. The
+example [here](https://github.com/pachadotdev/tabler/blob/main/inst/extdata/app-template/combo-layout-with-progress-bar.R) shows the dashboard after correctly typing the user "SpaceMariner"
+and password "IDDQD".
+
+I was thinking about adding a Google/Outlook/GitHub account login but I have no idea how to. If
+you know how and would like to contribute, please comment [here](https://github.com/pachadotdev/tabler/issues/2).
+
+<figure>
+<img src="screenshots/combo-layout-sign-in.png" title="Sign in"
+alt="sign-in" />
+</figure>
+
+<figure>
+<img src="screenshots/combo-layout-sign-out.png" title="Dashboard with sing out button"
+alt="sign-out" />
+</figure>
+
+## Does it run Doom?
+
+Yes. I tested the WebSocket compiling and running the Doom WASM version. See the code
+[here](https://github.com/pachadotdev/tabler/blob/main/dev/doom.R).
+
+<figure>
+<img src="screenshots/doom.png" title="Doom"
+alt="doom" />
+</figure>
+
 ## Available Layouts
 
 There are [additional examples](https://github.com/pachadotdev/tabler/tree/main/examples) for each of the following layouts:

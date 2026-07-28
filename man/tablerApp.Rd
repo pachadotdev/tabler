@@ -4,7 +4,17 @@
 \alias{tablerApp}
 \title{Run a Tabler Application}
 \usage{
-tablerApp(ui, server, host = "127.0.0.1", port = 3000L, launch.browser = interactive())
+tablerApp(
+  ui,
+  server,
+  host = "127.0.0.1",
+  port = 3000L,
+  launch.browser = interactive(),
+  checkCredentials = NULL,
+  sessionSecret = Sys.getenv("TABLER_SESSION_SECRET", ""),
+  sessionExpires = 604800L,
+  loginTitle = "Sign in"
+)
 }
 
 \arguments{
@@ -17,6 +27,25 @@ tablerApp(ui, server, host = "127.0.0.1", port = 3000L, launch.browser = interac
 \item{port}{Port number (default \code{3000L}).}
 
 \item{launch.browser}{Open a browser automatically when in an interactive session.}
+
+\item{checkCredentials}{Optional \code{function(username, password)} returning
+  \code{TRUE}/\code{FALSE}. When supplied, the app is gated behind a login
+  page: the HTML page, cached outputs, widgets, downloads, plots, and the
+  WebSocket connection are all withheld from a browser until it presents a
+  valid signed session cookie (set after a successful login). See
+  \code{\link{logout}} for ending a session from the server. Default
+  \code{NULL} disables the login gate entirely (unchanged behavior).}
+
+\item{sessionSecret}{Secret key used to sign the session cookie. Defaults to
+  the \code{TABLER_SESSION_SECRET} environment variable; if unset, a random
+  secret is generated for the run (with a warning) and all sessions are
+  invalidated on restart. Only used when \code{checkCredentials} is supplied.}
+
+\item{sessionExpires}{How long, in seconds, a login should persist
+  (default 7 days). Use \code{0} for a browser-session-only cookie that
+  requires logging in again every time the browser is fully closed.}
+
+\item{loginTitle}{Title shown on the login page and browser tab.}
 }
 
 \value{

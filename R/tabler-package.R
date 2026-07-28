@@ -53,7 +53,8 @@ add_deps <- function(layout = "default") {
     tags$script(src = "/js/tabler-multi-select.js"),
     tags$script(src = "/js/tabler-input-mask.js"),
     tags$script(src = "/js/tabler-datepicker-inline.js"),
-    tags$script(src = "/js/tabler-progress.js")
+    tags$script(src = "/js/tabler-progress.js"),
+    tags$script(src = "/js/tabler-login.js")
   )
 }
 

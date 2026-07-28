@@ -1,3 +1,9 @@
+# tabler 0.03
+
+* Adds themes, colours, templated inputs, calendars and an almost comprehensive
+  port of Tabler UI.
+* Includes a simple login.
+
 # tabler 0.2.0
 
 * `selectInput()` gains a `searchable` argument (default `TRUE`) that overlays

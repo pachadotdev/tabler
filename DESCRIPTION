@@ -19,6 +19,7 @@ Imports:
     httpserver,
     jsonlite,
     later2,
+    openssl,
     tinycache
 Suggests: 
     DT,

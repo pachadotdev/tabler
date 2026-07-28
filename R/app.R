@@ -112,6 +112,21 @@ addResourcePath <- function(prefix, directoryPath) {
 #' @param host      Host to listen on (default \code{"127.0.0.1"}).
 #' @param port      Port number (default \code{3000L}).
 #' @param launch.browser Open a browser automatically when in an interactive session.
+#' @param checkCredentials Optional \code{function(username, password)} returning
+#'   \code{TRUE}/\code{FALSE}. When supplied, the app is gated behind a login
+#'   page: the HTML page, cached outputs, widgets, downloads, plots, and the
+#'   WebSocket connection are all withheld from a browser until it presents a
+#'   valid signed session cookie (set after a successful login). See
+#'   \code{\link{logout}} for ending a session from the server. Default
+#'   \code{NULL} disables the login gate entirely (unchanged behavior).
+#' @param sessionSecret Secret key used to sign the session cookie. Defaults to
+#'   the \code{TABLER_SESSION_SECRET} environment variable; if unset, a random
+#'   secret is generated for the run (with a warning) and all sessions are
+#'   invalidated on restart. Only used when \code{checkCredentials} is supplied.
+#' @param sessionExpires How long, in seconds, a login should persist
+#'   (default 7 days). Use \code{0} for a browser-session-only cookie that
+#'   requires logging in again every time the browser is fully closed.
+#' @param loginTitle Title shown on the login page and browser tab.
 #'
 #' @details
 #' \strong{Protocol}
@@ -133,12 +148,19 @@ addResourcePath <- function(prefix, directoryPath) {
 #' @return Invisibly, after the server is stopped.
 #' @export
 tablerApp <- function(ui, server, host = "127.0.0.1", port = 3000L,
-                      launch.browser = interactive()) {
+                      launch.browser = interactive(),
+                      checkCredentials = NULL,
+                      sessionSecret = Sys.getenv("TABLER_SESSION_SECRET", ""),
+                      sessionExpires = 604800L,
+                      loginTitle = "Sign in") {
   # Reset the global reactive domain so stale observers from a previous run
   # do not interfere with this new session.
   .domain$pending <- list()
   .domain$flushing <- FALSE
   .domain$context_stack <- list()
+
+  # Login gate secret - only resolved (and only warns) when actually used ----
+  login_secret <- if (!is.null(checkCredentials)) .resolve_login_secret(sessionSecret) else NULL
 
   # Build the static page HTML once ----
   page_html <- paste0("<!DOCTYPE html><html>", render_html(ui), "</html>")
@@ -246,6 +268,72 @@ tablerApp <- function(ui, server, host = "127.0.0.1", port = 3000L,
   # HTTP handler ----
   http_handler <- function(req) {
     path <- req$PATH_INFO
+
+    # ---- Login gate -------------------------------------------------
+    # Withholds the page/outputs/websocket from unauthenticated browsers
+    # server-side; nothing sensitive is ever sent for DevTools to reveal.
+    if (!is.null(checkCredentials)) {
+      if (path == "/login") {
+        if (identical(req$REQUEST_METHOD, "POST")) {
+          creds <- .parse_urlencoded_body(req)
+          ok <- isTRUE(tryCatch(
+            checkCredentials(creds$username %||% "", creds$password %||% ""),
+            error = function(e) FALSE
+          ))
+          if (ok) {
+            expires_at <- as.numeric(Sys.time()) + max(sessionExpires, 1L)
+            token <- .sign_session_token(creds$username %||% "", login_secret, expires_at)
+            return(list(
+              status = 302L,
+              headers = list(
+                "Location" = "/",
+                "Set-Cookie" = .set_cookie_header(
+                  .tabler_session_cookie, token,
+                  max_age = if (sessionExpires > 0) sessionExpires else NULL
+                )
+              ),
+              body = ""
+            ))
+          }
+          return(list(
+            status = 302L,
+            headers = list("Location" = "/login?error=1"),
+            body = ""
+          ))
+        }
+        return(list(
+          status = 200L,
+          headers = list("Content-Type" = "text/html; charset=utf-8"),
+          body = .render_login_page(
+            loginTitle,
+            error = grepl("(^|&)error=1(&|$)", req$QUERY_STRING %||% "")
+          )
+        ))
+      }
+
+      if (path == "/logout") {
+        return(list(
+          status = 302L,
+          headers = list(
+            "Location" = "/login",
+            "Set-Cookie" = .clear_cookie_header(.tabler_session_cookie)
+          ),
+          body = ""
+        ))
+      }
+
+      if (path == "/" || path == "" || path == "/index.html" ||
+        grepl("^/(widgets|downloads|plots)/", path)) {
+        user <- .verify_session_token(.get_cookie(req, .tabler_session_cookie), login_secret)
+        if (is.null(user)) {
+          return(list(
+            status = 302L,
+            headers = list("Location" = "/login"),
+            body = ""
+          ))
+        }
+      }
+    }
 
     # Main page
     if (path == "/" || path == "" || path == "/index.html") {
@@ -424,6 +512,16 @@ tablerApp <- function(ui, server, host = "127.0.0.1", port = 3000L,
 
   # WebSocket handler ----
   ws_handler <- function(ws) {
+    if (!is.null(checkCredentials)) {
+      user <- .verify_session_token(
+        .get_cookie(ws$request, .tabler_session_cookie), login_secret
+      )
+      if (is.null(user)) {
+        ws$close(4001L, "Unauthorized")
+        return(invisible(NULL))
+      }
+    }
+
     ws_id <- paste(sample(c(letters, 0:9), 12L, replace = TRUE), collapse = "")
     assign(ws_id, ws, envir = connections)
 
