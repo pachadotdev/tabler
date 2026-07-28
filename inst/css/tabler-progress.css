@@ -1,38 +1,18 @@
+/**
+ * tabler-progress.css
+ * Full-page loading overlay styled after Tabler's own page-loader
+ * (https://preview.tabler.io/page-loader.html). Only positioning lives
+ * here - the overlay background and the progress bar's colours come from
+ * Tabler's own `--tblr-bg-surface`/`--tblr-progress-bg`/
+ * `--tblr-progress-bar-bg` variables (see tabler-progress.js), so both
+ * automatically follow the app's colour scheme and light/dark theme.
+ */
 #tabler-progress-overlay {
   display: none;
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: #1f2937;
+  inset: 0;
   z-index: 9999;
+  background-color: var(--tblr-bg-surface, #fff);
   justify-content: center;
   align-items: center;
-}
-.tabler-progress-container {
-  text-align: center;
-  width: 400px;
-  max-width: 80%;
-}
-.tabler-progress-text {
-  font-size: 18px;
-  margin-bottom: 20px;
-  color: white;
-  font-weight: 500;
-}
-.tabler-progress-bar-wrapper {
-  width: 100%;
-  height: 8px;
-  background-color: #e9ecef;
-  border-radius: 4px;
-  overflow: hidden;
-  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
-}
-.tabler-progress-bar {
-  height: 100%;
-  width: 0%;
-  background: linear-gradient(90deg, #20c997 0%, #17a2b8 100%);
-  transition: width 0.3s ease;
-  border-radius: 4px;
 }

@@ -16,10 +16,10 @@
     overlay = document.createElement("div");
     overlay.id = "tabler-progress-overlay";
     overlay.innerHTML =
-      '<div class="tabler-progress-container">' +
-        '<div class="tabler-progress-text" id="tabler-progress-text"></div>' +
-        '<div class="tabler-progress-bar-wrapper">' +
-          '<div class="tabler-progress-bar" id="tabler-progress-bar"></div>' +
+      '<div class="container-slim text-center">' +
+        '<div class="text-secondary mb-3" id="tabler-progress-text"></div>' +
+        '<div class="progress progress-sm">' +
+          '<div class="progress-bar" id="tabler-progress-bar" style="width: 0%"></div>' +
         "</div>" +
       "</div>";
     document.body.appendChild(overlay);

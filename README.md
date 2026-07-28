@@ -99,6 +99,16 @@ See the package skeleton [here](https://github.com/pachadotdev/tabler/tree/main/
 
 I built a full dashboard that uses environment variables, SQL connections, caching, and D3 plots [here](https://github.com/pachadotdev/tradestatistics-dashboard).
 
+## Loading/Progress bar
+
+I added an example with a progress bar [here](https://github.com/pachadotdev/tabler/blob/main/inst/extdata/app-template/combo-layout-with-progress-bar.R). The progress bar hides the app while
+the new plots or other elements are computed.
+
+<figure>
+<img src="screenshots/combo-layout-progress-bar.png" title="Progress bar"
+alt="progress-bar" />
+</figure>
+
 ## Login page
 
 This R package provides a login page that you can connect to a database or another system. The
