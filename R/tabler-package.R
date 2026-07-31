@@ -32,18 +32,18 @@
 add_deps <- function(layout = "default") {
   is_rtl <- layout == "rtl"
   css_file <- if (!is_rtl) "css/tabler.min.css" else "css/tabler.rtl.min.css"
+  css_themes_file <- if (!is_rtl) "css/tabler-themes.min.css" else "css/tabler-themes.rtl.min.css"
 
   tagList(
     tags$link(rel = "stylesheet", href = paste0("/tabler-1.4.0/", css_file)),
+    tags$link(rel = "stylesheet", href = paste0("/tabler-1.4.0/", css_themes_file)),
     tags$link(rel = "stylesheet", href = "/tabler-icons-3.55.0/tabler-icons.min.css"),
     tags$link(rel = "stylesheet", href = "/tabler-1.4.0/css/tabler-socials.min.css"),
-    tags$link(rel = "stylesheet", href = "/tabler-1.4.0/css/tabler-themes.min.css"),
     tags$link(rel = "stylesheet", href = "/css/tabler-progress.css"),
     tags$link(rel = "stylesheet", href = "/css/tabler-range2.css"),
     tags$link(rel = "stylesheet", href = "/css/tabler-select-search.css"),
     tags$link(rel = "stylesheet", href = "/css/tabler-multi-select.css"),
     tags$link(rel = "stylesheet", href = "/css/tabler-datepicker-inline.css"),
-    tags$link(rel = "stylesheet", href = "/css/tabler-navbar-sticky-fix.css"),
     tags$script(src = "/tabler-1.4.0/js/tabler.min.js"),
     tags$script(src = "/tabler-1.4.0/js/tabler-theme.min.js"),
     tags$script(src = "/js/tabler-tabs.js"),
