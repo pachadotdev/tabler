@@ -43,6 +43,7 @@ add_deps <- function(layout = "default") {
     tags$link(rel = "stylesheet", href = "/css/tabler-select-search.css"),
     tags$link(rel = "stylesheet", href = "/css/tabler-multi-select.css"),
     tags$link(rel = "stylesheet", href = "/css/tabler-datepicker-inline.css"),
+    tags$link(rel = "stylesheet", href = "/css/tabler-navbar-sticky-fix.css"),
     tags$script(src = "/tabler-1.4.0/js/tabler.min.js"),
     tags$script(src = "/tabler-1.4.0/js/tabler-theme.min.js"),
     tags$script(src = "/js/tabler-tabs.js"),
