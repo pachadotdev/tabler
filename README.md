@@ -85,6 +85,11 @@ alt="radio-checkboxes" />
 alt="text-numeric-buttons" />
 </figure>
 
+<figure>
+<img src="screenshots/flags-social.png" title="Flags & social"
+alt="flags-social" />
+</figure>
+
 ### Modular R package app
 
 Create an R package with modular components:

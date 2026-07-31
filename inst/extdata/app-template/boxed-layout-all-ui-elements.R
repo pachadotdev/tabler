@@ -21,7 +21,8 @@ top_nav <- navbar_menu(
   menu_item("Sliders", tab_name = "sliders", icon = "adjustments"),
   menu_item("Dates", tab_name = "dates", icon = "calendar-event"),
   menu_item("Radio & checkboxes", tab_name = "choices", icon = "checkbox"),
-  menu_item("Text, numeric & buttons", tab_name = "misc", icon = "forms")
+  menu_item("Text, numeric & buttons", tab_name = "misc", icon = "forms"),
+  menu_item("Flags & icons", tab_name = "decor", icon = "library-photo")
 )
 
 # UI --
@@ -278,6 +279,63 @@ ui <- page(
                     button("Download menu", icon = "download", color = "green"),
                     button("Visit site", href = "#", color = "cyan")
                   )
+                )
+              )
+            )
+          )
+        )
+      ),
+      tab_item(
+        "decor",
+        header(title = "Flags & icons", subtitle = "Country flags and social/brand icons"),
+        div(
+          class = "page-body",
+          div(
+            class = "container-xl",
+            row(
+              col6(
+                card(
+                  title = "social() - sign-in buttons",
+                  div(
+                    class = "d-flex flex-wrap gap-2",
+                    button("Sign in with Google", icon = social("google"), color = "dark"),
+                    button("Sign in with GitHub", icon = social("github"), outline = TRUE, color = "secondary")
+                  )
+                )
+              ),
+              col6(
+                card(
+                  title = "social() - sizes & gray variant",
+                  div(
+                    class = "d-flex flex-wrap align-items-center gap-3",
+                    social("discord", size = "lg"),
+                    social("facebook", size = "lg", gray = TRUE),
+                    social("instagram", size = "lg"),
+                    social("linkedin", size = "lg", gray = TRUE),
+                    social("x", size = "lg")
+                  )
+                )
+              )
+            ),
+            row(
+              col6(
+                card(
+                  title = "flag() - country flags",
+                  div(
+                    class = "d-flex flex-wrap align-items-center gap-2",
+                    flag("us"), flag("gb"), flag("de"), flag("fr"), flag("jp"), flag("br")
+                  )
+                )
+              ),
+              col6(
+                card(
+                  title = "Combining icon(), social() and flag()",
+                  p(
+                    class = "mb-2",
+                    "Star this project on GitHub ", social("github", size = "xs"),
+                    ", made in the UK ", flag("gb", size = "xs", class = "align-middle"), "."
+                  ),
+                  button("Star on GitHub", icon = social("github"), href = "#", color = "dark")
                 )
               )
             )

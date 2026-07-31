@@ -392,6 +392,50 @@ icon <- function(name, library = "tabler", class = NULL) {
   )
 }
 
+#' @title Create a Country Flag
+#' @description Display a country flag using Tabler's flag sprites
+#'   (\code{flag flag-country-*} classes).
+#' @param country Two-letter (or special, e.g. "eu", "gb-sct") country code
+#' @param size Flag size: "xxs", "xs", "sm", "md", "lg", "xl", "2xl" (default size if `NULL`)
+#' @param class Additional CSS classes
+#' @rdname tabler-components
+#' @return An HTML tag representing the flag
+#' @export
+flag <- function(country, size = NULL, class = NULL) {
+  size_class <- if (!is.null(size) && nzchar(size)) paste0("flag-", size) else NULL
+
+  parts <- c("flag", size_class, paste0("flag-country-", country), class)
+  parts <- Filter(function(x) nzchar(as.character(x)), parts)
+  class_attr <- paste(parts, collapse = " ")
+
+  span(
+    class = class_attr
+  )
+}
+
+#' @title Create a Social/Brand Icon
+#' @description Display a brand/social icon (e.g. Apple, Google, GitHub) using
+#'   Tabler's social sprites (\code{social social-app-*} classes).
+#' @param name Social/brand name, e.g. "apple", "google", "github"
+#' @param size Icon size: "xxs", "xs", "sm", "md", "lg", "xl", "2xl" (default size if `NULL`)
+#' @param gray Use the muted gray variant of the icon
+#' @param class Additional CSS classes
+#' @rdname tabler-components
+#' @return An HTML tag representing the social icon
+#' @export
+social <- function(name, size = NULL, gray = FALSE, class = NULL) {
+  size_class <- if (!is.null(size) && nzchar(size)) paste0("social-", size) else NULL
+  gray_class <- if (isTRUE(gray)) "social-gray" else NULL
+
+  parts <- c("social", size_class, paste0("social-app-", name), gray_class, class)
+  parts <- Filter(function(x) nzchar(as.character(x)), parts)
+  class_attr <- paste(parts, collapse = " ")
+
+  span(
+    class = class_attr
+  )
+}
+
 #' @title Create an Alert/Notification
 #' @description Display important messages to users
 #' @param ... Alert content

@@ -10,6 +10,8 @@
 \alias{body}
 \alias{value_box}
 \alias{icon}
+\alias{flag}
+\alias{social}
 \alias{alert}
 \alias{button}
 \title{Bootstrap Grid Row}
@@ -23,6 +25,8 @@ header(title, subtitle = NULL, header_actions = NULL)
 body(..., title = NULL, subtitle = NULL, header_actions = NULL)
 value_box(value, title, icon = NULL, color = "primary", width = 3)
 icon(name, library = "tabler", class = NULL)
+flag(country, size = NULL, class = NULL)
+social(name, size = NULL, gray = FALSE, class = NULL)
 alert(..., type = "info", dismissible = FALSE, title = NULL)
 button(
   label,
@@ -77,6 +81,12 @@ button(
 
 \item{library}{Icon library: "tabler", "bootstrap", "feather"}
 
+\item{country}{Two-letter (or special, e.g. "eu", "gb-sct") country code}
+
+\item{size}{Flag size: "xxs", "xs", "sm", "md", "lg", "xl", "2xl" (default size if `NULL`)}
+
+\item{gray}{Use the muted gray variant of the icon}
+
 \item{type}{Alert type: "info", "success", "warning", "danger"}
 
 \item{dismissible}{Whether alert can be dismissed}
@@ -86,8 +96,6 @@ button(
 \item{href}{URL to link to (creates an anchor tag instead of button)}
 
 \item{onclick}{JavaScript to execute on click}
-
-\item{size}{Button size: "sm", "md", "lg"}
 
 \item{outline}{Use outline style}
 
