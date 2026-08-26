@@ -118,11 +118,22 @@ addResourcePath <- function(prefix, directoryPath) {
 #'   WebSocket connection are all withheld from a browser until it presents a
 #'   valid signed session cookie (set after a successful login). See
 #'   \code{\link{logout}} for ending a session from the server. Default
-#'   \code{NULL} disables the login gate entirely (unchanged behavior).
+#'   \code{NULL} disables the login gate entirely. Cannot be combined with
+#'   \code{githubAuth}.
+#' @param githubAuth Optional list enabling GitHub OAuth login instead of the
+#'   username/password form. Must contain \code{clientId} and
+#'   \code{clientSecret} from a GitHub OAuth App (register one at
+#'   \url{https://github.com/settings/developers}, setting the callback URL to
+#'   \code{http://<host>:<port>/github/callback}). Optionally include
+#'   \code{org} (restrict to members of that GitHub organisation — requires
+#'   \code{read:org} token scope) and/or \code{allowedUsers} (character vector
+#'   of permitted GitHub usernames). Cannot be combined with
+#'   \code{checkCredentials}.
 #' @param sessionSecret Secret key used to sign the session cookie. Defaults to
 #'   the \code{TABLER_SESSION_SECRET} environment variable; if unset, a random
 #'   secret is generated for the run (with a warning) and all sessions are
-#'   invalidated on restart. Only used when \code{checkCredentials} is supplied.
+#'   invalidated on restart. Used when either \code{checkCredentials} or
+#'   \code{githubAuth} is supplied.
 #' @param sessionExpires How long, in seconds, a login should persist
 #'   (default 7 days). Use \code{0} for a browser-session-only cookie that
 #'   requires logging in again every time the browser is fully closed.
@@ -150,6 +161,7 @@ addResourcePath <- function(prefix, directoryPath) {
 tablerApp <- function(ui, server, host = "127.0.0.1", port = 3000L,
                       launch.browser = interactive(),
                       checkCredentials = NULL,
+                      githubAuth = NULL,
                       sessionSecret = Sys.getenv("TABLER_SESSION_SECRET", ""),
                       sessionExpires = 604800L,
                       loginTitle = "Sign in") {
@@ -159,8 +171,29 @@ tablerApp <- function(ui, server, host = "127.0.0.1", port = 3000L,
   .domain$flushing <- FALSE
   .domain$context_stack <- list()
 
-  # Login gate secret - only resolved (and only warns) when actually used ----
-  login_secret <- if (!is.null(checkCredentials)) .resolve_login_secret(sessionSecret) else NULL
+  if (!is.null(checkCredentials) && !is.null(githubAuth)) {
+    stop(
+      "tablerApp: use either `checkCredentials` or `githubAuth`, not both",
+      call. = FALSE
+    )
+  }
+  if (!is.null(githubAuth) && !is.list(githubAuth)) {
+    stop("tablerApp: `githubAuth` must be a list (see ?tablerApp)", call. = FALSE)
+  }
+
+  # Login gate secret — resolved (and warns if random) only when actually used
+  login_secret <- if (!is.null(checkCredentials) || !is.null(githubAuth)) {
+    .resolve_login_secret(sessionSecret)
+  } else {
+    NULL
+  }
+
+  # Redirect URI for GitHub OAuth callback
+  github_redirect_uri <- if (!is.null(githubAuth)) {
+    sprintf("http://%s:%d/github/callback", host, as.integer(port))
+  } else {
+    NULL
+  }
 
   # Build the static page HTML once ----
   page_html <- paste0("<!DOCTYPE html><html>", render_html(ui), "</html>")
@@ -325,6 +358,150 @@ tablerApp <- function(ui, server, host = "127.0.0.1", port = 3000L,
       if (path == "/" || path == "" || path == "/index.html" ||
         grepl("^/(widgets|downloads|plots)/", path)) {
         user <- .verify_session_token(.get_cookie(req, .tabler_session_cookie), login_secret)
+        if (is.null(user)) {
+          return(list(
+            status = 302L,
+            headers = list("Location" = "/login"),
+            body = ""
+          ))
+        }
+      }
+    }
+
+    # ---- GitHub OAuth gate ------------------------------------------
+    if (!is.null(githubAuth)) {
+      if (path == "/login") {
+        return(list(
+          status = 200L,
+          headers = list("Content-Type" = "text/html; charset=utf-8"),
+          body = .render_github_login_page(
+            loginTitle,
+            error = grepl("(^|&)error=1(&|$)", req$QUERY_STRING %||% "")
+          )
+        ))
+      }
+
+      if (path == "/logout") {
+        return(list(
+          status = 302L,
+          headers = list(
+            "Location" = "/login",
+            "Set-Cookie" = .clear_cookie_header(.tabler_session_cookie)
+          ),
+          body = ""
+        ))
+      }
+
+      if (path == "/github/login") {
+        if (!nzchar(githubAuth$clientId %||% "") || !nzchar(githubAuth$clientSecret %||% "")) {
+          return(list(
+            status = 302L,
+            headers = list("Location" = "/login?error=1"),
+            body = ""
+          ))
+        }
+        state <- .github_new_state()
+        scopes <- if (!is.null(githubAuth$org)) c("read:user", "read:org") else "read:user"
+        return(list(
+          status = 302L,
+          headers = list(
+            "Location" = .github_auth_url(
+              githubAuth$clientId, github_redirect_uri, state, scopes
+            )
+          ),
+          body = ""
+        ))
+      }
+
+      if (path == "/github/callback") {
+        params <- .parse_query_string(req$QUERY_STRING %||% "")
+        code <- params$code %||% ""
+        state <- params$state %||% ""
+
+        message("[tabler/github] callback — code=", nzchar(code), " state=", nzchar(state))
+
+        state_ok <- nzchar(code) && nzchar(state) && .github_consume_state(state)
+        if (!state_ok) {
+          message("[tabler/github] FAIL: code empty=", !nzchar(code),
+            " | state empty=", !nzchar(state),
+            " | state unknown=", !exists(state, envir = .github_states, inherits = FALSE))
+          return(list(
+            status = 302L,
+            headers = list("Location" = "/login?error=1"),
+            body = ""
+          ))
+        }
+
+        token <- .github_exchange_code(
+          githubAuth$clientId, githubAuth$clientSecret, code, github_redirect_uri
+        )
+        message("[tabler/github] token exchange: ", if (is.null(token)) "FAILED" else "ok")
+        if (is.null(token)) {
+          return(list(
+            status = 302L,
+            headers = list("Location" = "/login?error=1"),
+            body = ""
+          ))
+        }
+
+        gh_user <- .github_get_user(token)
+        message("[tabler/github] user: ", gh_user %||% "NULL")
+        if (is.null(gh_user) || !nzchar(gh_user)) {
+          return(list(
+            status = 302L,
+            headers = list("Location" = "/login?error=1"),
+            body = ""
+          ))
+        }
+
+        if (!is.null(githubAuth$org)) {
+          is_member <- tryCatch(
+            .github_check_org(token, githubAuth$org, gh_user),
+            error = function(e) {
+              message("[tabler/github] org check error: ", conditionMessage(e))
+              FALSE
+            }
+          )
+          message("[tabler/github] org '", githubAuth$org, "' member: ", is_member)
+          if (!isTRUE(is_member)) {
+            return(list(
+              status = 302L,
+              headers = list("Location" = "/login?error=1"),
+              body = ""
+            ))
+          }
+        }
+
+        if (!is.null(githubAuth$allowedUsers)) {
+          if (!gh_user %in% githubAuth$allowedUsers) {
+            return(list(
+              status = 302L,
+              headers = list("Location" = "/login?error=1"),
+              body = ""
+            ))
+          }
+        }
+
+        expires_at <- as.numeric(Sys.time()) + max(sessionExpires, 1L)
+        sess_token <- .sign_session_token(gh_user, login_secret, expires_at)
+        return(list(
+          status = 302L,
+          headers = list(
+            "Location" = "/",
+            "Set-Cookie" = .set_cookie_header(
+              .tabler_session_cookie, sess_token,
+              max_age = if (sessionExpires > 0) sessionExpires else NULL
+            )
+          ),
+          body = ""
+        ))
+      }
+
+      if (path == "/" || path == "" || path == "/index.html" ||
+        grepl("^/(widgets|downloads|plots)/", path)) {
+        user <- .verify_session_token(
+          .get_cookie(req, .tabler_session_cookie), login_secret
+        )
         if (is.null(user)) {
           return(list(
             status = 302L,
@@ -512,7 +689,7 @@ tablerApp <- function(ui, server, host = "127.0.0.1", port = 3000L,
 
   # WebSocket handler ----
   ws_handler <- function(ws) {
-    if (!is.null(checkCredentials)) {
+    if (!is.null(checkCredentials) || !is.null(githubAuth)) {
       user <- .verify_session_token(
         .get_cookie(ws$request, .tabler_session_cookie), login_secret
       )

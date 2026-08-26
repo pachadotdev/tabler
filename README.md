@@ -44,49 +44,49 @@ can be adjusted from the code or the theme setting icon that can be hidden. See 
 [here](https://github.com/pachadotdev/tabler/blob/main/inst/extdata/app-template/combo-layout.R).
 
 <figure>
-<img src="screenshots/combo-layout-light.png" title="Light theme + teal colour + zinc base"
+<img style = "width:50%" src="screenshots/combo-layout-light.png" title="Light theme + teal colour + zinc base"
 alt="layout-geyser" />
 </figure>
 
 <figure>
-<img src="screenshots/combo-layout-dark.png" title="Dark theme + cyan colour + slate base"
+<img style = "width:50%" src="screenshots/combo-layout-dark.png" title="Dark theme + cyan colour + slate base"
 alt="layout-geyser" />
 </figure>
 
 <figure>
-<img src="screenshots/theme-selection.png" title="Theme selection"
+<img style = "width:50%" src="screenshots/theme-selection.png" title="Theme selection"
 alt="layout-geyser" />
 </figure>
 
 I added a UI-only example to cover the different input elements and their options [here](https://github.com/pachadotdev/tabler/blob/main/inst/extdata/app-template/boxed-layout-all-ui-elements.R).
 
 <figure>
-<img src="screenshots/select.png" title="Select & Multi-Select"
+<img style = "width:50%" src="screenshots/select.png" title="Select & Multi-Select"
 alt="select" />
 </figure>
 
 <figure>
-<img src="screenshots/sliders.png" title="Sliders"
+<img style = "width:50%" src="screenshots/sliders.png" title="Sliders"
 alt="sliders" />
 </figure>
 
 <figure>
-<img src="screenshots/dates.png" title="Dates"
+<img style = "width:50%" src="screenshots/dates.png" title="Dates"
 alt="dates" />
 </figure>
 
 <figure>
-<img src="screenshots/radio-checkboxes.png" title="Radio & Checkboxes"
+<img style = "width:50%" src="screenshots/radio-checkboxes.png" title="Radio & Checkboxes"
 alt="radio-checkboxes" />
 </figure>
 
 <figure>
-<img src="screenshots/text-numeric-buttons.png" title="Text, Numeric & buttons"
+<img style = "width:50%" src="screenshots/text-numeric-buttons.png" title="Text, Numeric & buttons"
 alt="text-numeric-buttons" />
 </figure>
 
 <figure>
-<img src="screenshots/flags-social.png" title="Flags & social"
+<img style = "width:50%" src="screenshots/flags-social.png" title="Flags & social"
 alt="flags-social" />
 </figure>
 
@@ -110,28 +110,36 @@ I added an example with a progress bar [here](https://github.com/pachadotdev/tab
 the new plots or other elements are computed.
 
 <figure>
-<img src="screenshots/combo-layout-progress-bar.png" title="Progress bar"
+<img style = "width:50%" src="screenshots/combo-layout-progress-bar.png" title="Progress bar"
 alt="progress-bar" />
 </figure>
 
 ## Login page
 
 This R package provides a login page that you can connect to a database or another system. The
-example [here](https://github.com/pachadotdev/tabler/blob/main/inst/extdata/app-template/combo-layout-with-login.R) shows the
-dashboard after correctly typing the user "SpaceMariner" and password "IDDQD". There is an example using RSQLite
-[here](https://github.com/pachadotdev/tabler/blob/main/inst/extdata/app-template/combo-layout-with-login-sqlite.R).
-
-I was thinking about adding a Google/Outlook/GitHub account login but I have no idea how to. If
-you know how and would like to contribute, please comment [here](https://github.com/pachadotdev/tabler/issues/2).
+examples [here](https://github.com/pachadotdev/tabler/blob/main/inst/extdata/app-template/combo-layout-with-login.R) and
+[here](https://github.com/pachadotdev/tabler/blob/main/inst/extdata/app-template/combo-layout-with-login-github.R) show the
+dashboard after correctly typing the user "SpaceMariner" and password "IDDQD" or login with GitHub. There is an example using
+RSQLite [here](https://github.com/pachadotdev/tabler/blob/main/inst/extdata/app-template/combo-layout-with-login-sqlite.R).
 
 <figure>
-<img src="screenshots/combo-layout-sign-in.png" title="Sign in"
+<img style = "width:50%" src="screenshots/combo-layout-sign-in.png" title="Sign in"
 alt="sign-in" />
 </figure>
 
 <figure>
-<img src="screenshots/combo-layout-sign-out.png" title="Dashboard with sing out button"
+<img style = "width:50%" src="screenshots/combo-layout-sign-out.png" title="Dashboard with sing out button"
 alt="sign-out" />
+</figure>
+
+<figure>
+<img style = "width:50%" src="screenshots/combo-layout-sign-in-github.png" title="Sign in"
+alt="sign-in" />
+</figure>
+
+<figure>
+<img style = "width:50%" src="screenshots/combo-layout-sign-in-github2.png" title="Sign in"
+alt="sign-in" />
 </figure>
 
 ## Does it run Doom?
@@ -140,7 +148,7 @@ Yes. I tested the WebSocket compiling and running the Doom WASM version. See the
 [here](https://github.com/pachadotdev/tabler/blob/main/dev/doom.R).
 
 <figure>
-<img src="screenshots/doom.png" title="Doom"
+<img style = "width:50%" src="screenshots/doom.png" title="Doom"
 alt="doom" />
 </figure>
 

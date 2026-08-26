@@ -1,3 +1,7 @@
+# tabler (development version)
+
+* `tablerApp()` gains a `githubAuth` argument for GitHub OAuth login (server-side Authorization Code flow with CSRF state-token protection). Pass a list with `clientId`, `clientSecret`, and optionally `org` (restrict to GitHub org members) or `allowedUsers` (restrict to named GitHub users). Cannot be combined with `checkCredentials`.
+
 # tabler 0.03
 
 * Adds themes, colours, templated inputs, calendars and an almost comprehensive
