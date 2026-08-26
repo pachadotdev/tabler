@@ -1,4 +1,4 @@
-# tablerApp — standalone httpuv-based application runner.
+# tablerApp - standalone httpuv-based application runner.
 # Uses httpuv for HTTP + WebSocket and jsonlite for
 # the message protocol.
 
@@ -51,7 +51,7 @@ addResourcePath <- function(prefix, directoryPath) {
 }
 
 # ---------------------------------------------------------------------------
-# Input proxy — a reactiveValues() store; $.ReactiveValues handles reactive
+# Input proxy - a reactiveValues() store; $.ReactiveValues handles reactive
 # reads so no custom S3 method for $ is needed here.
 # ---------------------------------------------------------------------------
 
@@ -96,7 +96,7 @@ addResourcePath <- function(prefix, directoryPath) {
 }
 
 # ---------------------------------------------------------------------------
-# Output proxy — a plain environment; R's built-in env $<- stores render objects
+# Output proxy - a plain environment; R's built-in env $<- stores render objects
 # ---------------------------------------------------------------------------
 
 # ---------------------------------------------------------------------------
@@ -107,7 +107,7 @@ addResourcePath <- function(prefix, directoryPath) {
 #' @description Launches a self-contained web application using \pkg{httpuv} for
 #'   HTTP and WebSocket transport.
 #'
-#' @param ui        The UI definition — typically a call to \code{page()}.
+#' @param ui        The UI definition - typically a call to \code{page()}.
 #' @param server    A function with signature \code{function(input, output, session)}.
 #' @param host      Host to listen on (default \code{"127.0.0.1"}).
 #' @param port      Port number (default \code{3000L}).
@@ -125,7 +125,7 @@ addResourcePath <- function(prefix, directoryPath) {
 #'   \code{clientSecret} from a GitHub OAuth App (register one at
 #'   \url{https://github.com/settings/developers}, setting the callback URL to
 #'   \code{http://<host>:<port>/github/callback}). Optionally include
-#'   \code{org} (restrict to members of that GitHub organisation — requires
+#'   \code{org} (restrict to members of that GitHub organisation - requires
 #'   \code{read:org} token scope) and/or \code{allowedUsers} (character vector
 #'   of permitted GitHub usernames). Cannot be combined with
 #'   \code{checkCredentials}.
@@ -181,7 +181,7 @@ tablerApp <- function(ui, server, host = "127.0.0.1", port = 3000L,
     stop("tablerApp: `githubAuth` must be a list (see ?tablerApp)", call. = FALSE)
   }
 
-  # Login gate secret — resolved (and warns if random) only when actually used
+  # Login gate secret - resolved (and warns if random) only when actually used
   login_secret <- if (!is.null(checkCredentials) || !is.null(githubAuth)) {
     .resolve_login_secret(sessionSecret)
   } else {
@@ -209,7 +209,7 @@ tablerApp <- function(ui, server, host = "127.0.0.1", port = 3000L,
   input_proxy <- reactiveValues() # $.ReactiveValues gives reactive reads
   output_proxy <- new.env(parent = emptyenv()) # plain env; $<- is standard env assign
 
-  # URL sync config — NULL means disabled; character() means enabled (empty exclude) ----
+  # URL sync config - NULL means disabled; character() means enabled (empty exclude) ----
   url_sync_exclude <- NULL
 
   # Session object (minimal) ----
@@ -231,7 +231,7 @@ tablerApp <- function(ui, server, host = "127.0.0.1", port = 3000L,
     },
     onSessionEnded = function(fn) invisible(NULL),
     close = function() invisible(NULL),
-    # Used by syncUrl() — stores the exclude list and enables URL sync
+    # Used by syncUrl() - stores the exclude list and enables URL sync
     .setUrlSync = function(exclude) {
       url_sync_exclude <<- as.character(exclude)
     }
@@ -263,7 +263,7 @@ tablerApp <- function(ui, server, host = "127.0.0.1", port = 3000L,
         )
       } else if (identical(type, "plot_src") && is.character(val)) {
         # Serve the SVG from a dedicated HTTP endpoint so <img> gets a real
-        # URL — no encoding needed and right-click "Save image as" works.
+        # URL - no encoding needed and right-click "Save image as" works.
         assign(output_id, val, envir = plot_store)
         html <- paste0(
           '<img src="/plots/', output_id, "?t=", as.integer(Sys.time()), '"',
@@ -295,7 +295,7 @@ tablerApp <- function(ui, server, host = "127.0.0.1", port = 3000L,
     .observe_output(render_obj, make_send_fn(nm))
   }))
 
-  # Initial flush — populates output_cache before any browser connects ----
+  # Initial flush - populates output_cache before any browser connects ----
   .flush_domain()
 
   # HTTP handler ----
@@ -418,7 +418,7 @@ tablerApp <- function(ui, server, host = "127.0.0.1", port = 3000L,
         code <- params$code %||% ""
         state <- params$state %||% ""
 
-        message("[tabler/github] callback — code=", nzchar(code), " state=", nzchar(state))
+        message("[tabler/github] callback - code=", nzchar(code), " state=", nzchar(state))
 
         state_ok <- nzchar(code) && nzchar(state) && .github_consume_state(state)
         if (!state_ok) {
@@ -521,7 +521,7 @@ tablerApp <- function(ui, server, host = "127.0.0.1", port = 3000L,
       ))
     }
 
-    # Widget HTML endpoint — serve self-contained widget pages
+    # Widget HTML endpoint - serve self-contained widget pages
     if (grepl("^/widgets/", path)) {
       wid <- sub("^/widgets/", "", path) # regex mode so ^ anchors correctly
       # Reject any path tricks
@@ -546,7 +546,7 @@ tablerApp <- function(ui, server, host = "127.0.0.1", port = 3000L,
       ))
     }
 
-    # Download endpoint — evaluates a downloadHandler() on demand
+    # Download endpoint - evaluates a downloadHandler() on demand
     if (grepl("^/downloads/", path)) {
       did <- sub("^/downloads/([^?]*).*$", "\\1", path)
       if (grepl("..", did, fixed = TRUE) || grepl("/", did, fixed = TRUE)) {
@@ -597,7 +597,7 @@ tablerApp <- function(ui, server, host = "127.0.0.1", port = 3000L,
       return(result)
     }
 
-    # Plot SVG endpoint — serves raw SVG so <img> can use a plain URL
+    # Plot SVG endpoint - serves raw SVG so <img> can use a plain URL
     if (grepl("^/plots/", path)) {
       pid <- sub("^/plots/([^?]*).*$", "\\1", path)
       if (grepl("..", pid, fixed = TRUE) || grepl("/", pid, fixed = TRUE)) {
@@ -624,7 +624,7 @@ tablerApp <- function(ui, server, host = "127.0.0.1", port = 3000L,
       ))
     }
 
-    # Static assets — resolve via system.file() for path-traversal safety
+    # Static assets - resolve via system.file() for path-traversal safety
     rel <- sub("^/+", "", path)
 
     # Block anything that looks dangerous before hitting system.file

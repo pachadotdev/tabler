@@ -26,8 +26,8 @@ Suggests:
     DT,
     htmlwidgets,
     tinytest
-Remotes:
-    pachadotdev/later2,
-    pachadotdev/httpserver
 Encoding: UTF-8
 LazyData: true
+Config/Needs/remotes:
+    pachadotdev/later2,
+    pachadotdev/httpserver

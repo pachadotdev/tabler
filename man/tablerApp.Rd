@@ -19,7 +19,7 @@ tablerApp(
 }
 
 \arguments{
-\item{ui}{The UI definition — typically a call to \code{page()}.}
+\item{ui}{The UI definition - typically a call to \code{page()}.}
 
 \item{server}{A function with signature \code{function(input, output, session)}.}
 
@@ -43,7 +43,7 @@ tablerApp(
   \code{clientSecret} from a GitHub OAuth App (register one at
   \url{https://github.com/settings/developers}, setting the callback URL to
   \code{http://<host>:<port>/github/callback}). Optionally include
-  \code{org} (restrict to members of that GitHub organisation — requires
+  \code{org} (restrict to members of that GitHub organisation - requires
   \code{read:org} token scope) and/or \code{allowedUsers} (character vector
   of permitted GitHub usernames). Cannot be combined with
   \code{checkCredentials}.}
