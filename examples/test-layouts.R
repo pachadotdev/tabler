@@ -143,8 +143,7 @@ ui <- page(
     ),
     # Page body content
     body(
-      column(
-        6,
+      col6(
         card(
           title = "My title",
           footer = "Footer.",
@@ -153,8 +152,7 @@ ui <- page(
           d3po_output("plot", width = "100%", height = "500px")
         )
       ),
-      column(
-        6,
+      col6(
         card(
           title = "Buttons here",
           footer = "Footer.",

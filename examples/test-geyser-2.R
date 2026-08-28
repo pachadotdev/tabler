@@ -11,15 +11,13 @@ ui <- page(
   body = list(
     header(title = "Old Faithful Geyser Data", subtitle = "Histogram"),
     body(
-      column(
-        4,
+      col4(
         card(
           title = "Controls",
           sliderInput("bins", "Number of bins:", min = 1, max = 50, value = 30)
         )
       ),
-      column(
-        8,
+      col8(
         card(
           title  = "Output",
           footer = "Eruption duration (minutes)",

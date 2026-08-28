@@ -1,9 +1,9 @@
-if (!require("d3po")) {
-  install.packages("d3po", repos = "https://pachadotdev.r-universe.dev")
+if (!require("highcharter")) {
+  install.packages("highcharter")
 }
 
 library(tabler)
-library(d3po)
+library(highcharter)
 
 svg_text <- paste(
   readLines("./examples/tabler-logo.svg", warn = FALSE),
@@ -64,7 +64,7 @@ ui <- page(
           footer = "Footer.",
           p("My text"),
           p("More text", class = "text-muted"),
-          d3po_output("plot", width = "100%", height = "500px")
+          highchartOutput("plot", width = "100%", height = "500px")
         )
       )
     )
@@ -76,27 +76,10 @@ ui <- page(
 )
 
 server <- function(input, output, session) {
-  output$plot <- render_d3po({
+  output$plot <- renderHighchart({
     set.seed(123)
 
-    sim <- data.frame(
-      x = rnorm(100),
-      y = rnorm(100),
-      letter = sample(letters[1:3], 100, replace = TRUE)
-    )
-
-    # for light theme
-    axis_color <- "#000"
-    tooltip_color <- "#fff"
-
-    # for dark theme
-    # axis_color <- "#fff"
-    # tooltip_color <- "#000"
-
-    d3po(sim) |>
-      po_scatter(daes(x = x, y = y, group = letter)) |>
-      po_labels(title = "Weight Distribution by Type") |>
-      po_theme(axis = axis_color, tooltips = tooltip_color, background = "transparent")
+    hchart(mtcars, "point", hcaes(x = disp, y = mpg, group = am))
   })
 }
 

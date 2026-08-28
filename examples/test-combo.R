@@ -70,8 +70,7 @@ ui <- page(
       div(
         class = "row",
         # Left column: controls ----
-        column(
-          4,
+        col4(
           card(
             title = "Controls",
             selectInput(
@@ -104,8 +103,7 @@ ui <- page(
         ),
         
         # Right column: outputs ----
-        column(
-          8,
+        col8(
           card(
             title = uiOutput("card_title"),
             textOutput("summary_text")
