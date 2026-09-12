@@ -65,12 +65,12 @@ ui <- page(
           4,
           card(
             title = "Controls",
-            selectInput(
+            select_input(
               "dataset", "Dataset",
               choices = c("mtcars", "iris", "airquality"),
               selected = "mtcars"
             ),
-            selectInput(
+            select_input(
               "dummy", "Dummy",
               choices = 1:3,
               selected = 3
@@ -83,19 +83,19 @@ ui <- page(
               "multiplier", "Value multiplier",
               min = 0.5, max = 5, value = 1, step = 0.5
             ),
-            textInput(
+            text_input(
               "label", "Dashboard label",
               value = "My Dashboard"
             ),
-            checkboxInput(
+            checkbox_input(
               "show_cols", "Show column names",
               value = FALSE
             ),
-            radioButtons(
+            radio_buttons(
               "stat", "Summary statistic",
               choices = c("Mean" = "mean", "Median" = "median", "SD" = "sd")
             ),
-            actionButton("refresh", "Recalculate", icon = "refresh")
+            action_button("refresh", "Recalculate", icon = "refresh")
           )
         ),
         
@@ -103,17 +103,17 @@ ui <- page(
         column(
           8,
           card(
-            title = uiOutput("card_title"),
-            textOutput("summary_text")
+            title = ui_output("card_title"),
+            text_output("summary_text")
           ),
           card(
             title = "Computed statistic",
-            textOutput("computed")
+            text_output("computed")
           ),
           card(
             title = "Data preview",
-            verbatimTextOutput("data_preview"),
-            plotOutput("data_plot")
+            verbatim_text_output("data_preview"),
+            plot_output("data_plot")
           )
         )
       )
@@ -137,13 +137,13 @@ server <- function(input, output, session) {
   })
 
   # Dynamic card title reflects the chosen label
-  output$card_title <- renderUI({
+  output$card_title <- render_ui({
     lbl <- input$label %||% "Dataset summary"
     span(lbl, class = "text-teal")
   })
 
   # One-line summary
-  output$summary_text <- renderText({
+  output$summary_text <- render_text({
     df <- current_data()
     n  <- min(input$n_rows %||% 10L, nrow(df))
     paste0(
@@ -167,7 +167,7 @@ server <- function(input, output, session) {
     round(mean(vapply(num_cols, fn, numeric(1L))) * (input$multiplier %||% 1), 3L)
   })
 
-  output$computed <- renderText({
+  output$computed <- render_text({
     val  <- stat_val()
     cols <- if (isTRUE(input$show_cols)) {
       df <- current_data()
@@ -179,28 +179,28 @@ server <- function(input, output, session) {
   })
 
   # Verbatim data preview — number of rows driven by slider
-  output$data_preview <- renderPrint({
+  output$data_preview <- render_print({
     df <- current_data()
     n  <- min(input$n_rows %||% 10L, nrow(df))
     head(df, n)
   })
 
   # Add simple histogram
-  output$data_plot <- renderPlot({
+  output$data_plot <- render_plot({
     df <- current_data()
     tinyplot(df[, 1], type = "histogram", main = paste(input$dataset, colnames(df)[1], sep = " - "))
   })
 
   # Action button: recalculate forces stat_val to reprint (it's already reactive,
-  # but this shows observeEvent wiring)
-  click_count <- reactiveVal(0L)
-  observeEvent(input$refresh, {
+  # but this shows observe_event wiring)
+  click_count <- reactive_val(0L)
+  observe_event(input$refresh, {
     click_count(click_count() + 1L)
     message("Recalculate clicked (", click_count(), " times)")
   })
 
   # URL sync — action buttons are always excluded automatically
-  syncUrl(session, exclude = c("label", "dummy"))
+  sync_url(session, exclude = c("label", "dummy"))
 }
 
-tablerApp(ui, server)
+tabler_app(ui, server)

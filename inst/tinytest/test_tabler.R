@@ -105,7 +105,7 @@ p <- page(title = "X", layout = "boxed", theme = "dark", color = "blue",
            show_theme_button = FALSE)
 expect_true(grepl("layout-boxed", as.character(p)))
 
-# page() returns head + body tagList
+# page() returns head + body tag_list
 ui <- page(title = "Combo Dashboard", layout = "combo", body = body("Welcome to Tabler!"))
 expect_inherits(ui, "tabler.tag.list")
 expect_inherits(ui[[1]], "tabler.tag")

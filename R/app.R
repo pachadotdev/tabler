@@ -1,4 +1,4 @@
-# tablerApp - standalone httpuv-based application runner.
+# tabler_app - standalone httpuv-based application runner.
 # Uses httpuv for HTTP + WebSocket and jsonlite for
 # the message protocol.
 
@@ -36,14 +36,14 @@
 
 #' @title Register a Directory of Static Resources
 #' @description Serves files under \code{directoryPath} at URLs beginning
-#'   with \code{/prefix/}, mirroring \code{shiny::addResourcePath()}. Use this
+#'   with \code{/prefix/}, mirroring \code{shiny::add_resource_path()}. Use this
 #'   to serve an app's own CSS/JS/image assets (e.g. from \code{inst/app/www})
 #'   without depending on \pkg{shiny} or \pkg{golem}.
 #' @param prefix The URL prefix (e.g. \code{"www"} serves files at \code{/www/...}).
 #' @param directoryPath Absolute path to the directory to serve.
 #' @return Invisibly, \code{NULL}.
 #' @export
-addResourcePath <- function(prefix, directoryPath) {
+add_resource_path <- function(prefix, directoryPath) {
   prefix <- sub("^/+", "", prefix)
   prefix <- sub("/+$", "", prefix)
   assign(prefix, normalizePath(directoryPath, mustWork = TRUE), envir = .resource_paths)
@@ -51,7 +51,7 @@ addResourcePath <- function(prefix, directoryPath) {
 }
 
 # ---------------------------------------------------------------------------
-# Input proxy - a reactiveValues() store; $.ReactiveValues handles reactive
+# Input proxy - a reactive_values() store; $.ReactiveValues handles reactive
 # reads so no custom S3 method for $ is needed here.
 # ---------------------------------------------------------------------------
 
@@ -75,13 +75,13 @@ addResourcePath <- function(prefix, directoryPath) {
   value <- .simplify_input_value(value)
   # Skip invalidation when the incoming value is unchanged. The client
   # resends every bound input's *current* value right after the WebSocket
-  # connects (sendCurrentInputs(), so a freshly injected uiOutput input
+  # connects (sendCurrentInputs(), so a freshly injected ui_output input
   # isn't stuck at NULL server-side - see tabler-reactive.js), and re-sends
   # on every reconnect. Without this check, that resend unconditionally
   # invalidates every observer/output depending on the input even though
   # nothing actually changed, which (among other things) fires
-  # observeEvent()/eventReactive() handlers gated on that input as if the
-  # user had just triggered them - e.g. a withProgress()-wrapped handler
+  # observe_event()/event_reactive() handlers gated on that input as if the
+  # user had just triggered them - e.g. a with_progress()-wrapped handler
   # would show its overlay and run its "slow" work again on every reconnect.
   unchanged <- exists(name, envir = store, inherits = FALSE) &&
     identical(get(name, envir = store, inherits = FALSE), value)
@@ -100,7 +100,7 @@ addResourcePath <- function(prefix, directoryPath) {
 # ---------------------------------------------------------------------------
 
 # ---------------------------------------------------------------------------
-# tablerApp
+# tabler_app
 # ---------------------------------------------------------------------------
 
 #' @title Run a Tabler Application
@@ -152,13 +152,13 @@ addResourcePath <- function(prefix, directoryPath) {
 #' \strong{Reactive system}
 #'
 #' Uses tabler's own dependency-tracking reactive system (see \code{\link{reactive}},
-#' \code{\link{observe}}, \code{\link{reactiveVal}}, \code{\link{observeEvent}}).
-#' Render functions (\code{renderText}, \code{renderUI}, \code{renderPrint}) are
+#' \code{\link{observe}}, \code{\link{reactive_val}}, \code{\link{observe_event}}).
+#' Render functions (\code{render_text}, \code{render_ui}, \code{render_print}) are
 #' assigned to \code{output} inside \code{server}.
 #'
 #' @return Invisibly, after the server is stopped.
 #' @export
-tablerApp <- function(ui, server, host = "127.0.0.1", port = 3000L,
+tabler_app <- function(ui, server, host = "127.0.0.1", port = 3000L,
                       launch.browser = interactive(),
                       checkCredentials = NULL,
                       githubAuth = NULL,
@@ -173,12 +173,12 @@ tablerApp <- function(ui, server, host = "127.0.0.1", port = 3000L,
 
   if (!is.null(checkCredentials) && !is.null(githubAuth)) {
     stop(
-      "tablerApp: use either `checkCredentials` or `githubAuth`, not both",
+      "tabler_app: use either `checkCredentials` or `githubAuth`, not both",
       call. = FALSE
     )
   }
   if (!is.null(githubAuth) && !is.list(githubAuth)) {
-    stop("tablerApp: `githubAuth` must be a list (see ?tablerApp)", call. = FALSE)
+    stop("tabler_app: `githubAuth` must be a list (see ?tabler_app)", call. = FALSE)
   }
 
   # Login gate secret - resolved (and warns if random) only when actually used
@@ -206,7 +206,7 @@ tablerApp <- function(ui, server, host = "127.0.0.1", port = 3000L,
   download_store <- new.env(hash = TRUE, parent = emptyenv()) # id -> tabler_render (type="download")
 
   # Input / output proxies ----
-  input_proxy <- reactiveValues() # $.ReactiveValues gives reactive reads
+  input_proxy <- reactive_values() # $.ReactiveValues gives reactive reads
   output_proxy <- new.env(parent = emptyenv()) # plain env; $<- is standard env assign
 
   # URL sync config - NULL means disabled; character() means enabled (empty exclude) ----
@@ -231,14 +231,14 @@ tablerApp <- function(ui, server, host = "127.0.0.1", port = 3000L,
     },
     onSessionEnded = function(fn) invisible(NULL),
     close = function() invisible(NULL),
-    # Used by syncUrl() - stores the exclude list and enables URL sync
+    # Used by sync_url() - stores the exclude list and enables URL sync
     .setUrlSync = function(exclude) {
       url_sync_exclude <<- as.character(exclude)
     }
   )
 
-  # Make this session discoverable via getDefaultReactiveDomain(), used as
-  # the default `session` argument of moduleServer() ----
+  # Make this session discoverable via get_default_reactive_domain(), used as
+  # the default `session` argument of module_server() ----
   .domain$current_session <- session
 
   # Call server ----
@@ -546,7 +546,7 @@ tablerApp <- function(ui, server, host = "127.0.0.1", port = 3000L,
       ))
     }
 
-    # Download endpoint - evaluates a downloadHandler() on demand
+    # Download endpoint - evaluates a download_handler() on demand
     if (grepl("^/downloads/", path)) {
       did <- sub("^/downloads/([^?]*).*$", "\\1", path)
       if (grepl("..", did, fixed = TRUE) || grepl("/", did, fixed = TRUE)) {
@@ -571,7 +571,7 @@ tablerApp <- function(ui, server, host = "127.0.0.1", port = 3000L,
           tmp <- if (nzchar(ext)) tempfile(fileext = paste0(".", ext)) else tempfile()
           on.exit(unlink(tmp), add = TRUE)
           isolate(dh$content(tmp))
-          if (!file.exists(tmp)) stop("downloadHandler's content() did not write to the given file path")
+          if (!file.exists(tmp)) stop("download_handler's content() did not write to the given file path")
           fsize <- file.info(tmp)$size
           con <- file(tmp, "rb")
           on.exit(close(con), add = TRUE)
@@ -636,7 +636,7 @@ tablerApp <- function(ui, server, host = "127.0.0.1", port = 3000L,
       ))
     }
 
-    # Registered app resource paths (see addResourcePath()) take priority
+    # Registered app resource paths (see add_resource_path()) take priority
     seg <- sub("/.*$", "", rel)
     if (exists(seg, envir = .resource_paths, inherits = FALSE)) {
       base_dir <- get(seg, envir = .resource_paths, inherits = FALSE)
@@ -714,7 +714,7 @@ tablerApp <- function(ui, server, host = "127.0.0.1", port = 3000L,
       )
     }
 
-    # Send URL sync config if syncUrl() was called in the server function
+    # Send URL sync config if sync_url() was called in the server function
     if (!is.null(url_sync_exclude)) {
       tryCatch(
         ws$send(jsonlite::toJSON(
@@ -779,7 +779,7 @@ tablerApp <- function(ui, server, host = "127.0.0.1", port = 3000L,
     repeat {
       httpserver::service(1000L) # poll for 1 s then yield
       # Run any due later2::later() callbacks (e.g. work deferred by
-      # withProgress() so the "show" message can reach the browser first)
+      # with_progress() so the "show" message can reach the browser first)
       # before flushing reactive observers that they may have scheduled. An
       # uncaught error here must not take down the whole event loop/app.
       tryCatch(

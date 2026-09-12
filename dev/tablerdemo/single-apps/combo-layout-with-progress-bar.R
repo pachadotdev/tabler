@@ -52,16 +52,16 @@ histogram_section <- function(title, subtitle, col_input_id, col_choices, col_se
           col4(
             card(
               title = "Controls",
-              selectInput(col_input_id, "Column", choices = col_choices, selected = col_selected),
+              select_input(col_input_id, "Column", choices = col_choices, selected = col_selected),
               sliderInput(bins_input_id, "Number of bins:", min = 1, max = 10, value = 5),
-              downloadButton(download_output_id, label = "Download CSV")
+              download_button(download_output_id, label = "Download CSV")
             )
           ),
           col8(
             card(
               title  = "Output",
               footer = "Histogram",
-              plotOutput(plot_output_id)
+              plot_output(plot_output_id)
             )
           )
         )
@@ -122,7 +122,7 @@ ui <- page(
 server <- function(input, output, session) {
   # Generic histogram renderer, shared across the three sections
   render_histogram <- function(data, col_reactive, bins_reactive) {
-    renderPlot({
+    render_plot({
       x    <- stats::na.omit(data[[col_reactive()]])
       bins <- seq(min(x), max(x), length.out = bins_reactive() + 1)
       x |>
@@ -139,35 +139,35 @@ server <- function(input, output, session) {
   # Fake "slow recompute" showcase: the plot doesn't read the column/bins
   # inputs directly. Instead, whenever either settles on a new value, a
   # progress overlay is shown, a 3s Sys.sleep() simulates slow work, and only
-  # then are the *committed reactiveVals below updated - which is what the
-  # plot actually depends on. withProgress() defers the sleep with
+  # then are the *committed reactive_vals below updated - which is what the
+  # plot actually depends on. with_progress() defers the sleep with
   # later2::later(delay = 0) so the "show overlay" message reaches the
-  # browser before the blocking wait starts (see ?withProgress).
-  mtcars_col_c      <- reactiveVal("mpg")
-  mtcars_bins_c     <- reactiveVal(5)
-  iris_col_c        <- reactiveVal("Sepal.Length")
-  iris_bins_c       <- reactiveVal(5)
-  airquality_col_c  <- reactiveVal("Temp")
-  airquality_bins_c <- reactiveVal(5)
+  # browser before the blocking wait starts (see ?with_progress).
+  mtcars_col_c      <- reactive_val("mpg")
+  mtcars_bins_c     <- reactive_val(5)
+  iris_col_c        <- reactive_val("Sepal.Length")
+  iris_bins_c       <- reactive_val(5)
+  airquality_col_c  <- reactive_val("Temp")
+  airquality_bins_c <- reactive_val(5)
 
-  observeEvent(list(input$mtcars_col, input$mtcars_bins), {
-    withProgress(session, "Recomputing histogram with an added time for display...", {
+  observe_event(list(input$mtcars_col, input$mtcars_bins), {
+    with_progress(session, "Recomputing histogram with an added time for display...", {
       Sys.sleep(1.5)
       mtcars_col_c(input$mtcars_col %||% "mpg")
       mtcars_bins_c(input$mtcars_bins %||% 5)
     })
   })
 
-  observeEvent(list(input$iris_col, input$iris_bins), {
-    withProgress(session, "Recomputing histogram with an added time for display...", {
+  observe_event(list(input$iris_col, input$iris_bins), {
+    with_progress(session, "Recomputing histogram with an added time for display...", {
       Sys.sleep(1.5)
       iris_col_c(input$iris_col %||% "Sepal.Length")
       iris_bins_c(input$iris_bins %||% 5)
     })
   })
 
-  observeEvent(list(input$airquality_col, input$airquality_bins), {
-    withProgress(session, "Recomputing histogram with an added time for display...", {
+  observe_event(list(input$airquality_col, input$airquality_bins), {
+    with_progress(session, "Recomputing histogram with an added time for display...", {
       Sys.sleep(1.5)
       airquality_col_c(input$airquality_col %||% "Temp")
       airquality_bins_c(input$airquality_bins %||% 5)
@@ -181,22 +181,22 @@ server <- function(input, output, session) {
   output$airquality_plot <- render_histogram(airquality, airquality_col_c, airquality_bins_c)
 
   # Download handlers — export the full underlying dataset as CSV
-  output$mtcars_download <- downloadHandler(
+  output$mtcars_download <- download_handler(
     filename = "mtcars.csv",
     content  = function(file) utils::write.csv(mtcars, file, row.names = TRUE)
   )
 
-  output$iris_download <- downloadHandler(
+  output$iris_download <- download_handler(
     filename = "iris.csv",
     content  = function(file) utils::write.csv(iris, file, row.names = FALSE)
   )
 
-  output$airquality_download <- downloadHandler(
+  output$airquality_download <- download_handler(
     filename = "airquality.csv",
     content  = function(file) utils::write.csv(airquality, file, row.names = FALSE)
   )
 
-  syncUrl(session, exclude = c("parameters", "to", "not", "show"))
+  sync_url(session, exclude = c("parameters", "to", "not", "show"))
 }
 
-tablerApp(ui, server)
+tabler_app(ui, server)

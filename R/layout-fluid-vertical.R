@@ -28,7 +28,7 @@ layout_fluid_vertical <- function(navbar, sidebar, body, footer, theme = "light"
     }
   }
 
-  tagList(
+  tag_list(
     div(
       class = "page",
       if (!is.null(side_nav)) side_nav,

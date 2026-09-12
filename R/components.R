@@ -311,7 +311,7 @@ body <- function(..., title = NULL, subtitle = NULL, header_actions = NULL) {
 
   # Return header + body or just body
   if (!is.null(header_tag)) {
-    tagList(header_tag, body_tag)
+    tag_list(header_tag, body_tag)
   } else {
     body_tag
   }

@@ -52,16 +52,16 @@ histogram_section <- function(title, subtitle, col_input_id, col_choices, col_se
           col4(
             card(
               title = "Controls",
-              selectInput(col_input_id, "Column", choices = col_choices, selected = col_selected),
+              select_input(col_input_id, "Column", choices = col_choices, selected = col_selected),
               sliderInput(bins_input_id, "Number of bins:", min = 1, max = 10, value = 5),
-              downloadButton(download_output_id, label = "Download CSV")
+              download_button(download_output_id, label = "Download CSV")
             )
           ),
           col8(
             card(
               title  = "Output",
               footer = "Histogram",
-              plotOutput(plot_output_id)
+              plot_output(plot_output_id)
             )
           )
         )
@@ -114,7 +114,7 @@ ui <- page(
   footer = footer(
     left = "Tabler",
     right = list(
-      actionButton("logout_btn", "Log out", class = "btn-outline-secondary btn-sm me-2"),
+      action_button("logout_btn", "Log out", class = "btn-outline-secondary btn-sm me-2"),
       tags$span("v1.4.0")
     )
   )
@@ -125,7 +125,7 @@ ui <- page(
 server <- function(input, output, session) {
   # Generic histogram renderer, shared across the three sections
   render_histogram <- function(data, col_reactive, bins_reactive) {
-    renderPlot({
+    render_plot({
       x    <- stats::na.omit(data[[col_reactive()]])
       bins <- seq(min(x), max(x), length.out = bins_reactive() + 1)
       x |>
@@ -157,27 +157,27 @@ server <- function(input, output, session) {
     reactive(input$airquality_bins %||% 5)
   )
 
-  observeEvent(input$logout_btn, {
+  observe_event(input$logout_btn, {
     logout(session)
   })
 
   # Download handlers — export the full underlying dataset as CSV
-  output$mtcars_download <- downloadHandler(
+  output$mtcars_download <- download_handler(
     filename = "mtcars.csv",
     content  = function(file) utils::write.csv(mtcars, file, row.names = TRUE)
   )
 
-  output$iris_download <- downloadHandler(
+  output$iris_download <- download_handler(
     filename = "iris.csv",
     content  = function(file) utils::write.csv(iris, file, row.names = FALSE)
   )
 
-  output$airquality_download <- downloadHandler(
+  output$airquality_download <- download_handler(
     filename = "airquality.csv",
     content  = function(file) utils::write.csv(airquality, file, row.names = FALSE)
   )
 
-  syncUrl(session, exclude = c("parameters", "to", "not", "show"))
+  sync_url(session, exclude = c("parameters", "to", "not", "show"))
 }
 
 # GitHub OAuth login: any member of the tradestatistics organisation is allowed in.
@@ -188,7 +188,7 @@ server <- function(input, output, session) {
 #   TABLER_SESSION_SECRET=<any-long-random-string>
 # As org owner, approve your OAuth App at:
 #   https://github.com/organizations/tradestatistics/settings/oauth_application_policy
-tablerApp(
+tabler_app(
   ui,
   server,
   githubAuth = list(

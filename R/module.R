@@ -23,20 +23,20 @@ NS <- function(namespace, id = NULL) {
 }
 
 # ---------------------------------------------------------------------------
-# moduleServer() — dependency-free equivalent of shiny::moduleServer().
+# module_server() — dependency-free equivalent of shiny::module_server().
 # ---------------------------------------------------------------------------
 
-#' @title The Currently Running tablerApp Session
-#' @description Returns the \code{session} object of the \code{tablerApp}
+#' @title The Currently Running tabler_app Session
+#' @description Returns the \code{session} object of the \code{tabler_app}
 #'   server function currently executing, or \code{NULL} if none is running.
-#'   Used as the default \code{session} argument of \code{\link{moduleServer}}.
-#' @return A \code{tablerApp} session object, or \code{NULL}.
+#'   Used as the default \code{session} argument of \code{\link{module_server}}.
+#' @return A \code{tabler_app} session object, or \code{NULL}.
 #' @export
-getDefaultReactiveDomain <- function() {
+get_default_reactive_domain <- function() {
   .domain$current_session
 }
 
-# Scoped (module) input proxy — wraps a parent reactiveValues() store so that
+# Scoped (module) input proxy — wraps a parent reactive_values() store so that
 # unprefixed names are read/written under the module's namespace.
 .mi_dollar <- function(x, name) {
   x <- unclass(x)
@@ -61,7 +61,7 @@ getDefaultReactiveDomain <- function() {
 }
 
 #' @title Create a Namespaced Module Server
-#' @description Dependency-free equivalent of \code{shiny::moduleServer()}.
+#' @description Dependency-free equivalent of \code{shiny::module_server()}.
 #'   Wraps \code{input}/\code{output} so that unprefixed names accessed
 #'   inside \code{module} are automatically namespaced with \code{id},
 #'   matching the ids produced by \code{NS(id)} in the module's UI function.
@@ -69,12 +69,12 @@ getDefaultReactiveDomain <- function() {
 #'   module's \code{*_ui} function).
 #' @param module A function with signature \code{function(input, output, session)}.
 #' @param session The parent session object. Defaults to the currently
-#'   running \code{\link{tablerApp}} session (see \code{\link{getDefaultReactiveDomain}}).
+#'   running \code{\link{tabler_app}} session (see \code{\link{get_default_reactive_domain}}).
 #' @return The return value of \code{module}, invisibly.
 #' @export
-moduleServer <- function(id, module, session = getDefaultReactiveDomain()) {
+module_server <- function(id, module, session = get_default_reactive_domain()) {
   if (is.null(session)) {
-    stop("moduleServer() must be called while a tablerApp server function is running", call. = FALSE)
+    stop("module_server() must be called while a tabler_app server function is running", call. = FALSE)
   }
   ns <- NS(id)
 
@@ -92,10 +92,10 @@ moduleServer <- function(id, module, session = getDefaultReactiveDomain()) {
   scoped_session$input <- scoped_input
   scoped_session$output <- scoped_output
 
-  # Make getDefaultReactiveDomain() (and functions defaulting to it, like
-  # show()/hide()/showProgress()) resolve to this module's scoped session
+  # Make get_default_reactive_domain() (and functions defaulting to it, like
+  # show()/hide()/show_progress()) resolve to this module's scoped session
   # for the duration of the module's own execution, mirroring shiny's
-  # withReactiveDomain() behaviour inside moduleServer().
+  # withReactiveDomain() behaviour inside module_server().
   previous_session <- .domain$current_session
   .domain$current_session <- scoped_session
   on.exit(.domain$current_session <- previous_session, add = TRUE)

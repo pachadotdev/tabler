@@ -21,20 +21,20 @@ app_server <- function(input, output, session) {
   )
 
   # Download handlers — export the full underlying dataset as CSV
-  output$mtcars_download <- downloadHandler(
+  output$mtcars_download <- download_handler(
     filename = "mtcars.csv",
     content  = function(file) utils::write.csv(mtcars, file, row.names = TRUE)
   )
 
-  output$iris_download <- downloadHandler(
+  output$iris_download <- download_handler(
     filename = "iris.csv",
     content  = function(file) utils::write.csv(iris, file, row.names = FALSE)
   )
 
-  output$airquality_download <- downloadHandler(
+  output$airquality_download <- download_handler(
     filename = "airquality.csv",
     content  = function(file) utils::write.csv(airquality, file, row.names = FALSE)
   )
 
-  syncUrl(session, exclude = c("parameters", "to", "not", "show"))
+  sync_url(session, exclude = c("parameters", "to", "not", "show"))
 }

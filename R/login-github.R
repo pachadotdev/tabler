@@ -1,4 +1,4 @@
-# GitHub OAuth helpers for tablerApp()
+# GitHub OAuth helpers for tabler_app()
 # -----------------------------------------------------------------------
 # Internal — not exported.
 # -----------------------------------------------------------------------

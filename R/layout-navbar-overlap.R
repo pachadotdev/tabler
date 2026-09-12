@@ -138,7 +138,7 @@ layout_navbar_overlap <- function(navbar, sidebar, body, footer, theme = "light"
       )
     )
   } else if (!is.null(top_nav)) {
-    header_tag <- tagAppendAttributes(
+    header_tag <- tag_append_attributes(
       top_nav,
       class = "navbar-overlap d-print-none",
       `data-bs-theme` = "dark"
@@ -160,7 +160,7 @@ layout_navbar_overlap <- function(navbar, sidebar, body, footer, theme = "light"
     })
   }
 
-  tagList(
+  tag_list(
     div(
       class = "page",
       if (!is.null(header_tag)) header_tag,

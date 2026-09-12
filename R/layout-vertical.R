@@ -23,7 +23,7 @@ layout_vertical <- function(navbar, sidebar, body, footer, theme = "light", colo
     }
   }
 
-  tagList(
+  tag_list(
     div(
       class = "page",
       if (!is.null(side_nav)) side_nav,

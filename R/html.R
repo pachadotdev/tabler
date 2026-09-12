@@ -67,7 +67,7 @@ html_escape <- function(text) {
 }
 
 #' Render a Tag Tree to an HTML String
-#' @param x A tag, tagList, HTML literal, or character vector.
+#' @param x A tag, tag_list, HTML literal, or character vector.
 #' @return A single character string of HTML.
 #' @keywords internal
 #' @noRd
@@ -126,7 +126,7 @@ render_html <- function(x) {
 #'   appended (space-separated) rather than replaced.
 #' @return The modified tag.
 #' @export
-tagAppendAttributes <- function(tag, ...) {
+tag_append_attributes <- function(tag, ...) {
   new_attribs <- list(...)
   for (nm in names(new_attribs)) {
     if (nm == "class" && !is.null(tag$attribs[["class"]])) {
@@ -142,7 +142,7 @@ tagAppendAttributes <- function(tag, ...) {
 #' @param ... Tags or other HTML content.
 #' @return A tabler.tag.list object.
 #' @export
-tagList <- function(...) {
+tag_list <- function(...) {
   structure(list(...), class = c("tabler.tag.list", "list"))
 }
 

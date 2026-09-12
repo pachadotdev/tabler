@@ -60,7 +60,7 @@
 #' @return An HTML tag.
 #' @rdname tabler-inputs
 #' @export
-selectInput <- function(inputId, label, choices, selected = NULL, searchable = TRUE, ...) {
+select_input <- function(inputId, label, choices, selected = NULL, searchable = TRUE, ...) {
   flat <- .expand_choices(choices)
   if (is.null(selected) && length(flat)) selected <- flat[[1L]]$value
   selected <- if (!is.null(selected)) as.character(selected) else NULL
@@ -149,14 +149,14 @@ selectInput <- function(inputId, label, choices, selected = NULL, searchable = T
 #' @param choices Named or unnamed character vector of choices. A top-level
 #'   element that is itself a vector of length > 1 is rendered as an
 #'   \code{<optgroup>} (its name becomes the group label), matching Shiny's
-#'   grouped-choices convention (see \code{\link{selectInput}}).
+#'   grouped-choices convention (see \code{\link{select_input}}).
 #' @param selected Initially-selected values (character vector).
 #' @param ... Additional HTML attributes passed to the underlying
 #'   \code{<select>} element.
 #' @return An HTML tag.
 #' @rdname tabler-inputs
 #' @export
-selectMultipleInput <- function(inputId, label, choices, selected = NULL, ...) {
+select_multiple_input <- function(inputId, label, choices, selected = NULL, ...) {
   flat <- .expand_choices(choices)
   selected <- if (!is.null(selected)) as.character(selected) else character(0)
 
@@ -332,14 +332,14 @@ sliderInput <- function(inputId, label, min, max, value, step = 1,
     if (is_range) paste(value, collapse = " - ") else value
   )
 
-  .input_wrap(inputId, tagList(label, value_display), control)
+  .input_wrap(inputId, tag_list(label, value_display), control)
 }
 
 # Internal: send an "update this input" message to the browser, respecting
-# the current module namespace (see moduleServer()/session$ns()).
+# the current module namespace (see module_server()/session$ns()).
 .updateInputMessage <- function(session, inputId, params) {
   if (!is.list(session) || !is.function(session[["sendCustomMessage"]])) {
-    warning("update*Input() requires a tablerApp session object - ignoring", call. = FALSE)
+    warning("update*Input() requires a tabler_app session object - ignoring", call. = FALSE)
     return(invisible(NULL))
   }
   id <- inputId
@@ -351,7 +351,7 @@ sliderInput <- function(inputId, label, min, max, value, step = 1,
 
 # Internal: normalize choices (named/unnamed vector or list, optionally
 # grouped) into a flat list of list(value=, label=, group=) pairs for the
-# "tabler-updateInput" browser message, reusing selectInput()'s own choice
+# "tabler-updateInput" browser message, reusing select_input()'s own choice
 # expansion so both stay in sync.
 .normalize_choices_for_update <- function(choices) {
   lapply(.expand_choices(choices), function(it) {
@@ -365,8 +365,8 @@ sliderInput <- function(inputId, label, min, max, value, step = 1,
 
 #' @title Update a Select Input
 #' @description Change the choices and/or selected value of a
-#'   \code{\link{selectInput}} already displayed in the browser, without a
-#'   full page reload, similar to \code{shiny::updateSelectInput()}.
+#'   \code{\link{select_input}} already displayed in the browser, without a
+#'   full page reload, similar to \code{shiny::update_select_input()}.
 #' @param session  The session object.
 #' @param inputId  The id of the input to update.
 #' @param label    Ignored (kept for signature compatibility with Shiny).
@@ -374,11 +374,11 @@ sliderInput <- function(inputId, label, min, max, value, step = 1,
 #'   \code{NULL} (default), the existing choices are left unchanged.
 #' @param selected New selected value.
 #' @param ... Ignored (kept for signature compatibility with Shiny, e.g. the
-#'   \code{server} argument of \code{updateSelectizeInput()}).
+#'   \code{server} argument of \code{update_selectize_input()}).
 #' @return Invisibly, \code{NULL}.
 #' @rdname tabler-inputs
 #' @export
-updateSelectInput <- function(session, inputId, label = NULL, choices = NULL, selected = NULL, ...) {
+update_select_input <- function(session, inputId, label = NULL, choices = NULL, selected = NULL, ...) {
   params <- list()
   if (!is.null(choices)) params$choices <- .normalize_choices_for_update(choices)
   if (!is.null(selected)) params$selected <- selected
@@ -387,12 +387,12 @@ updateSelectInput <- function(session, inputId, label = NULL, choices = NULL, se
 
 #' @rdname tabler-inputs
 #' @export
-updateSelectizeInput <- updateSelectInput
+update_selectize_input <- update_select_input
 
 #' @title Update a Slider Input
 #' @description Change the value/min/max/step of a \code{\link{sliderInput}}
 #'   already displayed in the browser, similar to
-#'   \code{shiny::updateSliderInput()}.
+#'   \code{shiny::update_slider_input()}.
 #' @param session The session object.
 #' @param inputId The id of the input to update.
 #' @param label   Ignored (kept for signature compatibility with Shiny).
@@ -403,7 +403,7 @@ updateSelectizeInput <- updateSelectInput
 #' @return Invisibly, \code{NULL}.
 #' @rdname tabler-inputs
 #' @export
-updateSliderInput <- function(session, inputId, label = NULL, value = NULL, min = NULL, max = NULL, step = NULL) {
+update_slider_input <- function(session, inputId, label = NULL, value = NULL, min = NULL, max = NULL, step = NULL) {
   params <- list()
   if (!is.null(value)) params$value <- value
   if (!is.null(min)) params$min <- min
@@ -427,7 +427,7 @@ updateSliderInput <- function(session, inputId, label = NULL, value = NULL, min 
 #' @return An HTML tag.
 #' @rdname tabler-inputs
 #' @export
-textInput <- function(inputId, label, value = "", placeholder = NULL, mask = NULL, ...) {
+text_input <- function(inputId, label, value = "", placeholder = NULL, mask = NULL, ...) {
   if (!is.null(mask) && is.null(placeholder)) placeholder <- mask
 
   control <- tags$input(
@@ -461,7 +461,7 @@ textInput <- function(inputId, label, value = "", placeholder = NULL, mask = NUL
 #' @return An HTML tag.
 #' @rdname tabler-inputs
 #' @export
-numericInput <- function(inputId, label, value, min = NULL, max = NULL, step = 1, ...) {
+numeric_input <- function(inputId, label, value, min = NULL, max = NULL, step = 1, ...) {
   input_tag <- tags$input(
     type = "number",
     id = inputId,
@@ -582,7 +582,7 @@ dateInput <- function(inputId, label, value = Sys.Date(), min = NULL, max = NULL
 #' @return An HTML tag.
 #' @rdname tabler-inputs
 #' @export
-checkboxInput <- function(inputId, label, value = FALSE, description = NULL, inline = FALSE, ...) {
+checkbox_input <- function(inputId, label, value = FALSE, description = NULL, inline = FALSE, ...) {
   check_class <- if (inline) "form-check form-check-inline" else "form-check"
 
   control <- tags$label(
@@ -614,7 +614,7 @@ checkboxInput <- function(inputId, label, value = FALSE, description = NULL, inl
 #' @return An HTML tag.
 #' @rdname tabler-inputs
 #' @export
-actionButton <- function(inputId, label, class = "btn-primary", icon = NULL, ...) {
+action_button <- function(inputId, label, class = "btn-primary", icon = NULL, ...) {
   icon_tag <- if (!is.null(icon)) {
     tags$i(class = paste0("ti ti-", icon, " me-1"))
   }
@@ -640,7 +640,7 @@ actionButton <- function(inputId, label, class = "btn-primary", icon = NULL, ...
 #' @return An HTML tag.
 #' @rdname tabler-inputs
 #' @export
-checkboxGroupInput <- function(inputId, label, choices, selected = NULL) {
+checkbox_group_input <- function(inputId, label, choices, selected = NULL) {
   if (is.null(names(choices))) names(choices) <- choices
 
   boxes <- lapply(seq_along(choices), function(i) {
@@ -665,7 +665,7 @@ checkboxGroupInput <- function(inputId, label, choices, selected = NULL) {
   div(
     class = "mb-3",
     if (!is.null(label)) tags$label(class = "form-label", label),
-    do.call(tagList, boxes)
+    do.call(tag_list, boxes)
   )
 }
 
@@ -680,7 +680,7 @@ checkboxGroupInput <- function(inputId, label, choices, selected = NULL) {
 #' @return An HTML tag.
 #' @rdname tabler-inputs
 #' @export
-radioButtons <- function(inputId, label, choices, selected = NULL, inline = FALSE) {
+radio_buttons <- function(inputId, label, choices, selected = NULL, inline = FALSE) {
   if (is.null(names(choices))) names(choices) <- choices
   if (is.null(selected)) selected <- choices[[1L]]
 
@@ -709,6 +709,6 @@ radioButtons <- function(inputId, label, choices, selected = NULL, inline = FALS
   div(
     class = "mb-3",
     if (!is.null(label)) tags$label(class = "form-label", label),
-    div(do.call(tagList, buttons))
+    div(do.call(tag_list, buttons))
   )
 }

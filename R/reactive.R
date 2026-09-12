@@ -41,7 +41,7 @@ new_source <- function() {
   # insertion-ordered list of ids, and is what invalidate_dependents()
   # actually iterates over. A plain hashed environment's as.list()/ls() order
   # is *not* guaranteed to match insertion order, which matters here: several
-  # sibling eventReactive()/bindEvent()/observeEvent() calls gated on the same
+  # sibling event_reactive()/bindEvent()/observe_event() calls gated on the same
   # event (e.g. input$go) rely on being invalidated/re-run in the order they
   # were defined (module setup runs top-to-bottom, synchronously) - e.g. a
   # later observer that eagerly forces several earlier bindEvent()-wrapped
@@ -123,7 +123,7 @@ new_context <- function(on_invalidate_fn) {
     fn <- .domain$pending[[1L]]
     .domain$pending <- .domain$pending[-1L]
     # An uncaught error in one observer must not abort the whole flush: any
-    # other observers still pending (e.g. one that calls hideProgress(), or
+    # other observers still pending (e.g. one that calls hide_progress(), or
     # reveals a UI section) would otherwise silently never run. This mirrors
     # shiny, where an error in one observer/output doesn't take down
     # unrelated ones.
@@ -155,7 +155,7 @@ flush_reactive <- .flush_domain
 #' @return A function that acts as getter/setter.
 #' @rdname reactive-primitives
 #' @export
-reactiveVal <- function(value = NULL) {
+reactive_val <- function(value = NULL) {
   src <- new_source()
   function(x) {
     if (missing(x)) {
@@ -176,7 +176,7 @@ reactiveVal <- function(value = NULL) {
 #' @return An environment of class \code{"ReactiveValues"}.
 #' @rdname reactive-primitives
 #' @export
-reactiveValues <- function(...) {
+reactive_values <- function(...) {
   initial <- list(...)
   sources <- new.env(hash = TRUE, parent = emptyenv())
   store <- new.env(hash = TRUE, parent = emptyenv())
@@ -194,18 +194,18 @@ reactiveValues <- function(...) {
 }
 
 #' @title Convert Reactive Values To A List
-#' @description Returns a plain list snapshot of a \code{\link{reactiveValues}}
+#' @description Returns a plain list snapshot of a \code{\link{reactive_values}}
 #'   object's current values, establishing a reactive read dependency on each
-#'   contained value, similar to \code{shiny::reactiveValuesToList()}.
-#' @param x A \code{reactiveValues()} object.
+#'   contained value, similar to \code{shiny::reactive_values_to_list()}.
+#' @param x A \code{reactive_values()} object.
 #' @param all.names Include names starting with a dot (default \code{FALSE}).
 #' @return A named list.
 #' @rdname reactive-primitives
 #' @export
-reactiveValuesToList <- function(x, all.names = FALSE) {
+reactive_values_to_list <- function(x, all.names = FALSE) {
   store <- attr(x, ".store")
   if (is.null(store)) {
-    stop("reactiveValuesToList() requires a reactiveValues() object", call. = FALSE)
+    stop("reactive_values_to_list() requires a reactive_values() object", call. = FALSE)
   }
   nms <- ls(store, all.names = all.names)
   out <- lapply(nms, function(nm) .rv_dollar(x, nm))
@@ -311,8 +311,8 @@ reactive <- function(expr) {
 #'   or render function if any argument is not "truthy" (i.e. is \code{NULL},
 #'   \code{NA}, \code{FALSE}, an empty string, or an empty vector), similar to
 #'   \code{shiny::req()}. Unlike a normal error, this stop is silent: an
-#'   \code{observe()}/\code{observeEvent()} block simply does nothing for this
-#'   run, and a render function (\code{renderUI}, \code{renderText}, ...)
+#'   \code{observe()}/\code{observe_event()} block simply does nothing for this
+#'   run, and a render function (\code{render_ui}, \code{render_text}, ...)
 #'   simply leaves its output unchanged, instead of showing an error.
 #' @param ... Values to check; all must be truthy for \code{req()} to return.
 #' @param cancelOutput Ignored (kept for signature compatibility with Shiny).
@@ -361,12 +361,12 @@ observe <- function(expr) {
   suspended <- FALSE
 
   # Snapshot the reactive domain (session) that is active when this observer
-  # is *created* - e.g. the module-scoped session set up by moduleServer()
+  # is *created* - e.g. the module-scoped session set up by module_server()
   # while it synchronously runs the module's server function. Without this,
-  # functions that default to getDefaultReactiveDomain() (show(), hide(),
-  # showProgress(), ...) would resolve to the wrong session - the top-level
+  # functions that default to get_default_reactive_domain() (show(), hide(),
+  # show_progress(), ...) would resolve to the wrong session - the top-level
   # one - whenever this observer's body actually runs later (on a button
-  # click, say), because moduleServer() already restored the previous
+  # click, say), because module_server() already restored the previous
   # session by the time that happens. Restoring the captured session for the
   # duration of each run mirrors shiny's withReactiveDomain() behaviour.
   captured_session <- .domain$current_session
@@ -411,7 +411,7 @@ observe <- function(expr) {
 #' @param ignoreInit  If \code{TRUE} (default), skip the first evaluation.
 #' @rdname reactive-primitives
 #' @export
-observeEvent <- function(eventExpr, handlerExpr, ignoreInit = TRUE) {
+observe_event <- function(eventExpr, handlerExpr, ignoreInit = TRUE) {
   event_q <- substitute(eventExpr)
   handler_q <- substitute(handlerExpr)
   env <- parent.frame()
@@ -434,20 +434,20 @@ observeEvent <- function(eventExpr, handlerExpr, ignoreInit = TRUE) {
 
 #' @title Event-Based Reactive Expression
 #' @description A reactive expression that recomputes \code{valueExpr} only
-#'   when \code{eventExpr} changes, similar to \code{shiny::eventReactive()}.
+#'   when \code{eventExpr} changes, similar to \code{shiny::event_reactive()}.
 #' @param eventExpr  Reactive expression whose change triggers re-evaluation.
 #' @param valueExpr  Expression to evaluate (and cache) when the event fires.
 #' @param ignoreNULL If \code{TRUE} (default), do not (re)compute while
 #'   \code{eventExpr} evaluates to \code{NULL}.
 #' @param ignoreInit If \code{TRUE} (default), \code{valueExpr} is not
-#'   evaluated until \code{eventExpr} first changes (e.g. an actionButton's
+#'   evaluated until \code{eventExpr} first changes (e.g. an action_button's
 #'   click counter starts at \code{0}, not \code{NULL}, so without this,
 #'   \code{valueExpr} would run once immediately on creation, before any
 #'   click).
 #' @return A zero-argument function returning the cached value.
 #' @rdname reactive-primitives
 #' @export
-eventReactive <- function(eventExpr, valueExpr, ignoreNULL = TRUE, ignoreInit = TRUE) {
+event_reactive <- function(eventExpr, valueExpr, ignoreNULL = TRUE, ignoreInit = TRUE) {
   event_q <- substitute(eventExpr)
   value_q <- substitute(valueExpr)
   env <- parent.frame()
@@ -464,7 +464,7 @@ eventReactive <- function(eventExpr, valueExpr, ignoreNULL = TRUE, ignoreInit = 
   # check happens, right away - this can't race a real click that occurs in
   # the same flush pass. Crucially, this does NOT compute valueExpr; it only
   # flags the cached value as stale. Computation stays fully lazy (pull-based,
-  # like reactive()), because several sibling eventReactive()/bindEvent()
+  # like reactive()), because several sibling event_reactive()/bindEvent()
   # calls are often gated by the same event (e.g. input$go): if one of them
   # eagerly recomputed here, another one reading it moments later in the
   # *same* flush pass (observers run in scheduling order, not dependency
@@ -508,7 +508,7 @@ eventReactive <- function(eventExpr, valueExpr, ignoreNULL = TRUE, ignoreInit = 
 #' @param ignoreNULL If \code{TRUE} (default), do not (re)compute while all
 #'   event expressions evaluate to \code{NULL}.
 #' @param ignoreInit If \code{TRUE} (default), \code{x} is not computed until
-#'   an event expression first changes (e.g. an actionButton's click counter
+#'   an event expression first changes (e.g. an action_button's click counter
 #'   starts at \code{0}, not \code{NULL}, so without this, \code{x} would
 #'   compute once immediately on creation, before any click).
 #' @return A new zero-argument function returning the cached value.
@@ -533,7 +533,7 @@ bindEvent <- function(..., ignoreNULL = TRUE, ignoreInit = TRUE) {
   state$value <- NULL
   state$dirty <- FALSE
 
-  # See the comment in eventReactive() above: only invalidation-tracking is
+  # See the comment in event_reactive() above: only invalidation-tracking is
   # eager here; the wrapped x() is pulled lazily on next read so that sibling
   # reactives gated by the same event always see each other's fresh values.
   observe({
@@ -580,7 +580,7 @@ bindEvent <- function(..., ignoreNULL = TRUE, ignoreInit = TRUE) {
 #'   later).
 #' @rdname reactive-primitives
 #' @export
-tablerOptions <- function(cache) {
+tabler_options <- function(cache) {
   old <- list(cache = .tabler_opts$cache)
   if (!missing(cache)) .tabler_opts$cache <- cache
   invisible(old)
@@ -590,7 +590,7 @@ tablerOptions <- function(cache) {
 .tabler_opts <- new.env(parent = emptyenv())
 
 # Internal: lazily create a default in-memory cache if none was configured
-# via tablerOptions(cache = ...).
+# via tabler_options(cache = ...).
 .tabler_cache <- function() {
   if (is.null(.tabler_opts$cache)) {
     .tabler_opts$cache <- tinycache::mcache()
@@ -616,7 +616,7 @@ tablerOptions <- function(cache) {
 #'   one or more key expressions, similar to \code{shiny::bindCache()}.
 #'   Unlike \code{\link{reactive}}'s built-in caching (in-memory, lost as
 #'   soon as its dependencies change), \code{bindCache()} stores values in
-#'   the cache backend configured via \code{\link{tablerOptions}} (e.g.
+#'   the cache backend configured via \code{\link{tabler_options}} (e.g.
 #'   \code{tinycache::dcache()}), so identical key combinations are served
 #'   instantly - even across app restarts or different sessions - without
 #'   re-running \code{x}. Typically used with the pipe:
@@ -671,7 +671,7 @@ bindCache <- function(x, ...) {
 #'   page load, and every subsequent input change updates the URL in-place
 #'   (no page reload, no browser-history spam).
 #'
-#' @param session The \code{session} object passed by \code{\link{tablerApp}}
+#' @param session The \code{session} object passed by \code{\link{tabler_app}}
 #'   to the server function.
 #' @param exclude Character vector of input IDs to omit from the URL.
 #'   Action buttons are \emph{always} omitted regardless of this setting.
@@ -685,9 +685,9 @@ bindCache <- function(x, ...) {
 #' @return Invisibly, \code{session} (for chaining).
 #' @rdname reactive-primitives
 #' @export
-syncUrl <- function(session, exclude = character(0L)) {
+sync_url <- function(session, exclude = character(0L)) {
   if (!is.function(session[[".setUrlSync"]])) {
-    warning("syncUrl() requires a tablerApp session object - ignoring")
+    warning("sync_url() requires a tabler_app session object - ignoring")
     return(invisible(session))
   }
   session$.setUrlSync(as.character(exclude))
@@ -695,7 +695,7 @@ syncUrl <- function(session, exclude = character(0L)) {
 }
 
 # ---------------------------------------------------------------------------
-# Internal: observer for output renderers (avoids NSE at the tablerApp level)
+# Internal: observer for output renderers (avoids NSE at the tabler_app level)
 # ---------------------------------------------------------------------------
 .observe_output <- function(render_obj, send_fn) {
   run <- function() {
@@ -722,7 +722,7 @@ syncUrl <- function(session, exclude = character(0L)) {
             })
             svg_txt <- paste(readLines(tmp, warn = FALSE), collapse = "\n")
             if (!nzchar(svg_txt)) {
-              stop("renderPlot produced an empty graphic")
+              stop("render_plot produced an empty graphic")
             }
             val <- svg_txt
             type <- "plot_src"
@@ -740,11 +740,11 @@ syncUrl <- function(session, exclude = character(0L)) {
           }
         } else if (is.function(render_obj)) {
           # External render function from any htmlwidgets-based package
-          # (render_d3po, renderWidget, leaflet::renderLeaflet, ...).
+          # (render_d3po, render_widget, leaflet::renderLeaflet, ...).
           # We never call Shiny internals directly.  Priority order:
           #
           #  1. tabler_expr / tabler_env attributes - explicit opt-in kept for
-          #     backward compatibility (e.g. renderWidget() in outputs.R).
+          #     backward compatibility (e.g. render_widget() in outputs.R).
           #
           #  2. origUserFunc - the un-wrapped user closure stored by
           #     shiny::createRenderFunction (which htmlwidgets::shinyRenderWidget
@@ -768,7 +768,7 @@ syncUrl <- function(session, exclude = character(0L)) {
                 error = function(e) {
                   stop(
                     "Could not evaluate widget render function without a ",
-                    "Shiny session. Use renderWidget() or any render helper ",
+                    "Shiny session. Use render_widget() or any render helper ",
                     "built on htmlwidgets::shinyRenderWidget.\n",
                     "Original error: ", conditionMessage(e)
                   )

@@ -21,7 +21,7 @@ ui <- page(
         card(
           title  = "Output",
           footer = "Eruption duration (minutes)",
-          plotOutput("distPlot")
+          plot_output("distPlot")
         )
       )
     )
@@ -29,7 +29,7 @@ ui <- page(
 )
 
 server <- function(input, output, session) {
-  output$distPlot <- renderPlot({
+  output$distPlot <- render_plot({
     x    <- faithful[, 2]
     bins <- seq(min(x), max(x), length.out = input$bins + 1)
     x |>
@@ -43,4 +43,4 @@ server <- function(input, output, session) {
   })
 }
 
-tablerApp(ui, server)
+tabler_app(ui, server)

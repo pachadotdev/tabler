@@ -35,4 +35,4 @@ ui <- tags$div(
 server <- function(input, output, session) { }
 
 # Run the Tabler app
-tablerApp(ui, server, port = 4321)
+tabler_app(ui, server, port = 4321)

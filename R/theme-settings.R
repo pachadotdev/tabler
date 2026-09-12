@@ -12,7 +12,7 @@
 #' @param font Initially-selected font family (default \code{"sans-serif"}).
 #' @param base Initially-selected theme base/gray shade (default \code{"gray"}).
 #' @param radius Initially-selected corner radius factor (default \code{"1"}).
-#' @return A `tabler.tag` tagList to be inserted into the page body.
+#' @return A `tabler.tag` tag_list to be inserted into the page body.
 #' @keywords internal
 #' @noRd
 theme_settings_panel <- function(color = "blue", theme = "light", font = "sans-serif", base = "gray", radius = "1") {
@@ -27,7 +27,7 @@ theme_settings_panel <- function(color = "blue", theme = "light", font = "sans-s
   capitalize <- function(x) paste0(toupper(substr(x, 1, 1)), substr(x, 2, nchar(x)))
 
   radio_section <- function(name, options, selected, label_fn = capitalize) {
-    tagList(lapply(options, function(opt) {
+    tag_list(lapply(options, function(opt) {
       tags$label(
         class = "form-check",
         div(

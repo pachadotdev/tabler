@@ -48,8 +48,8 @@ ui <- page(
             row(
               col6(
                 card(
-                  title = "selectInput() - searchable (selectize style)",
-                  selectInput(
+                  title = "select_input() - searchable (selectize style)",
+                  select_input(
                     "country_selectize", "Country",
                     choices  = c("Chile", "Peru", "Colombia"),
                     selected = "Chile"
@@ -58,8 +58,8 @@ ui <- page(
               ),
               col6(
                 card(
-                  title = "selectInput() - non-searchable (plain native select)",
-                  selectInput(
+                  title = "select_input() - non-searchable (plain native select)",
+                  select_input(
                     "country_plain", "Country",
                     choices    = c("Chile", "Peru", "Colombia"),
                     selected   = "Chile",
@@ -71,8 +71,8 @@ ui <- page(
             row(
               col6(
                 card(
-                  title = "selectInput() - grouped choices",
-                  selectInput(
+                  title = "select_input() - grouped choices",
+                  select_input(
                     "country_grouped", "Country",
                     choices = list(
                       "South America" = c("Chile", "Peru", "Colombia"),
@@ -83,8 +83,8 @@ ui <- page(
               ),
               col6(
                 card(
-                  title = "selectMultipleInput() - searchable, tag-style multi-select",
-                  selectMultipleInput(
+                  title = "select_multiple_input() - searchable, tag-style multi-select",
+                  select_multiple_input(
                     "country_tag", "Country",
                     choices  = c("Chile", "Peru", "Colombia"),
                     selected = "Chile"
@@ -195,33 +195,33 @@ ui <- page(
             row(
               col6(
                 card(
-                  title = "radioButtons() - no inline (default, stacked)",
-                  radioButtons("crust_stacked", "Crust type", choices = c("Thin", "Thick", "Stuffed"))
+                  title = "radio_buttons() - no inline (default, stacked)",
+                  radio_buttons("crust_stacked", "Crust type", choices = c("Thin", "Thick", "Stuffed"))
                 )
               ),
               col6(
                 card(
-                  title = "radioButtons() - inline",
-                  radioButtons("crust_inline", "Crust type", choices = c("Thin", "Thick", "Stuffed"), inline = TRUE)
+                  title = "radio_buttons() - inline",
+                  radio_buttons("crust_inline", "Crust type", choices = c("Thin", "Thick", "Stuffed"), inline = TRUE)
                 )
               )
             ),
             row(
               col6(
                 card(
-                  title = "checkboxGroupInput()",
-                  checkboxGroupInput("dietary", "Dietary options", choices = c("Vegetarian", "Vegan", "Gluten-free"), selected = "Vegetarian")
+                  title = "checkbox_group_input()",
+                  checkbox_group_input("dietary", "Dietary options", choices = c("Vegetarian", "Vegan", "Gluten-free"), selected = "Vegetarian")
                 )
               ),
               col6(
                 card(
-                  title = "checkboxInput() - block vs inline",
-                  checkboxInput("rsvp1", "RSVP confirmed", value = TRUE, description = "Block layout (default)"),
+                  title = "checkbox_input() - block vs inline",
+                  checkbox_input("rsvp1", "RSVP confirmed", value = TRUE, description = "Block layout (default)"),
                   div(
                     class = "d-flex gap-3",
-                    checkboxInput("opt_a", "Option A", inline = TRUE),
-                    checkboxInput("opt_b", "Option B", value = TRUE, inline = TRUE),
-                    checkboxInput("opt_c", "Option C", inline = TRUE)
+                    checkbox_input("opt_a", "Option A", inline = TRUE),
+                    checkbox_input("opt_b", "Option B", value = TRUE, inline = TRUE),
+                    checkbox_input("opt_c", "Option C", inline = TRUE)
                   )
                 )
               )
@@ -239,28 +239,28 @@ ui <- page(
             row(
               col4(
                 card(
-                  title = "textInput() - plain",
-                  textInput("customer_name", "Customer name", value = "Jane Doe")
+                  title = "text_input() - plain",
+                  text_input("customer_name", "Customer name", value = "Jane Doe")
                 )
               ),
               col4(
                 card(
-                  title = "textInput() - with mask",
-                  textInput("customer_phone", "Phone number", mask = "(000) 0000-0000")
+                  title = "text_input() - with mask",
+                  text_input("customer_phone", "Phone number", mask = "(000) 0000-0000")
                 )
               ),
               col4(
                 card(
-                  title = "numericInput() - with stepper buttons",
-                  numericInput("num_guests", "Number of guests", value = 8, min = 1, max = 50)
+                  title = "numeric_input() - with stepper buttons",
+                  numeric_input("num_guests", "Number of guests", value = 8, min = 1, max = 50)
                 )
               )
             ),
             row(
               col4(
                 card(
-                  title = "actionButton()",
-                  actionButton("call_customer", "Call customer", icon = "phone")
+                  title = "action_button()",
+                  action_button("call_customer", "Call customer", icon = "phone")
                 )
               ),
               col8(
@@ -350,4 +350,4 @@ ui <- page(
   )
 )
 
-tablerApp(ui, function(input, output, session) {})
+tabler_app(ui, function(input, output, session) {})

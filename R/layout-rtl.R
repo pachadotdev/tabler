@@ -130,7 +130,7 @@ layout_rtl <- function(navbar, sidebar, body, footer, theme = "light", color = N
     header_tag <- top_nav
   }
 
-  tagList(
+  tag_list(
     div(
       class = "page",
       dir = "rtl",
