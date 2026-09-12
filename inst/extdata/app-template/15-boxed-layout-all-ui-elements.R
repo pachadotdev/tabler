@@ -106,13 +106,13 @@ ui <- page(
               col6(
                 card(
                   title = "Single value - no fill",
-                  sliderInput("single_nofill", "Value", min = 0, max = 100, value = 40)
+                  slider_input("single_nofill", "Value", min = 0, max = 100, value = 40)
                 )
               ),
               col6(
                 card(
                   title = "Single value - fill -  blue",
-                  sliderInput("single_fill", "Value", min = 0, max = 100, value = 40, fill = TRUE, color = "blue")
+                  slider_input("single_fill", "Value", min = 0, max = 100, value = 40, fill = TRUE, color = "blue")
                 )
               )
             ),
@@ -120,27 +120,27 @@ ui <- page(
               col6(
                 card(
                   title = "Range (two thumbs) - no fill",
-                  sliderInput("range_nofill", "Year range", min = 2000, max = 2025, value = c(2010, 2020))
+                  slider_input("range_nofill", "Year range", min = 2000, max = 2025, value = c(2010, 2020))
                 )
               ),
               col6(
                 card(
                   title = "Range (two thumbs) - fill - teal",
-                  sliderInput("range_fill", "Year range", min = 2000, max = 2025, value = c(2010, 2020), fill = TRUE, color = "teal")
+                  slider_input("range_fill", "Year range", min = 2000, max = 2025, value = c(2010, 2020), fill = TRUE, color = "teal")
                 )
               )
             ),
             row(
               col12(
                 card(
-                  sliderInput("c_purple", "Purple - thumbSize 2", min = 0, max = 10, value = 6, color = "purple", fill = TRUE, thumbSize = 2),
-                  sliderInput("c_azure", "Azure", min = 0, max = 10, value = 3, color = "azure", fill = TRUE),
-                  sliderInput("c_indigo", "Indigo", min = 0, max = 10, value = 3, color = "indigo", fill = TRUE),
-                  sliderInput("c_red", "Red", min = 0, max = 10, value = 3, color = "red", fill = TRUE),
-                  sliderInput("c_orange", "Orange", min = 0, max = 10, value = 3, color = "orange", fill = TRUE),
-                  sliderInput("c_yellow", "Yellow", min = 0, max = 10, value = 3, color = "yellow", fill = TRUE),
-                  sliderInput("c_lime", "Lime", min = 0, max = 10, value = 8, color = "lime", fill = TRUE),
-                  sliderInput("c_pink", "Pink", min = 0, max = 10, value = 5, color = "pink", fill = TRUE)
+                  slider_input("c_purple", "Purple - thumbSize 2", min = 0, max = 10, value = 6, color = "purple", fill = TRUE, thumbSize = 2),
+                  slider_input("c_azure", "Azure", min = 0, max = 10, value = 3, color = "azure", fill = TRUE),
+                  slider_input("c_indigo", "Indigo", min = 0, max = 10, value = 3, color = "indigo", fill = TRUE),
+                  slider_input("c_red", "Red", min = 0, max = 10, value = 3, color = "red", fill = TRUE),
+                  slider_input("c_orange", "Orange", min = 0, max = 10, value = 3, color = "orange", fill = TRUE),
+                  slider_input("c_yellow", "Yellow", min = 0, max = 10, value = 3, color = "yellow", fill = TRUE),
+                  slider_input("c_lime", "Lime", min = 0, max = 10, value = 8, color = "lime", fill = TRUE),
+                  slider_input("c_pink", "Pink", min = 0, max = 10, value = 5, color = "pink", fill = TRUE)
                 )
               )
             )

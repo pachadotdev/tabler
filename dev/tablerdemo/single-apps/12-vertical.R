@@ -57,11 +57,11 @@ ui <- page(
               choices = 1:3,
               selected = 3
             ),
-            sliderInput(
+            slider_input(
               "n_rows", "Rows to display",
               min = 1, max = 30, value = 10
             ),
-            sliderInput(
+            slider_input(
               "multiplier", "Value multiplier",
               min = 0.5, max = 5, value = 1, step = 0.5
             ),
