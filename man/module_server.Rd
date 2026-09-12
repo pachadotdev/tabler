@@ -25,6 +25,6 @@ The return value of \code{module}, invisibly.
 Dependency-free equivalent of \code{shiny::module_server()}.
   Wraps \code{input}/\code{output} so that unprefixed names accessed
   inside \code{module} are automatically namespaced with \code{id},
-  matching the ids produced by \code{NS(id)} in the module's UI function.
+  matching the ids produced by \code{ns(id)} in the module's UI function.
 }
 

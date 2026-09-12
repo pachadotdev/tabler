@@ -10,8 +10,8 @@
 #' @return If \code{id} is given, a namespaced id (character string).
 #'   Otherwise, a function that namespaces any id passed to it.
 #' @examples
-#' ns <- ns("mymodule")
-#' ns("button") # "mymodule-button"
+#' my_ns <- ns("mymodule")
+#' my_ns("button") # "mymodule-button"
 #' ns("mymodule", "button") # "mymodule-button"
 #' @export
 ns <- function(namespace, id = NULL) {

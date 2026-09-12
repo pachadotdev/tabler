@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>reactive_values_to_list • tabler</title><link rel="stylesheet" href="../menu.css"><link rel="stylesheet" href="../content.css"><!-- MathJax Configuration --><script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)'], ['$', '$']],
+        displayMath: [['\\[', '\\]'], ['$$', '$$']],
+        processEscapes: true,
+        processEnvironments: true,
+        packages: {'[+]': ['ams', 'newcommand', 'configmacros']}
+      },
+      options: {
+        ignoreHtmlClass: 'tex2jax_ignore',
+        processHtmlClass: 'tex2jax_process'
+      }
+    };
+  </script><script id="MathJax-script" async src="../js/tex-svg.js"></script></head><body>
+<div class="main-container">
+<div id="menu">
+  <div>
+    <h1 style="text-align:center;">tabler Documentation</h1>
+  </div>
+
+  <div class="search-container">
+    <input type="text" id="search-box" placeholder="Search..."></div>
+
+  <div class="search-container">
+    <button id="theme-toggle" title="Toggle dark mode" aria-label="Toggle dark mode">Toggle theme</button>
+    <button id="font-decrease" title="Decrease font size" aria-label="Decrease font size">A-</button>
+    <button id="font-increase" title="Increase font size" aria-label="Increase font size">A+</button>
+  </div>
+
+  <div class="submenu">
+    <label style="border-bottom: 0;"><a style="padding-left: 0;" href="../index.html">Home 🏠</a></label>
+  </div>
+
+
+  <div class="submenu">
+    <label>Functions</label>
+    <a href="../reference/add_resource_path.html">add_resource_path</a>
+    <a href="../reference/tabler_app.html">tabler_app</a>
+    <a href="../reference/row.html">row</a>
+    <a href="../reference/column.html">column</a>
+    <a href="../reference/col12.html">col12</a>
+    <a href="../reference/col11.html">col11</a>
+    <a href="../reference/col10.html">col10</a>
+    <a href="../reference/col9.html">col9</a>
+    <a href="../reference/col8.html">col8</a>
+    <a href="../reference/col7.html">col7</a>
+    <a href="../reference/col6.html">col6</a>
+    <a href="../reference/col5.html">col5</a>
+    <a href="../reference/col4.html">col4</a>
+    <a href="../reference/col3.html">col3</a>
+    <a href="../reference/col2.html">col2</a>
+    <a href="../reference/col1.html">col1</a>
+    <a href="../reference/card.html">card</a>
+    <a href="../reference/pre_title.html">pre_title</a>
+    <a href="../reference/title.html">title</a>
+    <a href="../reference/header.html">header</a>
+    <a href="../reference/body.html">body</a>
+    <a href="../reference/value_box.html">value_box</a>
+    <a href="../reference/icon.html">icon</a>
+    <a href="../reference/flag.html">flag</a>
+    <a href="../reference/social.html">social</a>
+    <a href="../reference/alert.html">alert</a>
+    <a href="../reference/button.html">button</a>
+    <a href="../reference/page.html">page</a>
+    <a href="../reference/topbar.html">topbar</a>
+    <a href="../reference/footer.html">footer</a>
+    <a href="../reference/sidebar_menu.html">sidebar_menu</a>
+    <a href="../reference/sidebar_brand.html">sidebar_brand</a>
+    <a href="../reference/horizontal_menu.html">horizontal_menu</a>
+    <a href="../reference/menu_item.html">menu_item</a>
+    <a href="../reference/menu_dropdown.html">menu_dropdown</a>
+    <a href="../reference/tab_items.html">tab_items</a>
+    <a href="../reference/tab_item.html">tab_item</a>
+    <a href="../reference/navbar_menu.html">navbar_menu</a>
+    <a href="../reference/tag_append_attributes.html">tag_append_attributes</a>
+    <a href="../reference/tag_list.html">tag_list</a>
+    <a href="../reference/html.html">html</a>
+    <a href="../reference/div.html">div</a>
+    <a href="../reference/span.html">span</a>
+    <a href="../reference/p.html">p</a>
+    <a href="../reference/a.html">a</a>
+    <a href="../reference/img.html">img</a>
+    <a href="../reference/ul.html">ul</a>
+    <a href="../reference/li.html">li</a>
+    <a href="../reference/aside.html">aside</a>
+    <a href="../reference/h1.html">h1</a>
+    <a href="../reference/h2.html">h2</a>
+    <a href="../reference/h3.html">h3</a>
+    <a href="../reference/h4.html">h4</a>
+    <a href="../reference/h5.html">h5</a>
+    <a href="../reference/h6.html">h6</a>
+    <a href="../reference/hr.html">hr</a>
+    <a href="../reference/br.html">br</a>
+    <a href="../reference/select_input.html">select_input</a>
+    <a href="../reference/select_multiple_input.html">select_multiple_input</a>
+    <a href="../reference/sliderInput.html">sliderInput</a>
+    <a href="../reference/update_select_input.html">update_select_input</a>
+    <a href="../reference/update_slider_input.html">update_slider_input</a>
+    <a href="../reference/text_input.html">text_input</a>
+    <a href="../reference/numeric_input.html">numeric_input</a>
+    <a href="../reference/date_input.html">date_input</a>
+    <a href="../reference/checkbox_input.html">checkbox_input</a>
+    <a href="../reference/action_button.html">action_button</a>
+    <a href="../reference/checkbox_group_input.html">checkbox_group_input</a>
+    <a href="../reference/radio_buttons.html">radio_buttons</a>
+    <a href="../reference/logout.html">logout</a>
+    <a href="../reference/ns.html">ns</a>
+    <a href="../reference/get_default_reactive_domain.html">get_default_reactive_domain</a>
+    <a href="../reference/module_server.html">module_server</a>
+    <a href="../reference/text_output.html">text_output</a>
+    <a href="../reference/verbatim_text_output.html">verbatim_text_output</a>
+    <a href="../reference/ui_output.html">ui_output</a>
+    <a href="../reference/render_text.html">render_text</a>
+    <a href="../reference/render_print.html">render_print</a>
+    <a href="../reference/render_ui.html">render_ui</a>
+    <a href="../reference/plot_output.html">plot_output</a>
+    <a href="../reference/render_plot.html">render_plot</a>
+    <a href="../reference/widget_output.html">widget_output</a>
+    <a href="../reference/render_widget.html">render_widget</a>
+    <a href="../reference/download_handler.html">download_handler</a>
+    <a href="../reference/download_button.html">download_button</a>
+    <a href="../reference/download_link.html">download_link</a>
+    <a href="../reference/show_progress.html">show_progress</a>
+    <a href="../reference/hide_progress.html">hide_progress</a>
+    <a href="../reference/with_progress.html">with_progress</a>
+    <a href="../reference/reactive_val.html">reactive_val</a>
+    <a href="../reference/reactive_values.html">reactive_values</a>
+    <a href="../reference/reactive_values_to_list.html">reactive_values_to_list</a>
+    <a href="../reference/reactive.html">reactive</a>
+    <a href="../reference/req.html">req</a>
+    <a href="../reference/isolate.html">isolate</a>
+    <a href="../reference/observe.html">observe</a>
+    <a href="../reference/observe_event.html">observe_event</a>
+    <a href="../reference/event_reactive.html">event_reactive</a>
+    <a href="../reference/bind_event.html">bind_event</a>
+    <a href="../reference/tabler_options.html">tabler_options</a>
+    <a href="../reference/bind_cache.html">bind_cache</a>
+    <a href="../reference/sync_url.html">sync_url</a>
+    <a href="../reference/pkg_template.html">pkg_template</a>
+    <a href="../reference/show.html">show</a>
+    <a href="../reference/hide.html">hide</a>
+    <a href="../reference/toggle.html">toggle</a>
+    <a href="../reference/hidden.html">hidden</a>
+  </div>
+
+
+  <div class="submenu">
+    <label>News</label>
+    <a href="../news/index.html">Changelog</a>
+  </div>
+</div>
+<div id="content">
+<div class="content-wrapper">
+        <div class="content-main">
+
+<table style="width: 100%;"><tr><td>reactive-primitives {tabler}</td><td style="text-align: right;">R Documentation</td></tr></table><h2>Reactive Value</h2>
+
+<h3>Description</h3>
+
+<p>A single mutable reactive value.  Call with no argument to read
+(tracks the caller as a dependent); call with one argument to write (invalidates
+all current dependents).
+</p>
+
+
+<h3>Usage</h3>
+
+<pre><code class="language-R">reactive_val(value = NULL)
+reactive_values(...)
+reactive_values_to_list(x, all.names = FALSE)
+reactive(expr)
+req(..., cancelOutput = FALSE)
+isolate(expr)
+observe(expr)
+observe_event(eventExpr, handlerExpr, ignoreInit = TRUE)
+event_reactive(eventExpr, valueExpr, ignoreNULL = TRUE, ignoreInit = TRUE)
+bind_event(..., ignoreNULL = TRUE, ignoreInit = TRUE)
+tabler_options(cache)
+bind_cache(x, ...)
+sync_url(session, exclude = character(0L))
+</code></pre>
+
+
+<h3>Arguments</h3>
+
+<table role="presentation"><tr><td><code id="value">value</code></td>
+<td>
+Initial value.
+</td></tr><tr><td><code id="...">...</code></td>
+<td>
+Initial <code>name = value</code> pairs.
+</td></tr><tr><td><code id="x">x</code></td>
+<td>
+A <code>reactive_values()</code> object.
+</td></tr><tr><td><code id="all.names">all.names</code></td>
+<td>
+Include names starting with a dot (default <code>FALSE</code>).
+</td></tr><tr><td><code id="expr">expr</code></td>
+<td>
+Expression (use <code>{ }</code> for multi-line).
+</td></tr><tr><td><code id="cancelOutput">cancelOutput</code></td>
+<td>
+Ignored (kept for signature compatibility with Shiny).
+</td></tr><tr><td><code id="eventExpr">eventExpr</code></td>
+<td>
+Reactive expression whose change triggers the handler.
+</td></tr><tr><td><code id="handlerExpr">handlerExpr</code></td>
+<td>
+Expression to run when the event fires.
+</td></tr><tr><td><code id="ignoreInit">ignoreInit</code></td>
+<td>
+If <code>TRUE</code> (default), skip the first evaluation.
+</td></tr><tr><td><code id="valueExpr">valueExpr</code></td>
+<td>
+Expression to evaluate (and cache) when the event fires.
+</td></tr><tr><td><code id="ignoreNULL">ignoreNULL</code></td>
+<td>
+If <code>TRUE</code> (default), do not (re)compute while
+<code>eventExpr</code> evaluates to <code>NULL</code>.
+</td></tr><tr><td><code id="cache">cache</code></td>
+<td>
+A <span class="pkg">tinycache</span> cache object (e.g.
+<code>tinycache::dcache(dir = "/path/to/cache")</code> or
+<code>tinycache::mcache()</code>) used to store <code>bind_cache</code>
+values. If never set, an in-memory <code>tinycache::mcache()</code> is
+created and used automatically - which (like a plain
+<code>reactive</code>) does not survive an R restart. Pass a
+<code>dcache()</code> object to persist values across app restarts and
+sessions.
+</td></tr><tr><td><code id="session">session</code></td>
+<td>
+The <code>session</code> object passed by <code>tabler_app</code>
+to the server function.
+</td></tr><tr><td><code id="exclude">exclude</code></td>
+<td>
+Character vector of input IDs to omit from the URL.
+Action buttons are <em>always</em> omitted regardless of this setting.
+</td></tr></table><h3>Value</h3>
+
+<p>A function that acts as getter/setter.
+</p>
+
+
+</div>
+        </div>
+        <footer><p id="last-updated">Loading...</p>
+</footer><script src="../js/footer.js"></script><script src="../js/theme.js"></script><script src="../js/search.js"></script><script src="../js/fontsize.js"></script></div>
+</div>
+
+</body></html>
+

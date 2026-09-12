@@ -8,7 +8,7 @@
 }
 
 \arguments{
-\item{x}{A \code{"tabler.html"} object created by \code{\link{HTML}}.}
+\item{x}{A \code{"tabler.html"} object created by \code{\link{html}}.}
 
 \item{...}{Unused.}
 }

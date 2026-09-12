@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>body • tabler</title><link rel="stylesheet" href="../menu.css"><link rel="stylesheet" href="../content.css"><!-- MathJax Configuration --><script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)'], ['$', '$']],
+        displayMath: [['\\[', '\\]'], ['$$', '$$']],
+        processEscapes: true,
+        processEnvironments: true,
+        packages: {'[+]': ['ams', 'newcommand', 'configmacros']}
+      },
+      options: {
+        ignoreHtmlClass: 'tex2jax_ignore',
+        processHtmlClass: 'tex2jax_process'
+      }
+    };
+  </script><script id="MathJax-script" async src="../js/tex-svg.js"></script></head><body>
+<div class="main-container">
+<div id="menu">
+  <div>
+    <h1 style="text-align:center;">tabler Documentation</h1>
+  </div>
+
+  <div class="search-container">
+    <input type="text" id="search-box" placeholder="Search..."></div>
+
+  <div class="search-container">
+    <button id="theme-toggle" title="Toggle dark mode" aria-label="Toggle dark mode">Toggle theme</button>
+    <button id="font-decrease" title="Decrease font size" aria-label="Decrease font size">A-</button>
+    <button id="font-increase" title="Increase font size" aria-label="Increase font size">A+</button>
+  </div>
+
+  <div class="submenu">
+    <label style="border-bottom: 0;"><a style="padding-left: 0;" href="../index.html">Home 🏠</a></label>
+  </div>
+
+
+  <div class="submenu">
+    <label>Functions</label>
+    <a href="../reference/add_resource_path.html">add_resource_path</a>
+    <a href="../reference/tabler_app.html">tabler_app</a>
+    <a href="../reference/row.html">row</a>
+    <a href="../reference/column.html">column</a>
+    <a href="../reference/col12.html">col12</a>
+    <a href="../reference/col11.html">col11</a>
+    <a href="../reference/col10.html">col10</a>
+    <a href="../reference/col9.html">col9</a>
+    <a href="../reference/col8.html">col8</a>
+    <a href="../reference/col7.html">col7</a>
+    <a href="../reference/col6.html">col6</a>
+    <a href="../reference/col5.html">col5</a>
+    <a href="../reference/col4.html">col4</a>
+    <a href="../reference/col3.html">col3</a>
+    <a href="../reference/col2.html">col2</a>
+    <a href="../reference/col1.html">col1</a>
+    <a href="../reference/card.html">card</a>
+    <a href="../reference/pre_title.html">pre_title</a>
+    <a href="../reference/title.html">title</a>
+    <a href="../reference/header.html">header</a>
+    <a href="../reference/body.html">body</a>
+    <a href="../reference/value_box.html">value_box</a>
+    <a href="../reference/icon.html">icon</a>
+    <a href="../reference/flag.html">flag</a>
+    <a href="../reference/social.html">social</a>
+    <a href="../reference/alert.html">alert</a>
+    <a href="../reference/button.html">button</a>
+    <a href="../reference/page.html">page</a>
+    <a href="../reference/topbar.html">topbar</a>
+    <a href="../reference/footer.html">footer</a>
+    <a href="../reference/sidebar_menu.html">sidebar_menu</a>
+    <a href="../reference/sidebar_brand.html">sidebar_brand</a>
+    <a href="../reference/horizontal_menu.html">horizontal_menu</a>
+    <a href="../reference/menu_item.html">menu_item</a>
+    <a href="../reference/menu_dropdown.html">menu_dropdown</a>
+    <a href="../reference/tab_items.html">tab_items</a>
+    <a href="../reference/tab_item.html">tab_item</a>
+    <a href="../reference/navbar_menu.html">navbar_menu</a>
+    <a href="../reference/tag_append_attributes.html">tag_append_attributes</a>
+    <a href="../reference/tag_list.html">tag_list</a>
+    <a href="../reference/html.html">html</a>
+    <a href="../reference/div.html">div</a>
+    <a href="../reference/span.html">span</a>
+    <a href="../reference/p.html">p</a>
+    <a href="../reference/a.html">a</a>
+    <a href="../reference/img.html">img</a>
+    <a href="../reference/ul.html">ul</a>
+    <a href="../reference/li.html">li</a>
+    <a href="../reference/aside.html">aside</a>
+    <a href="../reference/h1.html">h1</a>
+    <a href="../reference/h2.html">h2</a>
+    <a href="../reference/h3.html">h3</a>
+    <a href="../reference/h4.html">h4</a>
+    <a href="../reference/h5.html">h5</a>
+    <a href="../reference/h6.html">h6</a>
+    <a href="../reference/hr.html">hr</a>
+    <a href="../reference/br.html">br</a>
+    <a href="../reference/select_input.html">select_input</a>
+    <a href="../reference/select_multiple_input.html">select_multiple_input</a>
+    <a href="../reference/sliderInput.html">sliderInput</a>
+    <a href="../reference/update_select_input.html">update_select_input</a>
+    <a href="../reference/update_slider_input.html">update_slider_input</a>
+    <a href="../reference/text_input.html">text_input</a>
+    <a href="../reference/numeric_input.html">numeric_input</a>
+    <a href="../reference/date_input.html">date_input</a>
+    <a href="../reference/checkbox_input.html">checkbox_input</a>
+    <a href="../reference/action_button.html">action_button</a>
+    <a href="../reference/checkbox_group_input.html">checkbox_group_input</a>
+    <a href="../reference/radio_buttons.html">radio_buttons</a>
+    <a href="../reference/logout.html">logout</a>
+    <a href="../reference/ns.html">ns</a>
+    <a href="../reference/get_default_reactive_domain.html">get_default_reactive_domain</a>
+    <a href="../reference/module_server.html">module_server</a>
+    <a href="../reference/text_output.html">text_output</a>
+    <a href="../reference/verbatim_text_output.html">verbatim_text_output</a>
+    <a href="../reference/ui_output.html">ui_output</a>
+    <a href="../reference/render_text.html">render_text</a>
+    <a href="../reference/render_print.html">render_print</a>
+    <a href="../reference/render_ui.html">render_ui</a>
+    <a href="../reference/plot_output.html">plot_output</a>
+    <a href="../reference/render_plot.html">render_plot</a>
+    <a href="../reference/widget_output.html">widget_output</a>
+    <a href="../reference/render_widget.html">render_widget</a>
+    <a href="../reference/download_handler.html">download_handler</a>
+    <a href="../reference/download_button.html">download_button</a>
+    <a href="../reference/download_link.html">download_link</a>
+    <a href="../reference/show_progress.html">show_progress</a>
+    <a href="../reference/hide_progress.html">hide_progress</a>
+    <a href="../reference/with_progress.html">with_progress</a>
+    <a href="../reference/reactive_val.html">reactive_val</a>
+    <a href="../reference/reactive_values.html">reactive_values</a>
+    <a href="../reference/reactive_values_to_list.html">reactive_values_to_list</a>
+    <a href="../reference/reactive.html">reactive</a>
+    <a href="../reference/req.html">req</a>
+    <a href="../reference/isolate.html">isolate</a>
+    <a href="../reference/observe.html">observe</a>
+    <a href="../reference/observe_event.html">observe_event</a>
+    <a href="../reference/event_reactive.html">event_reactive</a>
+    <a href="../reference/bind_event.html">bind_event</a>
+    <a href="../reference/tabler_options.html">tabler_options</a>
+    <a href="../reference/bind_cache.html">bind_cache</a>
+    <a href="../reference/sync_url.html">sync_url</a>
+    <a href="../reference/pkg_template.html">pkg_template</a>
+    <a href="../reference/show.html">show</a>
+    <a href="../reference/hide.html">hide</a>
+    <a href="../reference/toggle.html">toggle</a>
+    <a href="../reference/hidden.html">hidden</a>
+  </div>
+
+
+  <div class="submenu">
+    <label>News</label>
+    <a href="../news/index.html">Changelog</a>
+  </div>
+</div>
+<div id="content">
+<div class="content-wrapper">
+        <div class="content-main">
+
+<table style="width: 100%;"><tr><td>tabler-components {tabler}</td><td style="text-align: right;">R Documentation</td></tr></table><h2>Bootstrap Grid Row</h2>
+
+<h3>Description</h3>
+
+<p>Wraps content in a Bootstrap row. Required as the direct
+parent of <code>column()</code>/<code>col1()</code>-<code>col12()</code> calls: those
+only lay out side-by-side inside a <code>.row</code> (which sets
+<code>display: flex</code>) - without it, columns stack vertically like any
+other block element. Includes the <code>row-deck row-cards</code> classes by
+default: <code>row-deck</code> stretches each column to the row's height and
+sets <code>flex: 1 1 auto</code> on any <code>card()</code> inside it (so
+cards end up the same height); <code>row-cards</code> applies Tabler's card
+row gutter spacing.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre><code class="language-R">row(..., class = NULL, equal_height = TRUE)
+column(..., width = 12, class = NULL)
+card(..., title = NULL, footer = NULL, status = NULL, class = NULL)
+pre_title(text)
+title(text)
+header(title, subtitle = NULL, header_actions = NULL)
+body(..., title = NULL, subtitle = NULL, header_actions = NULL)
+value_box(value, title, icon = NULL, color = "primary", width = 3)
+icon(name, library = "tabler", class = NULL)
+flag(country, size = NULL, class = NULL)
+social(name, size = NULL, gray = FALSE, class = NULL)
+alert(..., type = "info", dismissible = FALSE, title = NULL)
+button(
+  label,
+  href = NULL,
+  onclick = NULL,
+  color = "primary",
+  size = "md",
+  outline = FALSE,
+  icon = NULL,
+  icon_right = FALSE,
+  disabled = FALSE,
+  block = FALSE,
+  pill = FALSE,
+  square = FALSE,
+  loading = FALSE,
+  class = NULL,
+  type = "button",
+  ...
+)
+</code></pre>
+
+
+<h3>Arguments</h3>
+
+<table role="presentation"><tr><td><code id="...">...</code></td>
+<td>
+Child elements, typically <code>column()</code>/<code>col*()</code> calls.
+</td></tr><tr><td><code id="class">class</code></td>
+<td>
+Additional CSS classes.
+</td></tr><tr><td><code id="equal_height">equal_height</code></td>
+<td>
+Whether cards in this row should be stretched to the
+same height (adds the <code>row-deck row-cards</code> classes). Set to
+<code>FALSE</code> to let cards keep their natural height.
+</td></tr><tr><td><code id="width">width</code></td>
+<td>
+Integer 1–12 (number of columns in a 12-column grid).
+</td></tr><tr><td><code id="title">title</code></td>
+<td>
+Card title (optional)
+</td></tr><tr><td><code id="footer">footer</code></td>
+<td>
+Card footer content (optional)
+</td></tr><tr><td><code id="status">status</code></td>
+<td>
+Card color status: "primary", "secondary", "success", "warning", "danger", etc.
+</td></tr><tr><td><code id="text">text</code></td>
+<td>
+The pretitle text to display
+</td></tr><tr><td><code id="subtitle">subtitle</code></td>
+<td>
+The page pretitle text (optional)
+</td></tr><tr><td><code id="header_actions">header_actions</code></td>
+<td>
+Additional elements to include in the header (e.g., action buttons)
+</td></tr><tr><td><code id="value">value</code></td>
+<td>
+Main value to display
+</td></tr><tr><td><code id="icon">icon</code></td>
+<td>
+Icon name (optional)
+</td></tr><tr><td><code id="color">color</code></td>
+<td>
+Color theme
+</td></tr><tr><td><code id="name">name</code></td>
+<td>
+Icon name
+</td></tr><tr><td><code id="library">library</code></td>
+<td>
+Icon library: "tabler", "bootstrap", "feather"
+</td></tr><tr><td><code id="country">country</code></td>
+<td>
+Two-letter (or special, e.g. "eu", "gb-sct") country code
+</td></tr><tr><td><code id="size">size</code></td>
+<td>
+Flag size: "xxs", "xs", "sm", "md", "lg", "xl", "2xl" (default size if 'NULL')
+</td></tr><tr><td><code id="gray">gray</code></td>
+<td>
+Use the muted gray variant of the icon
+</td></tr><tr><td><code id="type">type</code></td>
+<td>
+Alert type: "info", "success", "warning", "danger"
+</td></tr><tr><td><code id="dismissible">dismissible</code></td>
+<td>
+Whether alert can be dismissed
+</td></tr><tr><td><code id="label">label</code></td>
+<td>
+Button text
+</td></tr><tr><td><code id="href">href</code></td>
+<td>
+URL to link to (creates an anchor tag instead of button)
+</td></tr><tr><td><code id="onclick">onclick</code></td>
+<td>
+JavaScript to execute on click
+</td></tr><tr><td><code id="outline">outline</code></td>
+<td>
+Use outline style
+</td></tr><tr><td><code id="icon_right">icon_right</code></td>
+<td>
+Position icon on the right side
+</td></tr><tr><td><code id="disabled">disabled</code></td>
+<td>
+Whether the button is disabled
+</td></tr><tr><td><code id="block">block</code></td>
+<td>
+Make button full-width (block-level)
+</td></tr><tr><td><code id="pill">pill</code></td>
+<td>
+Use pill-shaped button style
+</td></tr><tr><td><code id="square">square</code></td>
+<td>
+Use square button style
+</td></tr><tr><td><code id="loading">loading</code></td>
+<td>
+Show loading spinner
+</td></tr></table><h3>Value</h3>
+
+<p>An HTML tag.
+</p>
+
+
+</div>
+        </div>
+        <footer><p id="last-updated">Loading...</p>
+</footer><script src="../js/footer.js"></script><script src="../js/theme.js"></script><script src="../js/search.js"></script><script src="../js/fontsize.js"></script></div>
+</div>
+
+</body></html>
+

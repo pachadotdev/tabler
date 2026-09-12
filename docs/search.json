@@ -1,0 +1,98 @@
+[
+  {
+    "title": "add_resource_path",
+    "url": "reference/add_resource_path.html",
+    "content": "add_resource_path Register a Directory of Static Resources add_resource_path(prefix, directoryPath) prefixThe URL prefix (e.g. \"www\" serves files at /www/...). directoryPath Absolute path to the directory to serve. Invisibly, NULL.  Serves files under directoryPath at URLs beginning with /prefix/, mirroring shiny::add_resource_path(). Use this to serve an app's own CSS/JS/image assets (e.g. from inst/app/www) without depending on shiny or golem.",
+    "type": "function"
+  },
+  {
+    "title": "tabler_app",
+    "url": "reference/tabler_app.html",
+    "content": "tabler_app Run a Tabler Application tabler_app( ui, server, host = \"127.0.0.1\", port = 3000L, launch.browser = interactive(), checkCredentials = NULL, githubAuth = NULL, sessionSecret = Sys.getenv(\"TABLER_SESSION_SECRET\", \"\"), sessionExpires = 604800L, loginTitle = \"Sign in\" ) uiThe UI definition - typically a call to page(). server A function with signature function(input, output, session). host Host to listen on (default \"127.0.0.1\"). port Port number (default 3000L). launch.browser Open a browser automatically when in an interactive session. checkCredentials Optional function(username, password) returning TRUE/FALSE. When supplied, the app is gated behind a login page: the HTML page, cached outputs, widgets, downloads, plots, and the WebSocket connection are all withheld from a browser until it presents a valid signed session cookie (set after a successful login). See \">logout for ending a session from the server. Default NULL disables the login gate entirely. Cannot be combined with githubAuth. githubAuth Optional list enabling GitHub OAuth login instead of the username/password form. Must contain clientId and clientSecret from a GitHub OAuth App (register one at https://github.com/settings/developers, setting the callback URL to http://:/github/callback). Optionally include org (restrict to members of that GitHub organisation - requires read:org token scope) and/or allowedUsers (character vector of permitted GitHub usernames). Cannot be combined with checkCredentials. sessionSecret Secret key used to sign the session cookie. Defaults to the TABLER_SESSION_SECRET environment variable; if unset, a random secret is generated for the run (with a warning) and all sessions are invalidated on restart. Used when either checkCredentials or githubAuth is supplied. sessionExpires How long, in seconds, a login should persist (default 7 days). Use 0 for a browser-session-only cookie that requires logging in again every time the browser is fully closed. loginTitle Title shown on the login page and browser tab. Invisibly, after the server is stopped. Launches a self-contained web application using httpuv for HTTP and WebSocket transport. Protocol The browser and server exchange plain JSON messages over a WebSocket at /ws: Browser → R: \\\"type\":\"input\",\"name\":\"\",\"value\":\\ R → Browser: \\\"type\":\"output\",\"id\":\"\",\"html\":\"\"\\ Reactive system Uses tabler's own dependency-tracking reactive system (see \">reactive, \">observe, \">reactive_val, \">observe_event). Render functions (render_text, render_ui, render_print) are assigned to output inside server.",
+    "type": "function"
+  },
+  {
+    "title": "sidebar_brand",
+    "url": "reference/sidebar_brand.html",
+    "content": "sidebar_brand Create a Sidebar Brand sidebar_brand(text = NULL, img = NULL, href = \"#\") textBrand text/label img Optional image URL/path for brand logo href Optional link URL for the brand (defaults to \"#\") A named list suitable to pass to `sidebar_menu(title = )` Helper to build a brand structure for `sidebar_menu(title = ...)`. sidebar_brand(\"My App\", img = \"logo.png\")",
+    "type": "function"
+  },
+  {
+    "title": "menu_dropdown",
+    "url": "reference/menu_dropdown.html",
+    "content": "menu_dropdown Create a Dropdown Menu Item menu_dropdown(text, icon = NULL, href = NULL, items = list()) textTitle of the dropdown icon Icon name (optional) href Link for the dropdown toggle (optional) items A list of character vectors or tags representing dropdown links; each element can be a character vector of length 2: c(text, href) An HTML tag representing the dropdown nav item Create a nav-item with a dropdown menu using columns like the example",
+    "type": "function"
+  },
+  {
+    "title": "navbar_menu",
+    "url": "reference/navbar_menu.html",
+    "content": "navbar_menu Build a standard navbar/header navbar_menu(..., brand = NULL, show_theme_button = FALSE) ...Additional nodes to include (typically `menu_item()` elements) brand Optional brand for the navbar; either a string (text title), `sidebar_brand(...)` or a named list with elements `text` and `img` (URL/path). show_theme_button Whether to show the theme toggle buttons (default: `FALSE``). An HTML tag for the header Create the top header used in boxed layout. This function accepts raw `li` items (created by `menu_item`) or a `sidebar_brand()` attached as `title` attribute on a `ul`.",
+    "type": "function"
+  },
+  {
+    "title": "tag_append_attributes",
+    "url": "reference/tag_append_attributes.html",
+    "content": "tag_append_attributes Append Attributes to an Existing Tag tag_append_attributes(tag, ...) tagA tabler.tag object. ... Named attributes to add/overwrite. The class attribute is appended (space-separated) rather than replaced. The modified tag. Append Attributes to an Existing Tag",
+    "type": "function"
+  },
+  {
+    "title": "tag_list",
+    "url": "reference/tag_list.html",
+    "content": "tag_list Create an Ordered Collection of Tags tag_list(...) ...Tags or other HTML content. A tabler.tag.list object. Create an Ordered Collection of Tags",
+    "type": "function"
+  },
+  {
+    "title": "html",
+    "url": "reference/html.html",
+    "content": "html Mark a String as Raw HTML (Do Not Escape) html(text) textCharacter string of literal HTML. An object of class \"tabler.html\".  Mark a String as Raw HTML (Do Not Escape)",
+    "type": "function"
+  },
+  {
+    "title": "logout",
+    "url": "reference/logout.html",
+    "content": "logout Log Out The Current Session logout(session = get_default_reactive_domain()) sessionThe session object passed by \">tabler_app to the server function. Defaults to ()\">get_default_reactive_domain(). Invisibly, NULL.  Forces the browser to drop its session cookie and return to the login page. For use inside a  server function (e.g. in an observe_event() on a \"Log out\" button) when checkCredentials was supplied to tabler_app\">tabler_app server function (e.g. in an observe_event() on a \"Log out\" button) when checkCredentials was supplied to tabler_app. Why this can't be done by just hiding a DOM element Unlike \">show_progress/\">hide_progress, which only toggle a cosmetic overlay, a login gate has to withhold the actual page content from the browser until the server has verified the visitor - anything already sent to the browser (HTML, JS, JSON) can always be revealed again with the browser's DevTools, no matter how it is hidden client-side. \">tabler_app therefore checks a signed session cookie before it ever renders the page, serves cached outputs, or accepts a WebSocket connection: an unauthenticated request gets nothing but the login form, both for the initial page load and for the WebSocket handshake that carries reactive output. logout() sends a small message over the WebSocket telling the browser-side JS (tabler-login.js) to navigate to /logout, which is a real server-side endpoint that clears the session cookie and redirects back to /login. This is the same show/hide message mechanism as \">show_progress, but logout can only actually take effect through the server, not through anything client-side. \">tabler_app if (interactive()) ui <- page( title = \"Login Example\", body = body(action_button(\"logout_btn\", \"Log out\")) ) server <- function(input, output, session) observe_event(input$logout_btn, logout(session) ) tabler_app( ui, server, checkCredentials = function(username, password) username == \"admin\" && password == \"hunter2\" )",
+    "type": "function"
+  },
+  {
+    "title": "ns",
+    "url": "reference/ns.html",
+    "content": "ns Namespace an Id ns(namespace, id = NULL) namespaceNamespace prefix. id Id to namespace. If missing, returns a function that namespaces any id it is given (as shiny::ns() does). If id is given, a namespaced id (character string). Otherwise, a function that namespaces any id passed to it.  Prefixes an id with a namespace, mirroring the id-prefixing behaviour of shiny::ns() without depending on shiny or its module system. my_ns <- ns(\"mymodule\") my_ns(\"button\") # \"mymodule-button\" ns(\"mymodule\", \"button\") # \"mymodule-button\"",
+    "type": "function"
+  },
+  {
+    "title": "get_default_reactive_domain",
+    "url": "reference/get_default_reactive_domain.html",
+    "content": "get_default_reactive_domain The Currently Running tabler_app Session get_default_reactive_domain() A tabler_app session object, or NULL. Returns the session object of the tabler_app server function currently executing, or NULL if none is running. Used as the default session argument of \">module_server.",
+    "type": "function"
+  },
+  {
+    "title": "module_server",
+    "url": "reference/module_server.html",
+    "content": "module_server Create a Namespaced Module Server module_server(id, module, session = get_default_reactive_domain()) idThe module's namespace id (must match the id used to call the module's *_ui function). module A function with signature function(input, output, session). session The parent session object. Defaults to the currently running  session (see get_default_reactive_domain\">tabler_app session (see get_default_reactive_domain). The return value of module, invisibly.  Dependency-free equivalent of shiny::module_server(). Wraps input/output so that unprefixed names accessed inside module are automatically namespaced with id, matching the ids produced by ns(id) in the module's UI function.",
+    "type": "function"
+  },
+  {
+    "title": "show_progress",
+    "url": "reference/show_progress.html",
+    "content": "show_progress Show/Hide a Full-Page Progress Overlay show_progress(session = get_default_reactive_domain(), text = \"Loading...\") hide_progress(session = get_default_reactive_domain()) sessionThe session object passed by \">tabler_app to the server function. Defaults to ()\">get_default_reactive_domain(). text The message displayed above the progress bar. Invisibly, NULL.  Displays (or hides) a full-page loading overlay with an animated progress bar in a running . Useful for indicating that a long-running computation (e.g. a database query) is in progress. \">tabler_app. Useful for indicating that a long-running computation (e.g. a database query) is in progress.  This is a dependency-free replacement for ad-hoc waiter/custom JS overlay setups. It works the same way as \">show/\">hide: the server sends a small message over the WebSocket connection and the browser-side JS (tabler-progress.js) creates/reveals or hides the overlay. \">tabler_app's event loop only writes queued WebSocket messages to the socket in between iterations of its repeat \\ httpserver::service(); ... \\ loop. If show_progress() is immediately followed by a long, blocking computation in the same observer, the \"show\" message sits in the queue - never reaching the browser - until that observer (and thus the slow computation) finishes, making the overlay flash on right at the end instead of before the work starts. Calling httpserver::service() again from inside the observer to force an early flush is unsafe here: it re-enters httpuv's event loop while it is still dispatching the current WebSocket message, which can cause that message (and the input it carries) to be processed more than once. Use \">with_progress instead, which defers the slow computation with later2::later() so control returns to the event loop (flushing the \"show\" message) before the work actually runs. \">tabler_app, \">with_progress if (interactive()) ui <- page( title = \"Progress Example\", body = body(action_button(\"btn\", \"Load data\")) ) server <- function(input, output, session) observe_event(input$btn, with_progress(session, \"Loading data...\", Sys.sleep(2) ) ) tabler_app(ui, server)",
+    "type": "function"
+  },
+  {
+    "title": "with_progress",
+    "url": "reference/with_progress.html",
+    "content": "with_progress Run a Long Computation with a Progress Overlay with_progress(session = get_default_reactive_domain(), text = \"Loading...\", expr) sessionThe session object passed by \">tabler_app to the server function. Defaults to ()\">get_default_reactive_domain(). text The message displayed above the progress bar. expr The (potentially slow) expression to run once the overlay is visible. Invisibly, NULL. expr runs asynchronously, after with_progress() itself has already returned. Shows the full-page progress overlay (see ), then runs expr, then hides the overlay again - but unlike calling show_progress\">show_progress), then runs expr, then hides the overlay again - but unlike calling show_progress/\">hide_progress directly around a blocking computation, expr is deferred with later2::later() so that \">tabler_app's event loop gets a chance to actually flush the \"show\" message to the browser before the slow work begins. \">show_progress, \">tabler_app if (interactive()) ui <- page( title = \"Progress Example\", body = body(action_button(\"btn\", \"Load data\")) ) server <- function(input, output, session) observe_event(input$btn, with_progress(session, \"Loading data...\", Sys.sleep(2) ) ) tabler_app(ui, server)",
+    "type": "function"
+  },
+  {
+    "title": "pkg_template",
+    "url": "reference/pkg_template.html",
+    "content": "pkg_template Start a new project with the tabler package template pkg_template(path = NULL, pkgname = NULL) pathPath to the new project pkgname Name of the new package The file path to the copied template (invisibly). Copies a package template into a new directory. The template includes a DESCRIPTION file, a minimal R/ directory and placeholders with instructions. You can then edit these files to customize your new package. # create a new directory dir <- tempdir() dir.create(dir) # copy the package template into the directory pkg_template(dir, \"mynewpkg\")",
+    "type": "function"
+  },
+  {
+    "title": "hidden",
+    "url": "reference/hidden.html",
+    "content": "hidden Initialize a Tag as Hidden hidden(...) ...Tag (or tag_list or list of tags) to make invisible. The tag (or tags) that were given as an argument, in a hidden state. Create a tag (or tag list) that is invisible when the page first loads. It can be made visible later with  or show\">toggle or show. \">show, \">hide, \">toggle if (interactive()) ui <- page( title = \"Hidden Example\", body = body( action_button(\"btn\", \"Click me\"), hidden( p(id = \"element\", \"I was born invisible\") ) ) ) server <- function(input, output, session) observe_event(input$btn, show(session, \"element\") ) tabler_app(ui, server)",
+    "type": "function"
+  }
+]
