@@ -1,6 +1,5 @@
-#' @title UI Dispatcher
+#' @title UI Side
 #' @noRd
-#' @export
 app_ui <- function() {
   page(
     theme = "light",

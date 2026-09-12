@@ -81,6 +81,7 @@ ui <- page(
   layout = "combo",
   show_theme_button = TRUE,
   title = "Combo Layout",
+  # navbar = sidebar_nav,
   navbar = list(side = sidebar_nav, top = topbar_nav),
   body = list(
     tab_items(
@@ -112,7 +113,10 @@ ui <- page(
   ),
   footer = footer(
     left = "Tabler",
-    right = tags$span("v1.4.0")
+    right = list(
+      action_button("logout_btn", "Log out", class = "btn-outline-secondary btn-sm me-2"),
+      tags$span("v1.4.0")
+    )
   )
 )
 
@@ -153,6 +157,10 @@ server <- function(input, output, session) {
     reactive(input$airquality_bins %||% 5)
   )
 
+  observe_event(input$logout_btn, {
+    logout(session)
+  })
+
   # Download handlers — export the full underlying dataset as CSV
   output$mtcars_download <- download_handler(
     filename = "mtcars.csv",
@@ -172,4 +180,21 @@ server <- function(input, output, session) {
   sync_url(session, exclude = c("parameters", "to", "not", "show"))
 }
 
-tabler_app(ui, server)
+# GitHub OAuth login: any member of the tradestatistics organisation is allowed in.
+# Register a GitHub OAuth App at https://github.com/settings/developers and
+# set the callback URL to http://127.0.0.1:3000/github/callback, then export:
+#   GITHUB_CLIENT_ID=<your-client-id>
+#   GITHUB_CLIENT_SECRET=<your-client-secret>
+#   TABLER_SESSION_SECRET=<any-long-random-string>
+# As org owner, approve your OAuth App at:
+#   https://github.com/organizations/tradestatistics/settings/oauth_application_policy
+tabler_app(
+  ui,
+  server,
+  githubAuth = list(
+    clientId     = Sys.getenv("GITHUB_CLIENT_ID"),
+    clientSecret = Sys.getenv("GITHUB_CLIENT_SECRET"),
+    org          = "tradestatistics"
+  ),
+  sessionSecret = Sys.getenv("TABLER_SESSION_SECRET")
+)

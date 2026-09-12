@@ -5,7 +5,7 @@ render_histogram <- function(data, col_reactive, bins_reactive) {
     x <- stats::na.omit(data[[col_reactive()]])
     bins <- seq(min(x), max(x), length.out = bins_reactive() + 1)
     x |>
-      hist(
+      graphics::hist(
         breaks = bins,
         col    = "darkgray",
         border = "white",
