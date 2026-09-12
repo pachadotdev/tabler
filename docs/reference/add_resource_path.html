@@ -95,7 +95,7 @@
     <a href="../reference/br.html">br</a>
     <a href="../reference/select_input.html">select_input</a>
     <a href="../reference/select_multiple_input.html">select_multiple_input</a>
-    <a href="../reference/sliderInput.html">sliderInput</a>
+    <a href="../reference/slider_input.html">slider_input</a>
     <a href="../reference/update_select_input.html">update_select_input</a>
     <a href="../reference/update_slider_input.html">update_slider_input</a>
     <a href="../reference/text_input.html">text_input</a>
@@ -159,7 +159,7 @@
 
 <h3>Description</h3>
 
-<p>Serves files under <code>directoryPath</code> at URLs beginning
+<p>Serves files under <code>directory_path</code> at URLs beginning
 with <code>/prefix/</code>, mirroring <code>shiny::add_resource_path()</code>. Use this
 to serve an app's own CSS/JS/image assets (e.g. from <code>inst/app/www</code>)
 without depending on <span class="pkg">shiny</span> or <span class="pkg">golem</span>.
@@ -168,7 +168,7 @@ without depending on <span class="pkg">shiny</span> or <span class="pkg">golem</
 
 <h3>Usage</h3>
 
-<pre><code class="language-R">add_resource_path(prefix, directoryPath)
+<pre><code class="language-R">add_resource_path(prefix, directory_path)
 </code></pre>
 
 
@@ -177,7 +177,7 @@ without depending on <span class="pkg">shiny</span> or <span class="pkg">golem</
 <table role="presentation"><tr><td><code id="prefix">prefix</code></td>
 <td>
 The URL prefix (e.g. <code>"www"</code> serves files at <code>/www/...</code>).
-</td></tr><tr><td><code id="directoryPath">directoryPath</code></td>
+</td></tr><tr><td><code id="directory_path">directory_path</code></td>
 <td>
 Absolute path to the directory to serve.
 </td></tr></table><h3>Value</h3>

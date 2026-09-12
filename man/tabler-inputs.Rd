@@ -3,7 +3,7 @@
 \name{tabler-inputs}
 \alias{select_input}
 \alias{select_multiple_input}
-\alias{sliderInput}
+\alias{slider_input}
 \alias{update_select_input}
 \alias{update_selectize_input}
 \alias{update_slider_input}
@@ -16,34 +16,34 @@
 \alias{radio_buttons}
 \title{Select Input}
 \usage{
-select_input(inputId, label, choices, selected = NULL, searchable = TRUE, ...)
-select_multiple_input(inputId, label, choices, selected = NULL, ...)
-sliderInput(
-  inputId,
+select_input(input_id, label, choices, selected = NULL, searchable = TRUE, ...)
+select_multiple_input(input_id, label, choices, selected = NULL, ...)
+slider_input(
+  input_id,
   label,
   min,
   max,
   value,
   step = 1,
-  thumbSize = NULL,
+  thumb_size = NULL,
   fill = FALSE,
   color = NULL,
   ...
 )
-update_select_input(session, inputId, label = NULL, choices = NULL, selected = NULL, ...)
+update_select_input(session, input_id, label = NULL, choices = NULL, selected = NULL, ...)
 update_slider_input(
   session,
-  inputId,
+  input_id,
   label = NULL,
   value = NULL,
   min = NULL,
   max = NULL,
   step = NULL
 )
-text_input(inputId, label, value = "", placeholder = NULL, mask = NULL, ...)
-numeric_input(inputId, label, value, min = NULL, max = NULL, step = 1, ...)
+text_input(input_id, label, value = "", placeholder = NULL, mask = NULL, ...)
+numeric_input(input_id, label, value, min = NULL, max = NULL, step = 1, ...)
 date_input(
-  inputId,
+  input_id,
   label,
   value = Sys.Date(),
   min = NULL,
@@ -52,14 +52,14 @@ date_input(
   inline = FALSE,
   ...
 )
-checkbox_input(inputId, label, value = FALSE, description = NULL, inline = FALSE, ...)
-action_button(inputId, label, class = "btn-primary", icon = NULL, ...)
-checkbox_group_input(inputId, label, choices, selected = NULL)
-radio_buttons(inputId, label, choices, selected = NULL, inline = FALSE)
+checkbox_input(input_id, label, value = FALSE, description = NULL, inline = FALSE, ...)
+action_button(input_id, label, class = "btn-primary", icon = NULL, ...)
+checkbox_group_input(input_id, label, choices, selected = NULL)
+radio_buttons(input_id, label, choices, selected = NULL, inline = FALSE)
 }
 
 \arguments{
-\item{inputId}{The input identifier used in \code{server}.}
+\item{input_id}{The input identifier used in \code{server}.}
 
 \item{label}{Display label shown above the control.}
 
@@ -88,7 +88,7 @@ radio_buttons(inputId, label, choices, selected = NULL, inline = FALSE)
 
 \item{step}{Step size (default \code{1}).}
 
-\item{thumbSize}{Optional numeric multiplier of the default handle size
+\item{thumb_size}{Optional numeric multiplier of the default handle size
   (\code{1rem}), e.g. \code{1} for the normal size, \code{2} for double
   size, \code{2.5} for 250\%. Defaults to \code{NULL} (Tabler's built-in
   size).}

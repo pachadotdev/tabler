@@ -5,14 +5,14 @@ doom_directory <- "./doom-wasm"
 
 startServer("127.0.0.1", 1234, list(
   call = function(req) {
-    filePath <- paste0(doom_directory, req$PATH_INFO)
-    if (file.exists(filePath)) {
+    file_path <- paste0(doom_directory, req$PATH_INFO)
+    if (file.exists(file_path)) {
       return(list(
         status = 200,
         headers = list(
           "Content-Type" = "text/html"
         ),
-        body = readBin(filePath, "raw", file.info(filePath)$size)
+        body = readBin(file_path, "raw", file.info(file_path)$size)
       ))
     } else {
       return(list(

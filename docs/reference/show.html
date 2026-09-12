@@ -95,7 +95,7 @@
     <a href="../reference/br.html">br</a>
     <a href="../reference/select_input.html">select_input</a>
     <a href="../reference/select_multiple_input.html">select_multiple_input</a>
-    <a href="../reference/sliderInput.html">sliderInput</a>
+    <a href="../reference/slider_input.html">slider_input</a>
     <a href="../reference/update_select_input.html">update_select_input</a>
     <a href="../reference/update_slider_input.html">update_slider_input</a>
     <a href="../reference/text_input.html">text_input</a>
@@ -176,7 +176,7 @@ condition evaluates to <code>TRUE</code> and hidden otherwise.
   session = get_default_reactive_domain(),
   id = NULL,
   anim = FALSE,
-  animType = "slide",
+  anim_type = "slide",
   time = 0.5,
   selector = NULL
 )
@@ -184,7 +184,7 @@ hide(
   session = get_default_reactive_domain(),
   id = NULL,
   anim = FALSE,
-  animType = "slide",
+  anim_type = "slide",
   time = 0.5,
   selector = NULL
 )
@@ -192,7 +192,7 @@ toggle(
   session = get_default_reactive_domain(),
   id = NULL,
   anim = FALSE,
-  animType = "slide",
+  anim_type = "slide",
   time = 0.5,
   selector = NULL,
   condition = NULL
@@ -212,7 +212,7 @@ The id of the element/HTML tag.
 </td></tr><tr><td><code id="anim">anim</code></td>
 <td>
 If <code>TRUE</code> then animate the behaviour.
-</td></tr><tr><td><code id="animType">animType</code></td>
+</td></tr><tr><td><code id="anim_type">anim_type</code></td>
 <td>
 The type of animation to use, either <code>"slide"</code> or <code>"fade"</code>.
 </td></tr><tr><td><code id="time">time</code></td>
@@ -269,7 +269,7 @@ these functions use the plain-list <code>session</code> object created by
 toggle(session, id = "panel")
 toggle(session, "panel", TRUE)
 toggle(session, "panel", TRUE, "fade", 2)
-toggle(session, id = "panel", time = 1, anim = TRUE, animType = "slide")
+toggle(session, id = "panel", time = 1, anim = TRUE, anim_type = "slide")
 show(session, "panel")
 show(session, id = "panel", anim = TRUE)
 hide(session, "panel")

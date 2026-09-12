@@ -10,11 +10,11 @@ tabler_app(
   host = "127.0.0.1",
   port = 3000L,
   launch.browser = interactive(),
-  checkCredentials = NULL,
-  githubAuth = NULL,
-  sessionSecret = Sys.getenv("TABLER_SESSION_SECRET", ""),
-  sessionExpires = 604800L,
-  loginTitle = "Sign in"
+  check_credentials = NULL,
+  github_auth = NULL,
+  session_secret = Sys.getenv("TABLER_SESSION_SECRET", ""),
+  session_expires = 604800L,
+  login_title = "Sign in"
 )
 }
 
@@ -29,36 +29,36 @@ tabler_app(
 
 \item{launch.browser}{Open a browser automatically when in an interactive session.}
 
-\item{checkCredentials}{Optional \code{function(username, password)} returning
+\item{check_credentials}{Optional \code{function(username, password)} returning
   \code{TRUE}/\code{FALSE}. When supplied, the app is gated behind a login
   page: the HTML page, cached outputs, widgets, downloads, plots, and the
   WebSocket connection are all withheld from a browser until it presents a
   valid signed session cookie (set after a successful login). See
   \code{\link{logout}} for ending a session from the server. Default
   \code{NULL} disables the login gate entirely. Cannot be combined with
-  \code{githubAuth}.}
+  \code{github_auth}.}
 
-\item{githubAuth}{Optional list enabling GitHub OAuth login instead of the
-  username/password form. Must contain \code{clientId} and
-  \code{clientSecret} from a GitHub OAuth App (register one at
+\item{github_auth}{Optional list enabling GitHub OAuth login instead of the
+  username/password form. Must contain \code{client_id} and
+  \code{client_secret} from a GitHub OAuth App (register one at
   \url{https://github.com/settings/developers}, setting the callback URL to
   \code{http://<host>:<port>/github/callback}). Optionally include
   \code{org} (restrict to members of that GitHub organisation - requires
   \code{read:org} token scope) and/or \code{allowedUsers} (character vector
   of permitted GitHub usernames). Cannot be combined with
-  \code{checkCredentials}.}
+  \code{check_credentials}.}
 
-\item{sessionSecret}{Secret key used to sign the session cookie. Defaults to
+\item{session_secret}{Secret key used to sign the session cookie. Defaults to
   the \code{TABLER_SESSION_SECRET} environment variable; if unset, a random
   secret is generated for the run (with a warning) and all sessions are
-  invalidated on restart. Used when either \code{checkCredentials} or
-  \code{githubAuth} is supplied.}
+  invalidated on restart. Used when either \code{check_credentials} or
+  \code{github_auth} is supplied.}
 
-\item{sessionExpires}{How long, in seconds, a login should persist
+\item{session_expires}{How long, in seconds, a login should persist
   (default 7 days). Use \code{0} for a browser-session-only cookie that
   requires logging in again every time the browser is fully closed.}
 
-\item{loginTitle}{Title shown on the login page and browser tab.}
+\item{login_title}{Title shown on the login page and browser tab.}
 }
 
 \value{

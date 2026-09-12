@@ -23,9 +23,9 @@ reactive(expr)
 req(..., cancelOutput = FALSE)
 isolate(expr)
 observe(expr)
-observe_event(eventExpr, handlerExpr, ignoreInit = TRUE)
-event_reactive(eventExpr, valueExpr, ignoreNULL = TRUE, ignoreInit = TRUE)
-bind_event(..., ignoreNULL = TRUE, ignoreInit = TRUE)
+observe_event(event_expr, handler_expr, ignore_init = TRUE)
+event_reactive(event_expr, value_expr, ignore_null = TRUE, ignore_init = TRUE)
+bind_event(..., ignore_null = TRUE, ignore_init = TRUE)
 tabler_options(cache)
 bind_cache(x, ...)
 sync_url(session, exclude = character(0L))
@@ -44,16 +44,16 @@ sync_url(session, exclude = character(0L))
 
 \item{cancelOutput}{Ignored (kept for signature compatibility with Shiny).}
 
-\item{eventExpr}{Reactive expression whose change triggers the handler.}
+\item{event_expr}{Reactive expression whose change triggers the handler.}
 
-\item{handlerExpr}{Expression to run when the event fires.}
+\item{handler_expr}{Expression to run when the event fires.}
 
-\item{ignoreInit}{If \code{TRUE} (default), skip the first evaluation.}
+\item{ignore_init}{If \code{TRUE} (default), skip the first evaluation.}
 
-\item{valueExpr}{Expression to evaluate (and cache) when the event fires.}
+\item{value_expr}{Expression to evaluate (and cache) when the event fires.}
 
-\item{ignoreNULL}{If \code{TRUE} (default), do not (re)compute while
-  \code{eventExpr} evaluates to \code{NULL}.}
+\item{ignore_null}{If \code{TRUE} (default), do not (re)compute while
+  \code{event_expr} evaluates to \code{NULL}.}
 
 \item{cache}{A \pkg{tinycache} cache object (e.g.
   \code{tinycache::dcache(dir = "/path/to/cache")} or

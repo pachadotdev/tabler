@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>sliderInput • tabler</title><link rel="stylesheet" href="../menu.css"><link rel="stylesheet" href="../content.css"><!-- MathJax Configuration --><script>
+<html lang="en"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>slider_input • tabler</title><link rel="stylesheet" href="../menu.css"><link rel="stylesheet" href="../content.css"><!-- MathJax Configuration --><script>
     window.MathJax = {
       tex: {
         inlineMath: [['\\(', '\\)'], ['$', '$']],
@@ -95,7 +95,7 @@
     <a href="../reference/br.html">br</a>
     <a href="../reference/select_input.html">select_input</a>
     <a href="../reference/select_multiple_input.html">select_multiple_input</a>
-    <a href="../reference/sliderInput.html">sliderInput</a>
+    <a href="../reference/slider_input.html">slider_input</a>
     <a href="../reference/update_select_input.html">update_select_input</a>
     <a href="../reference/update_slider_input.html">update_slider_input</a>
     <a href="../reference/text_input.html">text_input</a>
@@ -165,34 +165,34 @@
 
 <h3>Usage</h3>
 
-<pre><code class="language-R">select_input(inputId, label, choices, selected = NULL, searchable = TRUE, ...)
-select_multiple_input(inputId, label, choices, selected = NULL, ...)
-sliderInput(
-  inputId,
+<pre><code class="language-R">select_input(input_id, label, choices, selected = NULL, searchable = TRUE, ...)
+select_multiple_input(input_id, label, choices, selected = NULL, ...)
+slider_input(
+  input_id,
   label,
   min,
   max,
   value,
   step = 1,
-  thumbSize = NULL,
+  thumb_size = NULL,
   fill = FALSE,
   color = NULL,
   ...
 )
-update_select_input(session, inputId, label = NULL, choices = NULL, selected = NULL, ...)
+update_select_input(session, input_id, label = NULL, choices = NULL, selected = NULL, ...)
 update_slider_input(
   session,
-  inputId,
+  input_id,
   label = NULL,
   value = NULL,
   min = NULL,
   max = NULL,
   step = NULL
 )
-text_input(inputId, label, value = "", placeholder = NULL, mask = NULL, ...)
-numeric_input(inputId, label, value, min = NULL, max = NULL, step = 1, ...)
+text_input(input_id, label, value = "", placeholder = NULL, mask = NULL, ...)
+numeric_input(input_id, label, value, min = NULL, max = NULL, step = 1, ...)
 date_input(
-  inputId,
+  input_id,
   label,
   value = Sys.Date(),
   min = NULL,
@@ -201,16 +201,16 @@ date_input(
   inline = FALSE,
   ...
 )
-checkbox_input(inputId, label, value = FALSE, description = NULL, inline = FALSE, ...)
-action_button(inputId, label, class = "btn-primary", icon = NULL, ...)
-checkbox_group_input(inputId, label, choices, selected = NULL)
-radio_buttons(inputId, label, choices, selected = NULL, inline = FALSE)
+checkbox_input(input_id, label, value = FALSE, description = NULL, inline = FALSE, ...)
+action_button(input_id, label, class = "btn-primary", icon = NULL, ...)
+checkbox_group_input(input_id, label, choices, selected = NULL)
+radio_buttons(input_id, label, choices, selected = NULL, inline = FALSE)
 </code></pre>
 
 
 <h3>Arguments</h3>
 
-<table role="presentation"><tr><td><code id="inputId">inputId</code></td>
+<table role="presentation"><tr><td><code id="input_id">input_id</code></td>
 <td>
 The input identifier used in <code>server</code>.
 </td></tr><tr><td><code id="label">label</code></td>
@@ -249,7 +249,7 @@ slider.
 </td></tr><tr><td><code id="step">step</code></td>
 <td>
 Step size (default <code>1</code>).
-</td></tr><tr><td><code id="thumbSize">thumbSize</code></td>
+</td></tr><tr><td><code id="thumb_size">thumb_size</code></td>
 <td>
 Optional numeric multiplier of the default handle size
 (<code>1rem</code>), e.g. <code>1</code> for the normal size, <code>2</code> for double

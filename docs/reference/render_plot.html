@@ -95,7 +95,7 @@
     <a href="../reference/br.html">br</a>
     <a href="../reference/select_input.html">select_input</a>
     <a href="../reference/select_multiple_input.html">select_multiple_input</a>
-    <a href="../reference/sliderInput.html">sliderInput</a>
+    <a href="../reference/slider_input.html">slider_input</a>
     <a href="../reference/update_select_input.html">update_select_input</a>
     <a href="../reference/update_slider_input.html">update_slider_input</a>
     <a href="../reference/text_input.html">text_input</a>
@@ -166,31 +166,31 @@
 
 <h3>Usage</h3>
 
-<pre><code class="language-R">text_output(outputId, inline = FALSE)
-verbatim_text_output(outputId)
-ui_output(outputId, container = div, ...)
+<pre><code class="language-R">text_output(output_id, inline = FALSE)
+verbatim_text_output(output_id)
+ui_output(output_id, container = div, ...)
 render_text(expr)
 render_print(expr)
 render_ui(expr)
-plot_output(outputId, width = "100%", height = "400px")
+plot_output(output_id, width = "100%", height = "400px")
 render_plot(expr, width = 800, height = 400)
-widget_output(outputId, width = "100%", height = "400px")
+widget_output(output_id, width = "100%", height = "400px")
 render_widget(expr)
-download_handler(filename, content, contentType = NULL)
+download_handler(filename, content, content_type = NULL)
 download_button(
-  outputId,
+  output_id,
   label = "Download",
   class = "btn-primary",
   icon = "download",
   ...
 )
-download_link(outputId, label = "Download", class = NULL, icon = NULL, ...)
+download_link(output_id, label = "Download", class = NULL, icon = NULL, ...)
 </code></pre>
 
 
 <h3>Arguments</h3>
 
-<table role="presentation"><tr><td><code id="outputId">outputId</code></td>
+<table role="presentation"><tr><td><code id="output_id">output_id</code></td>
 <td>
 The output identifier (must match the server-side name).
 </td></tr><tr><td><code id="inline">inline</code></td>
@@ -220,7 +220,7 @@ giving the filename offered to the browser (e.g. <code>"data.csv"</code>).
 <td>
 A one-argument function <code>function(file) {...}</code> that
 writes the file's contents to the path given by <code>file</code>.
-</td></tr><tr><td><code id="contentType">contentType</code></td>
+</td></tr><tr><td><code id="content_type">content_type</code></td>
 <td>
 Optional MIME type string. If <code>NULL</code> (default), it
 is guessed from the filename's extension.

@@ -17,29 +17,29 @@
 \alias{download_link}
 \title{Text Output Placeholder}
 \usage{
-text_output(outputId, inline = FALSE)
-verbatim_text_output(outputId)
-ui_output(outputId, container = div, ...)
+text_output(output_id, inline = FALSE)
+verbatim_text_output(output_id)
+ui_output(output_id, container = div, ...)
 render_text(expr)
 render_print(expr)
 render_ui(expr)
-plot_output(outputId, width = "100\%", height = "400px")
+plot_output(output_id, width = "100\%", height = "400px")
 render_plot(expr, width = 800, height = 400)
-widget_output(outputId, width = "100\%", height = "400px")
+widget_output(output_id, width = "100\%", height = "400px")
 render_widget(expr)
-download_handler(filename, content, contentType = NULL)
+download_handler(filename, content, content_type = NULL)
 download_button(
-  outputId,
+  output_id,
   label = "Download",
   class = "btn-primary",
   icon = "download",
   ...
 )
-download_link(outputId, label = "Download", class = NULL, icon = NULL, ...)
+download_link(output_id, label = "Download", class = NULL, icon = NULL, ...)
 }
 
 \arguments{
-\item{outputId}{The output identifier (must match the server-side name).}
+\item{output_id}{The output identifier (must match the server-side name).}
 
 \item{inline}{If \code{TRUE}, use \code{<span>}; otherwise \code{<div>}.}
 
@@ -60,7 +60,7 @@ download_link(outputId, label = "Download", class = NULL, icon = NULL, ...)
 \item{content}{A one-argument function \code{function(file) {...}} that
   writes the file's contents to the path given by \code{file}.}
 
-\item{contentType}{Optional MIME type string. If \code{NULL} (default), it
+\item{content_type}{Optional MIME type string. If \code{NULL} (default), it
   is guessed from the filename's extension.}
 
 \item{label}{Link/button text.}

@@ -20,7 +20,7 @@ Invisibly, \code{NULL}.
 Forces the browser to drop its session cookie and return to the login
 page. For use inside a \code{\link{tabler_app}} \code{server} function
 (e.g. in an \code{observe_event()} on a "Log out" button) when
-\code{checkCredentials} was supplied to \code{\link{tabler_app}}.
+\code{check_credentials} was supplied to \code{\link{tabler_app}}.
 }
 
 \details{
@@ -64,7 +64,7 @@ if (interactive()) {
 
   tabler_app(
     ui, server,
-    checkCredentials = function(username, password) {
+    check_credentials = function(username, password) {
       username == "admin" && password == "hunter2"
     }
   )

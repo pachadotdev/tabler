@@ -121,8 +121,8 @@ add_resource_path <- function(prefix, directory_path) {
 #'   \code{NULL} disables the login gate entirely. Cannot be combined with
 #'   \code{github_auth}.
 #' @param github_auth Optional list enabling GitHub OAuth login instead of the
-#'   username/password form. Must contain \code{clientId} and
-#'   \code{clientSecret} from a GitHub OAuth App (register one at
+#'   username/password form. Must contain \code{client_id} and
+#'   \code{client_secret} from a GitHub OAuth App (register one at
 #'   \url{https://github.com/settings/developers}, setting the callback URL to
 #'   \code{http://<host>:<port>/github/callback}). Optionally include
 #'   \code{org} (restrict to members of that GitHub organisation - requires
@@ -393,7 +393,7 @@ tabler_app <- function(ui, server, host = "127.0.0.1", port = 3000L,
       }
 
       if (path == "/github/login") {
-        if (!nzchar(github_auth$clientId %||% "") || !nzchar(github_auth$clientSecret %||% "")) {
+        if (!nzchar(github_auth$client_id %||% "") || !nzchar(github_auth$client_secret %||% "")) {
           return(list(
             status = 302L,
             headers = list("Location" = "/login?error=1"),
@@ -406,7 +406,7 @@ tabler_app <- function(ui, server, host = "127.0.0.1", port = 3000L,
           status = 302L,
           headers = list(
             "Location" = .github_auth_url(
-              github_auth$clientId, github_redirect_uri, state, scopes
+              github_auth$client_id, github_redirect_uri, state, scopes
             )
           ),
           body = ""
@@ -433,7 +433,7 @@ tabler_app <- function(ui, server, host = "127.0.0.1", port = 3000L,
         }
 
         token <- .github_exchange_code(
-          github_auth$clientId, github_auth$clientSecret, code, github_redirect_uri
+          github_auth$client_id, github_auth$client_secret, code, github_redirect_uri
         )
         message("[tabler/github] token exchange: ", if (is.null(token)) "FAILED" else "ok")
         if (is.null(token)) {

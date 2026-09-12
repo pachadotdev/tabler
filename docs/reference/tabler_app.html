@@ -95,7 +95,7 @@
     <a href="../reference/br.html">br</a>
     <a href="../reference/select_input.html">select_input</a>
     <a href="../reference/select_multiple_input.html">select_multiple_input</a>
-    <a href="../reference/sliderInput.html">sliderInput</a>
+    <a href="../reference/slider_input.html">slider_input</a>
     <a href="../reference/update_select_input.html">update_select_input</a>
     <a href="../reference/update_slider_input.html">update_slider_input</a>
     <a href="../reference/text_input.html">text_input</a>
@@ -172,11 +172,11 @@ HTTP and WebSocket transport.
   host = "127.0.0.1",
   port = 3000L,
   launch.browser = interactive(),
-  checkCredentials = NULL,
-  githubAuth = NULL,
-  sessionSecret = Sys.getenv("TABLER_SESSION_SECRET", ""),
-  sessionExpires = 604800L,
-  loginTitle = "Sign in"
+  check_credentials = NULL,
+  github_auth = NULL,
+  session_secret = Sys.getenv("TABLER_SESSION_SECRET", ""),
+  session_expires = 604800L,
+  login_title = "Sign in"
 )
 </code></pre>
 
@@ -198,7 +198,7 @@ Port number (default <code>3000L</code>).
 </td></tr><tr><td><code id="launch.browser">launch.browser</code></td>
 <td>
 Open a browser automatically when in an interactive session.
-</td></tr><tr><td><code id="checkCredentials">checkCredentials</code></td>
+</td></tr><tr><td><code id="check_credentials">check_credentials</code></td>
 <td>
 Optional <code>function(username, password)</code> returning
 <code>TRUE</code>/<code>FALSE</code>. When supplied, the app is gated behind a login
@@ -207,31 +207,31 @@ WebSocket connection are all withheld from a browser until it presents a
 valid signed session cookie (set after a successful login). See
 <code>logout</code> for ending a session from the server. Default
 <code>NULL</code> disables the login gate entirely. Cannot be combined with
-<code>githubAuth</code>.
-</td></tr><tr><td><code id="githubAuth">githubAuth</code></td>
+<code>github_auth</code>.
+</td></tr><tr><td><code id="github_auth">github_auth</code></td>
 <td>
 Optional list enabling GitHub OAuth login instead of the
-username/password form. Must contain <code>clientId</code> and
-<code>clientSecret</code> from a GitHub OAuth App (register one at
+username/password form. Must contain <code>client_id</code> and
+<code>client_secret</code> from a GitHub OAuth App (register one at
 <a href="https://github.com/settings/developers">https://github.com/settings/developers</a>, setting the callback URL to
 <code>http://&lt;host&gt;:&lt;port&gt;/github/callback</code>). Optionally include
 <code>org</code> (restrict to members of that GitHub organisation - requires
 <code>read:org</code> token scope) and/or <code>allowedUsers</code> (character vector
 of permitted GitHub usernames). Cannot be combined with
-<code>checkCredentials</code>.
-</td></tr><tr><td><code id="sessionSecret">sessionSecret</code></td>
+<code>check_credentials</code>.
+</td></tr><tr><td><code id="session_secret">session_secret</code></td>
 <td>
 Secret key used to sign the session cookie. Defaults to
 the <code>TABLER_SESSION_SECRET</code> environment variable; if unset, a random
 secret is generated for the run (with a warning) and all sessions are
-invalidated on restart. Used when either <code>checkCredentials</code> or
-<code>githubAuth</code> is supplied.
-</td></tr><tr><td><code id="sessionExpires">sessionExpires</code></td>
+invalidated on restart. Used when either <code>check_credentials</code> or
+<code>github_auth</code> is supplied.
+</td></tr><tr><td><code id="session_expires">session_expires</code></td>
 <td>
 How long, in seconds, a login should persist
 (default 7 days). Use <code>0</code> for a browser-session-only cookie that
 requires logging in again every time the browser is fully closed.
-</td></tr><tr><td><code id="loginTitle">loginTitle</code></td>
+</td></tr><tr><td><code id="login_title">login_title</code></td>
 <td>
 Title shown on the login page and browser tab.
 </td></tr></table><h3>Details</h3>

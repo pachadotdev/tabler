@@ -405,22 +405,22 @@ observe <- function(expr) {
 }
 
 #' @title Event-Based Observer
-#' @description Runs \code{handlerExpr} whenever \code{eventExpr} changes.
-#' @param eventExpr   Reactive expression whose change triggers the handler.
-#' @param handlerExpr Expression to run when the event fires.
-#' @param ignoreInit  If \code{TRUE} (default), skip the first evaluation.
+#' @description Runs \code{handler_expr} whenever \code{event_expr} changes.
+#' @param event_expr   Reactive expression whose change triggers the handler.
+#' @param handler_expr Expression to run when the event fires.
+#' @param ignore_init  If \code{TRUE} (default), skip the first evaluation.
 #' @rdname reactive-primitives
 #' @export
-observe_event <- function(eventExpr, handlerExpr, ignoreInit = TRUE) {
-  event_q <- substitute(eventExpr)
-  handler_q <- substitute(handlerExpr)
+observe_event <- function(event_expr, handler_expr, ignore_init = TRUE) {
+  event_q <- substitute(event_expr)
+  handler_q <- substitute(handler_expr)
   env <- parent.frame()
   # State is kept in an environment (reference semantics) rather than a plain
   # local, because the observer body below is eval()'d in this frame and a
   # `<<-` superassignment would skip the local binding and write to the global
   # environment, leaving `init_done` permanently FALSE.
   state <- new.env(parent = emptyenv())
-  state$init_done <- !isTRUE(ignoreInit)
+  state$init_done <- !isTRUE(ignore_init)
 
   observe({
     eval(event_q, env) # read to register dependency
@@ -433,28 +433,28 @@ observe_event <- function(eventExpr, handlerExpr, ignoreInit = TRUE) {
 }
 
 #' @title Event-Based Reactive Expression
-#' @description A reactive expression that recomputes \code{valueExpr} only
-#'   when \code{eventExpr} changes, similar to \code{shiny::event_reactive()}.
-#' @param eventExpr  Reactive expression whose change triggers re-evaluation.
-#' @param valueExpr  Expression to evaluate (and cache) when the event fires.
-#' @param ignoreNULL If \code{TRUE} (default), do not (re)compute while
-#'   \code{eventExpr} evaluates to \code{NULL}.
-#' @param ignoreInit If \code{TRUE} (default), \code{valueExpr} is not
-#'   evaluated until \code{eventExpr} first changes (e.g. an action_button's
+#' @description A reactive expression that recomputes \code{value_expr} only
+#'   when \code{event_expr} changes, similar to \code{shiny::event_reactive()}.
+#' @param event_expr  Reactive expression whose change triggers re-evaluation.
+#' @param value_expr  Expression to evaluate (and cache) when the event fires.
+#' @param ignore_null If \code{TRUE} (default), do not (re)compute while
+#'   \code{event_expr} evaluates to \code{NULL}.
+#' @param ignore_init If \code{TRUE} (default), \code{value_expr} is not
+#'   evaluated until \code{event_expr} first changes (e.g. an action_button's
 #'   click counter starts at \code{0}, not \code{NULL}, so without this,
-#'   \code{valueExpr} would run once immediately on creation, before any
+#'   \code{value_expr} would run once immediately on creation, before any
 #'   click).
 #' @return A zero-argument function returning the cached value.
 #' @rdname reactive-primitives
 #' @export
-event_reactive <- function(eventExpr, valueExpr, ignoreNULL = TRUE, ignoreInit = TRUE) {
-  event_q <- substitute(eventExpr)
-  value_q <- substitute(valueExpr)
+event_reactive <- function(event_expr, value_expr, ignore_null = TRUE, ignore_init = TRUE) {
+  event_q <- substitute(event_expr)
+  value_q <- substitute(value_expr)
   env <- parent.frame()
 
   src <- new_source()
   state <- new.env(parent = emptyenv())
-  state$init_done <- !isTRUE(ignoreInit)
+  state$init_done <- !isTRUE(ignore_init)
   state$has_value <- FALSE
   state$value <- NULL
   state$dirty <- FALSE
@@ -462,7 +462,7 @@ event_reactive <- function(eventExpr, valueExpr, ignoreNULL = TRUE, ignoreInit =
   # Eagerly track invalidation of the event expression (exactly like a plain
   # observe()) so the dependency is registered, and the once-only "init"
   # check happens, right away - this can't race a real click that occurs in
-  # the same flush pass. Crucially, this does NOT compute valueExpr; it only
+  # the same flush pass. Crucially, this does NOT compute value_expr; it only
   # flags the cached value as stale. Computation stays fully lazy (pull-based,
   # like reactive()), because several sibling event_reactive()/bind_event()
   # calls are often gated by the same event (e.g. input$go): if one of them
@@ -473,10 +473,10 @@ event_reactive <- function(eventExpr, valueExpr, ignoreNULL = TRUE, ignoreInit =
     ev <- eval(event_q, env) # read to register dependency
     first_run <- !state$init_done
     state$init_done <- TRUE
-    if (first_run && isTRUE(ignoreInit)) {
+    if (first_run && isTRUE(ignore_init)) {
       return(invisible(NULL))
     }
-    if (isTRUE(ignoreNULL) && is.null(ev)) {
+    if (isTRUE(ignore_null) && is.null(ev)) {
       return(invisible(NULL))
     }
     state$dirty <- TRUE
@@ -505,16 +505,16 @@ event_reactive <- function(eventExpr, valueExpr, ignoreNULL = TRUE, ignoreInit =
 #' @param ... The reactive expression (created by \code{\link{reactive}}),
 #'   followed by one or more (unevaluated) event expressions. The reactive
 #'   fires whenever any of the event expressions change.
-#' @param ignoreNULL If \code{TRUE} (default), do not (re)compute while all
+#' @param ignore_null If \code{TRUE} (default), do not (re)compute while all
 #'   event expressions evaluate to \code{NULL}.
-#' @param ignoreInit If \code{TRUE} (default), \code{x} is not computed until
+#' @param ignore_init If \code{TRUE} (default), \code{x} is not computed until
 #'   an event expression first changes (e.g. an action_button's click counter
 #'   starts at \code{0}, not \code{NULL}, so without this, \code{x} would
 #'   compute once immediately on creation, before any click).
 #' @return A new zero-argument function returning the cached value.
 #' @rdname reactive-primitives
 #' @export
-bind_event <- function(..., ignoreNULL = TRUE, ignoreInit = TRUE) {
+bind_event <- function(..., ignore_null = TRUE, ignore_init = TRUE) {
   dots <- substitute(list(...))[-1]
   env <- parent.frame()
   if (length(dots) < 2L) {
@@ -528,7 +528,7 @@ bind_event <- function(..., ignoreNULL = TRUE, ignoreInit = TRUE) {
 
   src <- new_source()
   state <- new.env(parent = emptyenv())
-  state$init_done <- !isTRUE(ignoreInit)
+  state$init_done <- !isTRUE(ignore_init)
   state$has_value <- FALSE
   state$value <- NULL
   state$dirty <- FALSE
@@ -540,10 +540,10 @@ bind_event <- function(..., ignoreNULL = TRUE, ignoreInit = TRUE) {
     evs <- lapply(dots, function(e) eval(e, env)) # register dependencies
     first_run <- !state$init_done
     state$init_done <- TRUE
-    if (first_run && isTRUE(ignoreInit)) {
+    if (first_run && isTRUE(ignore_init)) {
       return(invisible(NULL))
     }
-    if (isTRUE(ignoreNULL) && all(vapply(evs, is.null, logical(1L)))) {
+    if (isTRUE(ignore_null) && all(vapply(evs, is.null, logical(1L)))) {
       return(invisible(NULL))
     }
     state$dirty <- TRUE

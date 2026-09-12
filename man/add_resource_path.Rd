@@ -4,13 +4,13 @@
 \alias{add_resource_path}
 \title{Register a Directory of Static Resources}
 \usage{
-add_resource_path(prefix, directoryPath)
+add_resource_path(prefix, directory_path)
 }
 
 \arguments{
 \item{prefix}{The URL prefix (e.g. \code{"www"} serves files at \code{/www/...}).}
 
-\item{directoryPath}{Absolute path to the directory to serve.}
+\item{directory_path}{Absolute path to the directory to serve.}
 }
 
 \value{
@@ -18,7 +18,7 @@ Invisibly, \code{NULL}.
 }
 
 \description{
-Serves files under \code{directoryPath} at URLs beginning
+Serves files under \code{directory_path} at URLs beginning
   with \code{/prefix/}, mirroring \code{shiny::add_resource_path()}. Use this
   to serve an app's own CSS/JS/image assets (e.g. from \code{inst/app/www})
   without depending on \pkg{shiny} or \pkg{golem}.

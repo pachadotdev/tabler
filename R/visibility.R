@@ -23,7 +23,7 @@
 #'   to the server function.
 #' @param id The id of the element/HTML tag.
 #' @param anim If \code{TRUE} then animate the behaviour.
-#' @param animType The type of animation to use, either \code{"slide"} or \code{"fade"}.
+#' @param anim_type The type of animation to use, either \code{"slide"} or \code{"fade"}.
 #' @param time The number of seconds to make the animation last.
 #' @param selector CSS selector of the elements to show/hide. Ignored if the
 #' \code{id} argument is given. For example, to select all span elements with
@@ -55,7 +55,7 @@
 #' toggle(session, id = "panel")
 #' toggle(session, "panel", TRUE)
 #' toggle(session, "panel", TRUE, "fade", 2)
-#' toggle(session, id = "panel", time = 1, anim = TRUE, animType = "slide")
+#' toggle(session, id = "panel", time = 1, anim = TRUE, anim_type = "slide")
 #' show(session, "panel")
 #' show(session, id = "panel", anim = TRUE)
 #' hide(session, "panel")
@@ -104,9 +104,9 @@ NULL
 #' @export
 #' @rdname visibilityFuncs
 show <- function(session = get_default_reactive_domain(), id = NULL, anim = FALSE,
-                 animType = "slide", time = 0.5, selector = NULL) {
+                 anim_type = "slide", time = 0.5, selector = NULL) {
   params <- list(
-    id = id, anim = anim, animType = animType,
+    id = id, anim = anim, anim_type = anim_type,
     time = time, selector = selector
   )
   .visibilityMessage(session, "show", params)
@@ -119,9 +119,9 @@ show_element <- show
 #' @export
 #' @rdname visibilityFuncs
 hide <- function(session = get_default_reactive_domain(), id = NULL, anim = FALSE,
-                 animType = "slide", time = 0.5, selector = NULL) {
+                 anim_type = "slide", time = 0.5, selector = NULL) {
   params <- list(
-    id = id, anim = anim, animType = animType,
+    id = id, anim = anim, anim_type = anim_type,
     time = time, selector = selector
   )
   .visibilityMessage(session, "hide", params)
@@ -134,9 +134,9 @@ hide_element <- hide
 #' @export
 #' @rdname visibilityFuncs
 toggle <- function(session = get_default_reactive_domain(), id = NULL, anim = FALSE,
-                   animType = "slide", time = 0.5, selector = NULL, condition = NULL) {
+                   anim_type = "slide", time = 0.5, selector = NULL, condition = NULL) {
   params <- list(
-    id = id, anim = anim, animType = animType,
+    id = id, anim = anim, anim_type = anim_type,
     time = time, selector = selector, condition = condition
   )
   .visibilityMessage(session, "toggle", params)

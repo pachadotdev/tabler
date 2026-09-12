@@ -13,7 +13,7 @@ show(
   session = get_default_reactive_domain(),
   id = NULL,
   anim = FALSE,
-  animType = "slide",
+  anim_type = "slide",
   time = 0.5,
   selector = NULL
 )
@@ -21,7 +21,7 @@ hide(
   session = get_default_reactive_domain(),
   id = NULL,
   anim = FALSE,
-  animType = "slide",
+  anim_type = "slide",
   time = 0.5,
   selector = NULL
 )
@@ -29,7 +29,7 @@ toggle(
   session = get_default_reactive_domain(),
   id = NULL,
   anim = FALSE,
-  animType = "slide",
+  anim_type = "slide",
   time = 0.5,
   selector = NULL,
   condition = NULL
@@ -44,7 +44,7 @@ toggle(
 
 \item{anim}{If \code{TRUE} then animate the behaviour.}
 
-\item{animType}{The type of animation to use, either \code{"slide"} or \code{"fade"}.}
+\item{anim_type}{The type of animation to use, either \code{"slide"} or \code{"fade"}.}
 
 \item{time}{The number of seconds to make the animation last.}
 
@@ -106,7 +106,7 @@ if (interactive()) {
 toggle(session, id = "panel")
 toggle(session, "panel", TRUE)
 toggle(session, "panel", TRUE, "fade", 2)
-toggle(session, id = "panel", time = 1, anim = TRUE, animType = "slide")
+toggle(session, id = "panel", time = 1, anim = TRUE, anim_type = "slide")
 show(session, "panel")
 show(session, id = "panel", anim = TRUE)
 hide(session, "panel")

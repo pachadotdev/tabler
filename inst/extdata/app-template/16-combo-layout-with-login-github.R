@@ -192,8 +192,8 @@ tabler_app(
   ui,
   server,
   github_auth = list(
-    clientId     = Sys.getenv("GITHUB_CLIENT_ID"),
-    clientSecret = Sys.getenv("GITHUB_CLIENT_SECRET"),
+    client_id     = Sys.getenv("GITHUB_CLIENT_ID"),
+    client_secret = Sys.getenv("GITHUB_CLIENT_SECRET"),
     org          = "tradestatistics"
   ),
   session_secret = Sys.getenv("TABLER_SESSION_SECRET")
