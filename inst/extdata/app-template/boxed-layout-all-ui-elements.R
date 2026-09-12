@@ -157,28 +157,28 @@ ui <- page(
             row(
               col4(
                 card(
-                  title = "dateInput() - no icon",
-                  dateInput("date_none", "Date", value = Sys.Date())
+                  title = "date_input() - no icon",
+                  date_input("date_none", "Date", value = Sys.Date())
                 )
               ),
               col4(
                 card(
-                  title = "dateInput() - icon to the left",
-                  dateInput("date_left", "Date", value = Sys.Date(), icon = "left")
+                  title = "date_input() - icon to the left",
+                  date_input("date_left", "Date", value = Sys.Date(), icon = "left")
                 )
               ),
               col4(
                 card(
-                  title = "dateInput() - icon to the right",
-                  dateInput("date_right", "Date", value = Sys.Date(), icon = "right")
+                  title = "date_input() - icon to the right",
+                  date_input("date_right", "Date", value = Sys.Date(), icon = "right")
                 )
               )
             ),
             row(
               col12(
                 card(
-                  title = "dateInput() - inline (always-visible calendar)",
-                  dateInput("date_inline", NULL, value = Sys.Date(), inline = TRUE)
+                  title = "date_input() - inline (always-visible calendar)",
+                  date_input("date_inline", NULL, value = Sys.Date(), inline = TRUE)
                 )
               )
             )

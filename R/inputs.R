@@ -337,7 +337,7 @@ sliderInput <- function(inputId, label, min, max, value, step = 1,
 
 # Internal: send an "update this input" message to the browser, respecting
 # the current module namespace (see module_server()/session$ns()).
-.updateInputMessage <- function(session, inputId, params) {
+.update_inputMessage <- function(session, inputId, params) {
   if (!is.list(session) || !is.function(session[["sendCustomMessage"]])) {
     warning("update*Input() requires a tabler_app session object - ignoring", call. = FALSE)
     return(invisible(NULL))
@@ -345,13 +345,13 @@ sliderInput <- function(inputId, label, min, max, value, step = 1,
   id <- inputId
   if (is.function(session[["ns"]])) id <- session$ns(id)
   params$id <- id
-  session$sendCustomMessage("tabler-updateInput", params)
+  session$sendCustomMessage("tabler-update_input", params)
   invisible(NULL)
 }
 
 # Internal: normalize choices (named/unnamed vector or list, optionally
 # grouped) into a flat list of list(value=, label=, group=) pairs for the
-# "tabler-updateInput" browser message, reusing select_input()'s own choice
+# "tabler-update_input" browser message, reusing select_input()'s own choice
 # expansion so both stay in sync.
 .normalize_choices_for_update <- function(choices) {
   lapply(.expand_choices(choices), function(it) {
@@ -382,7 +382,7 @@ update_select_input <- function(session, inputId, label = NULL, choices = NULL, 
   params <- list()
   if (!is.null(choices)) params$choices <- .normalize_choices_for_update(choices)
   if (!is.null(selected)) params$selected <- selected
-  .updateInputMessage(session, inputId, params)
+  .update_inputMessage(session, inputId, params)
 }
 
 #' @rdname tabler-inputs
@@ -409,7 +409,7 @@ update_slider_input <- function(session, inputId, label = NULL, value = NULL, mi
   if (!is.null(min)) params$min <- min
   if (!is.null(max)) params$max <- max
   if (!is.null(step)) params$step <- step
-  .updateInputMessage(session, inputId, params)
+  .update_inputMessage(session, inputId, params)
 }
 
 #' @title Text Input
@@ -521,7 +521,7 @@ numeric_input <- function(inputId, label, value, min = NULL, max = NULL, step = 
 #'   need a \code{Date} object.
 #' @rdname tabler-inputs
 #' @export
-dateInput <- function(inputId, label, value = Sys.Date(), min = NULL, max = NULL,
+date_input <- function(inputId, label, value = Sys.Date(), min = NULL, max = NULL,
                        icon = c("none", "left", "right"), inline = FALSE, ...) {
   fmt <- function(x) if (is.null(x)) NULL else format(as.Date(x), "%Y-%m-%d")
 

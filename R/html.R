@@ -150,7 +150,7 @@ tag_list <- function(...) {
 #' @param text Character string of literal HTML.
 #' @return An object of class \code{"tabler.html"}.
 #' @export
-HTML <- function(text) {
+html <- function(text) {
   structure(list(html = text), class = "tabler.html")
 }
 

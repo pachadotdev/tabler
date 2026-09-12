@@ -109,10 +109,10 @@ theme_settings_panel <- function(color = "blue", theme = "light", font = "sans-s
         )
       )
     ),
-    tags$style(HTML(
+    tags$style(html(
       ".settings{position:fixed;bottom:1rem;left:1rem;z-index:1030}"
     )),
-    tags$script(HTML(theme_settings_script(defaults = list(
+    tags$script(html(theme_settings_script(defaults = list(
       theme = theme, `theme-base` = base, `theme-font` = font,
       `theme-primary` = color, `theme-radius` = radius
     ))))

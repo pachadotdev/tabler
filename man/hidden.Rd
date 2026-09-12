@@ -8,7 +8,7 @@ hidden(...)
 }
 
 \arguments{
-\item{...}{Tag (or tagList or list of tags) to make invisible.}
+\item{...}{Tag (or tag_list or list of tags) to make invisible.}
 }
 
 \value{
@@ -30,7 +30,7 @@ if (interactive()) {
   ui <- page(
     title = "Hidden Example",
     body = body(
-      actionButton("btn", "Click me"),
+      action_button("btn", "Click me"),
       hidden(
         p(id = "element", "I was born invisible")
       )
@@ -38,12 +38,12 @@ if (interactive()) {
   )
 
   server <- function(input, output, session) {
-    observeEvent(input$btn, {
+    observe_event(input$btn, {
       show(session, "element")
     })
   }
 
-  tablerApp(ui, server)
+  tabler_app(ui, server)
 }
 }
 

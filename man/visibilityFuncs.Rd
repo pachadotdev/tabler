@@ -2,15 +2,15 @@
 % Please edit documentation in visibility.R
 \name{visibilityFuncs}
 \alias{show}
-\alias{showElement}
+\alias{show_element}
 \alias{hide}
-\alias{hideElement}
+\alias{hide_element}
 \alias{toggle}
-\alias{toggleElement}
+\alias{toggle_element}
 \title{Show/Hide an element}
 \usage{
 show(
-  session = getDefaultReactiveDomain(),
+  session = get_default_reactive_domain(),
   id = NULL,
   anim = FALSE,
   animType = "slide",
@@ -18,7 +18,7 @@ show(
   selector = NULL
 )
 hide(
-  session = getDefaultReactiveDomain(),
+  session = get_default_reactive_domain(),
   id = NULL,
   anim = FALSE,
   animType = "slide",
@@ -26,7 +26,7 @@ hide(
   selector = NULL
 )
 toggle(
-  session = getDefaultReactiveDomain(),
+  session = get_default_reactive_domain(),
   id = NULL,
   anim = FALSE,
   animType = "slide",
@@ -37,7 +37,7 @@ toggle(
 }
 
 \arguments{
-\item{session}{The \code{session} object passed by \code{\link{tablerApp}}
+\item{session}{The \code{session} object passed by \code{\link{tabler_app}}
   to the server function.}
 
 \item{id}{The id of the element/HTML tag.}
@@ -56,12 +56,12 @@ class x, use \code{selector = "span.x"}.}
 }
 
 \description{
-Show or hide an HTML element in a running \code{\link{tablerApp}}.\cr\cr
+Show or hide an HTML element in a running \code{\link{tabler_app}}.\cr\cr
 \strong{\code{show}} makes an element visible, \strong{\code{hide}} makes
 an element invisible, \strong{\code{toggle}} displays the element if it is
 hidden and hides it if it is visible.\cr\cr
-\strong{\code{showElement}}, \strong{\code{hideElement}}, and
-\strong{\code{toggleElement}} are synonyms for \code{show}/\code{hide}/
+\strong{\code{show_element}}, \strong{\code{hide_element}}, and
+\strong{\code{toggle_element}} are synonyms for \code{show}/\code{hide}/
 \code{toggle}.\cr\cr
 If \code{condition} is given to \code{toggle}, that condition is used to
 decide whether to show or hide the element: the element is shown when the
@@ -73,12 +73,12 @@ This is a dependency-free adaptation of \pkg{shinyjs}'s
 \code{show}/\code{hide}/\code{toggle} functions for \pkg{tabler}, which does
 not use or depend on \pkg{shiny}. Instead of relying on a Shiny session,
 these functions use the plain-list \code{session} object created by
-\code{\link{tablerApp}} and passed as the third argument to the
+\code{\link{tabler_app}} and passed as the third argument to the
 \code{server} function.
 }
 
 \seealso{
-\code{\link{tablerApp}}
+\code{\link{tabler_app}}
 }
 
 \examples{
@@ -86,19 +86,19 @@ if (interactive()) {
   ui <- page(
     title = "Show/Hide Example",
     body = body(
-      actionButton("btn", "Click me"),
+      action_button("btn", "Click me"),
       div(id = "panel", "Watch what happens to me")
     )
   )
 
   server <- function(input, output, session) {
-    observeEvent(input$btn, {
+    observe_event(input$btn, {
       # Change the following line for more examples
       toggle(session, "panel")
     })
   }
 
-  tablerApp(ui, server)
+  tabler_app(ui, server)
 }
 \dontrun{
 # The function call in the above app can be replaced by any of the
@@ -119,7 +119,7 @@ if (interactive()) {
   ui <- page(
     title = "Conditional Toggle",
     body = body(
-      checkboxInput("checkbox", "Show the text", TRUE),
+      checkbox_input("checkbox", "Show the text", TRUE),
       div(id = "element", "Watch what happens to me")
     )
   )
@@ -130,7 +130,7 @@ if (interactive()) {
     })
   }
 
-  tablerApp(ui, server)
+  tabler_app(ui, server)
 }
 }
 

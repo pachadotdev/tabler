@@ -4,12 +4,12 @@
 \alias{logout}
 \title{Log Out The Current Session}
 \usage{
-logout(session = getDefaultReactiveDomain())
+logout(session = get_default_reactive_domain())
 }
 
 \arguments{
-\item{session}{The \code{session} object passed by \code{\link{tablerApp}}
-  to the server function. Defaults to \code{\link{getDefaultReactiveDomain}()}.}
+\item{session}{The \code{session} object passed by \code{\link{tabler_app}}
+  to the server function. Defaults to \code{\link{get_default_reactive_domain}()}.}
 }
 
 \value{
@@ -18,20 +18,20 @@ Invisibly, \code{NULL}.
 
 \description{
 Forces the browser to drop its session cookie and return to the login
-page. For use inside a \code{\link{tablerApp}} \code{server} function
-(e.g. in an \code{observeEvent()} on a "Log out" button) when
-\code{checkCredentials} was supplied to \code{\link{tablerApp}}.
+page. For use inside a \code{\link{tabler_app}} \code{server} function
+(e.g. in an \code{observe_event()} on a "Log out" button) when
+\code{checkCredentials} was supplied to \code{\link{tabler_app}}.
 }
 
 \details{
 \strong{Why this can't be done by just hiding a DOM element}
 
-Unlike \code{\link{showProgress}}/\code{\link{hideProgress}}, which only
+Unlike \code{\link{show_progress}}/\code{\link{hide_progress}}, which only
 toggle a cosmetic overlay, a login gate has to withhold the actual page
 content from the browser until the server has verified the visitor -
 anything already sent to the browser (HTML, JS, JSON) can always be
 revealed again with the browser's DevTools, no matter how it is hidden
-client-side. \code{\link{tablerApp}} therefore checks a signed session
+client-side. \code{\link{tabler_app}} therefore checks a signed session
 cookie \emph{before} it ever renders the page, serves cached outputs, or
 accepts a WebSocket connection: an unauthenticated request gets nothing
 but the login form, both for the initial page load and for the
@@ -41,28 +41,28 @@ WebSocket handshake that carries reactive output.
 browser-side JS (\code{tabler-login.js}) to navigate to \code{/logout},
 which is a real server-side endpoint that clears the session cookie and
 redirects back to \code{/login}. This is the same show/hide message
-mechanism as \code{\link{showProgress}}, but logout can only actually
+mechanism as \code{\link{show_progress}}, but logout can only actually
 take effect through the server, not through anything client-side.
 }
 
 \seealso{
-\code{\link{tablerApp}}
+\code{\link{tabler_app}}
 }
 
 \examples{
 if (interactive()) {
   ui <- page(
     title = "Login Example",
-    body = body(actionButton("logout_btn", "Log out"))
+    body = body(action_button("logout_btn", "Log out"))
   )
 
   server <- function(input, output, session) {
-    observeEvent(input$logout_btn, {
+    observe_event(input$logout_btn, {
       logout(session)
     })
   }
 
-  tablerApp(
+  tabler_app(
     ui, server,
     checkCredentials = function(username, password) {
       username == "admin" && password == "hunter2"

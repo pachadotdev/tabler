@@ -158,7 +158,7 @@ page <- function(
     # `title()` renders an <h2> element intended for page body headers and
     # accidentally added that to the head when used here.
     if (!is.null(title)) tags$title(title),
-    script(HTML(script_text))
+    script(html(script_text))
   )
 
   settings_panel <- if (isTRUE(show_theme_button)) {
@@ -370,7 +370,7 @@ menu_item <- function(text, tab_name = NULL, icon = NULL, href = NULL, badge = N
       span(
         class = "nav-link-icon d-md-none d-lg-inline-block",
         # comment placeholder for upstream SVG
-        HTML(sprintf("<!-- Download SVG icon from http://tabler.io/icons/icon/%s -->", icon)),
+        html(sprintf("<!-- Download SVG icon from http://tabler.io/icons/icon/%s -->", icon)),
         icon(icon)
       ),
       " "
@@ -436,7 +436,7 @@ menu_dropdown <- function(text, icon = NULL, href = NULL, items = list()) {
     if (!is.null(icon)) {
       span(
         class = "nav-link-icon d-md-none d-lg-inline-block",
-        HTML(sprintf("<!-- Download SVG icon from http://tabler.io/icons/icon/%s -->", icon)),
+        html(sprintf("<!-- Download SVG icon from http://tabler.io/icons/icon/%s -->", icon)),
         icon(icon)
       )
     },
@@ -613,7 +613,7 @@ navbar_menu <- function(..., brand = NULL, show_theme_button = FALSE) {
 
     aside(
       class = "navbar navbar-vertical",
-      HTML("<!-- BEGIN SIDEBAR -->"),
+      html("<!-- BEGIN SIDEBAR -->"),
       div(
         class = "container-fluid",
         # toggler
@@ -647,13 +647,13 @@ navbar_menu <- function(..., brand = NULL, show_theme_button = FALSE) {
           )
         )
       ),
-      HTML("<!-- END SIDEBAR -->")
+      html("<!-- END SIDEBAR -->")
     )
   } else {
     # standard header
     tags$header(
       class = "navbar navbar-expand-md",
-      HTML("<!-- BEGIN NAVBAR  -->"),
+      html("<!-- BEGIN NAVBAR  -->"),
       div(
         class = "collapse navbar-collapse",
         id = "navbar-menu",
@@ -692,7 +692,7 @@ navbar_menu <- function(..., brand = NULL, show_theme_button = FALSE) {
           )
         )
       ),
-      HTML("<!-- END NAVBAR  -->")
+      html("<!-- END NAVBAR  -->")
     )
   }
 }

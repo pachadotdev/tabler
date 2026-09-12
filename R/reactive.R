@@ -41,10 +41,10 @@ new_source <- function() {
   # insertion-ordered list of ids, and is what invalidate_dependents()
   # actually iterates over. A plain hashed environment's as.list()/ls() order
   # is *not* guaranteed to match insertion order, which matters here: several
-  # sibling event_reactive()/bindEvent()/observe_event() calls gated on the same
+  # sibling event_reactive()/bind_event()/observe_event() calls gated on the same
   # event (e.g. input$go) rely on being invalidated/re-run in the order they
   # were defined (module setup runs top-to-bottom, synchronously) - e.g. a
-  # later observer that eagerly forces several earlier bindEvent()-wrapped
+  # later observer that eagerly forces several earlier bind_event()-wrapped
   # reactives to compute (for progress-bar bracketing) needs those reactives'
   # own dirty-flagging watchers to have already run.
   deps <- new.env(hash = TRUE, parent = emptyenv())
@@ -464,7 +464,7 @@ event_reactive <- function(eventExpr, valueExpr, ignoreNULL = TRUE, ignoreInit =
   # check happens, right away - this can't race a real click that occurs in
   # the same flush pass. Crucially, this does NOT compute valueExpr; it only
   # flags the cached value as stale. Computation stays fully lazy (pull-based,
-  # like reactive()), because several sibling event_reactive()/bindEvent()
+  # like reactive()), because several sibling event_reactive()/bind_event()
   # calls are often gated by the same event (e.g. input$go): if one of them
   # eagerly recomputed here, another one reading it moments later in the
   # *same* flush pass (observers run in scheduling order, not dependency
@@ -500,8 +500,8 @@ event_reactive <- function(eventExpr, valueExpr, ignoreNULL = TRUE, ignoreInit =
 #' @title Bind an Event Trigger to a Reactive Expression
 #' @description Modifies a reactive expression created by \code{\link{reactive}}
 #'   so that it only (re)executes when the given event expression(s) change,
-#'   similar to \code{shiny::bindEvent()}. Typically used with the pipe:
-#'   \code{reactive({...}) |> bindEvent(input$go)}.
+#'   similar to \code{shiny::bind_event()}. Typically used with the pipe:
+#'   \code{reactive({...}) |> bind_event(input$go)}.
 #' @param ... The reactive expression (created by \code{\link{reactive}}),
 #'   followed by one or more (unevaluated) event expressions. The reactive
 #'   fires whenever any of the event expressions change.
@@ -514,15 +514,15 @@ event_reactive <- function(eventExpr, valueExpr, ignoreNULL = TRUE, ignoreInit =
 #' @return A new zero-argument function returning the cached value.
 #' @rdname reactive-primitives
 #' @export
-bindEvent <- function(..., ignoreNULL = TRUE, ignoreInit = TRUE) {
+bind_event <- function(..., ignoreNULL = TRUE, ignoreInit = TRUE) {
   dots <- substitute(list(...))[-1]
   env <- parent.frame()
   if (length(dots) < 2L) {
-    stop("bindEvent() requires a reactive expression and at least one event expression", call. = FALSE)
+    stop("bind_event() requires a reactive expression and at least one event expression", call. = FALSE)
   }
   x <- eval(dots[[1L]], env)
   if (!is.function(x)) {
-    stop("bindEvent() only supports reactive expressions created by reactive()", call. = FALSE)
+    stop("bind_event() only supports reactive expressions created by reactive()", call. = FALSE)
   }
   dots <- dots[-1L]
 
@@ -566,11 +566,11 @@ bindEvent <- function(..., ignoreNULL = TRUE, ignoreInit = TRUE) {
 
 #' @title Set Tabler Package Options
 #' @description Configure package-wide options for tabler. Currently this
-#'   only sets the cache backend used by \code{\link{bindCache}}, mirroring
+#'   only sets the cache backend used by \code{\link{bind_cache}}, mirroring
 #'   \code{shiny::shinyOptions(cache = ...)}.
 #' @param cache A \pkg{tinycache} cache object (e.g.
 #'   \code{tinycache::dcache(dir = "/path/to/cache")} or
-#'   \code{tinycache::mcache()}) used to store \code{\link{bindCache}}
+#'   \code{tinycache::mcache()}) used to store \code{\link{bind_cache}}
 #'   values. If never set, an in-memory \code{tinycache::mcache()} is
 #'   created and used automatically - which (like a plain
 #'   \code{\link{reactive}}) does not survive an R restart. Pass a
@@ -613,14 +613,14 @@ tabler_options <- function(cache) {
 
 #' @title Cache a Reactive Expression's Value
 #' @description Persistently caches a reactive expression's value, keyed by
-#'   one or more key expressions, similar to \code{shiny::bindCache()}.
+#'   one or more key expressions, similar to \code{shiny::bind_cache()}.
 #'   Unlike \code{\link{reactive}}'s built-in caching (in-memory, lost as
-#'   soon as its dependencies change), \code{bindCache()} stores values in
+#'   soon as its dependencies change), \code{bind_cache()} stores values in
 #'   the cache backend configured via \code{\link{tabler_options}} (e.g.
 #'   \code{tinycache::dcache()}), so identical key combinations are served
 #'   instantly - even across app restarts or different sessions - without
 #'   re-running \code{x}. Typically used with the pipe:
-#'   \code{reactive({...}) |> bindCache(key1, key2) |> bindEvent(input$go)}.
+#'   \code{reactive({...}) |> bind_cache(key1, key2) |> bind_event(input$go)}.
 #' @param x A reactive expression created by \code{\link{reactive}}.
 #' @param ... One or more (unevaluated) key expressions. Whenever their
 #'   combined value changes, \code{x} is (re)computed and the result is
@@ -629,14 +629,14 @@ tabler_options <- function(cache) {
 #' @return A new zero-argument function returning the (possibly cached) value.
 #' @rdname reactive-primitives
 #' @export
-bindCache <- function(x, ...) {
+bind_cache <- function(x, ...) {
   if (!is.function(x)) {
-    stop("bindCache() only supports reactive expressions created by reactive()", call. = FALSE)
+    stop("bind_cache() only supports reactive expressions created by reactive()", call. = FALSE)
   }
   key_q <- substitute(list(...))[-1]
   env <- parent.frame()
 
-  # Every bindCache() call site gets its own namespace, folded into every key
+  # Every bind_cache() call site gets its own namespace, folded into every key
   # it generates. Without this, two different reactives bound to the same
   # cache with identical key *values* (e.g. two outputs both keyed on the same
   # inputs) would collide on the exact same cache slot and silently return
