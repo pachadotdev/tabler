@@ -184,7 +184,7 @@ server <- function(input, output, session) {
 tabler_app(
   ui,
   server,
-  checkCredentials = function(user, password) {
+  check_credentials = function(user, password) {
     user == "SpaceMariner" && password == "IDDQD"
   }
 )

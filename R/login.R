@@ -3,7 +3,7 @@
 #' Forces the browser to drop its session cookie and return to the login
 #' page. For use inside a \code{\link{tabler_app}} \code{server} function
 #' (e.g. in an \code{observe_event()} on a "Log out" button) when
-#' \code{checkCredentials} was supplied to \code{\link{tabler_app}}.
+#' \code{check_credentials} was supplied to \code{\link{tabler_app}}.
 #'
 #' @details
 #' \strong{Why this can't be done by just hiding a DOM element}
@@ -45,7 +45,7 @@
 #'
 #'   tabler_app(
 #'     ui, server,
-#'     checkCredentials = function(username, password) {
+#'     check_credentials = function(username, password) {
 #'       username == "admin" && password == "hunter2"
 #'     }
 #'   )
@@ -69,13 +69,13 @@ logout <- function(session = get_default_reactive_domain()) {
 # Resolves the HMAC secret used to sign session cookies. Falls back to a
 # random per-run secret (with a warning) so cookies still work, but every
 # session is invalidated on restart - set TABLER_SESSION_SECRET (or pass
-# `sessionSecret`) to a fixed value to keep users logged in across restarts.
-.resolve_login_secret <- function(sessionSecret) {
-  if (nzchar(sessionSecret)) {
-    return(sessionSecret)
+# `session_secret`) to a fixed value to keep users logged in across restarts.
+.resolve_login_secret <- function(session_secret) {
+  if (nzchar(session_secret)) {
+    return(session_secret)
   }
   warning(
-    "tabler: no `sessionSecret` (or TABLER_SESSION_SECRET env var) was set - ",
+    "tabler: no `session_secret` (or TABLER_SESSION_SECRET env var) was set - ",
     "using a random secret for this run. All logged-in sessions will be ",
     "invalidated the next time the app restarts.",
     call. = FALSE
@@ -157,7 +157,7 @@ logout <- function(session = get_default_reactive_domain()) {
 
 # Builds a Set-Cookie header value. `max_age` in seconds; NULL means no
 # Max-Age attribute (a browser-session cookie that disappears when the
-# browser fully closes - used when `sessionExpires = 0`).
+# browser fully closes - used when `session_expires = 0`).
 .set_cookie_header <- function(name, value, max_age = NULL) {
   cookie <- paste0(name, "=", value, "; Path=/; HttpOnly; SameSite=Lax")
   if (!is.null(max_age)) {

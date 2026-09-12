@@ -191,10 +191,10 @@ server <- function(input, output, session) {
 tabler_app(
   ui,
   server,
-  githubAuth = list(
+  github_auth = list(
     clientId     = Sys.getenv("GITHUB_CLIENT_ID"),
     clientSecret = Sys.getenv("GITHUB_CLIENT_SECRET"),
     org          = "tradestatistics"
   ),
-  sessionSecret = Sys.getenv("TABLER_SESSION_SECRET")
+  session_secret = Sys.getenv("TABLER_SESSION_SECRET")
 )

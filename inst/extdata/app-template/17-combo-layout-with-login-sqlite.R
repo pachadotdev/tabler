@@ -194,7 +194,7 @@ on.exit(dbDisconnect(con))
 tabler_app(
   ui,
   server,
-  checkCredentials = function(user, password) {
+  check_credentials = function(user, password) {
     pwd <- dbGetQuery(con, sprintf("select pass from passwords where user = '%s'", user))
     if (length(pwd) != 1L) { return(FALSE) }
     if (password == pwd) { return(TRUE) }
