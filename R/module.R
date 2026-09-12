@@ -2,19 +2,19 @@
 
 #' @title Namespace an Id
 #' @description Prefixes an id with a namespace, mirroring the id-prefixing
-#'   behaviour of \code{shiny::NS()} without depending on \pkg{shiny} or its
+#'   behaviour of \code{shiny::ns()} without depending on \pkg{shiny} or its
 #'   module system.
 #' @param namespace Namespace prefix.
 #' @param id Id to namespace. If missing, returns a function that namespaces
-#'   any id it is given (as \code{shiny::NS()} does).
+#'   any id it is given (as \code{shiny::ns()} does).
 #' @return If \code{id} is given, a namespaced id (character string).
 #'   Otherwise, a function that namespaces any id passed to it.
 #' @examples
-#' ns <- NS("mymodule")
+#' ns <- ns("mymodule")
 #' ns("button") # "mymodule-button"
-#' NS("mymodule", "button") # "mymodule-button"
+#' ns("mymodule", "button") # "mymodule-button"
 #' @export
-NS <- function(namespace, id = NULL) {
+ns <- function(namespace, id = NULL) {
   if (is.null(id)) {
     function(id) paste(namespace, id, sep = "-")
   } else {
@@ -64,7 +64,7 @@ get_default_reactive_domain <- function() {
 #' @description Dependency-free equivalent of \code{shiny::module_server()}.
 #'   Wraps \code{input}/\code{output} so that unprefixed names accessed
 #'   inside \code{module} are automatically namespaced with \code{id},
-#'   matching the ids produced by \code{NS(id)} in the module's UI function.
+#'   matching the ids produced by \code{ns(id)} in the module's UI function.
 #' @param id The module's namespace id (must match the id used to call the
 #'   module's \code{*_ui} function).
 #' @param module A function with signature \code{function(input, output, session)}.
@@ -76,7 +76,7 @@ module_server <- function(id, module, session = get_default_reactive_domain()) {
   if (is.null(session)) {
     stop("module_server() must be called while a tabler_app server function is running", call. = FALSE)
   }
-  ns <- NS(id)
+  ns <- ns(id)
 
   scoped_input <- structure(
     list(.parent = session$input, .ns = ns),
