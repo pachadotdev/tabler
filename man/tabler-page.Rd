@@ -106,6 +106,6 @@ ui <- page(
 
 server <- function(input, output, session) {}
 
-# tablerApp(ui, server)
+# tabler_app(ui, server)
 }
 

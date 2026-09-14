@@ -1,6 +1,6 @@
 # How to use tabler?
 
-The [package website](https://pacha.dev/tabler) covers the basics, customization, and
+The [package website](https://pacha.dev/tabler/) covers the basics, customization, and
 advanced usage of the package.
 
 Edit the UI, server, or modules in ./R and then rebuild the package. One option is to

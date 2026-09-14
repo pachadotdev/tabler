@@ -121,7 +121,7 @@ layout_navbar <- function(navbar, sidebar, body, footer, theme = "light", color 
     header_tag <- top_nav
   }
 
-  tagList(
+  tag_list(
     div(
       class = "page",
       if (!is.null(header_tag)) header_tag,

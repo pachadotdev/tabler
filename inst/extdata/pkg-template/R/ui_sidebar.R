@@ -1,6 +1,5 @@
-#' @title Create a Side Bar (UI)
+#' @title Side Bar (UI)
 #' @noRd
-#' @export
 sidebar_nav <- function() {
   navbar_menu(
     brand = sidebar_brand(text = "", img = svg_data_uri(), href = "./"),

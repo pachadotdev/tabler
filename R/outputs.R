@@ -1,4 +1,4 @@
-# Output placeholder tags and render functions for tablerApp
+# Output placeholder tags and render functions for tabler_app
 
 # ---------------------------------------------------------------------------
 # Placeholder tags (UI side)
@@ -6,48 +6,48 @@
 
 #' @title Text Output Placeholder
 #' @description Places a \code{<span>} in the UI whose content is updated by
-#'   \code{renderText} in the server.
-#' @param outputId The output identifier (must match the server-side name).
+#'   \code{render_text} in the server.
+#' @param output_id The output identifier (must match the server-side name).
 #' @param inline   If \code{TRUE}, use \code{<span>}; otherwise \code{<div>}.
 #' @return An HTML tag.
 #' @rdname tabler-outputs
 #' @export
-textOutput <- function(outputId, inline = FALSE) {
+text_output <- function(output_id, inline = FALSE) {
   if (inline) {
-    span(id = outputId, class = "tabler-out-text")
+    span(id = output_id, class = "tabler-out-text")
   } else {
-    div(id = outputId, class = "tabler-out-text")
+    div(id = output_id, class = "tabler-out-text")
   }
 }
 
 #' @title Verbatim Text Output Placeholder
 #' @description Places a \code{<pre>} in the UI for monospace/printed output.
-#' @param outputId The output identifier.
+#' @param output_id The output identifier.
 #' @return An HTML tag.
 #' @rdname tabler-outputs
 #' @export
-verbatimTextOutput <- function(outputId) {
-  tags$pre(id = outputId, class = "tabler-out-verbatim bg-dark p-2 rounded")
+verbatim_text_output <- function(output_id) {
+  tags$pre(id = output_id, class = "tabler-out-verbatim bg-dark p-2 rounded")
 }
 
 #' @title UI Output Placeholder
 #' @description Places a tag (by default a \code{<div>}) whose inner HTML is
-#'   replaced wholesale by \code{renderUI} output.
-#' @param outputId The output identifier.
+#'   replaced wholesale by \code{render_ui} output.
+#' @param output_id The output identifier.
 #' @param container A tag-building function used to create the placeholder
 #'   element, e.g. \code{tags$h1}. Defaults to \code{\link{div}}.
 #' @param ... Additional arguments passed to \code{container}.
 #' @return An HTML tag.
 #' @rdname tabler-outputs
 #' @export
-uiOutput <- function(outputId, container = div, ...) {
-  container(id = outputId, class = "tabler-out-ui", ...)
+ui_output <- function(output_id, container = div, ...) {
+  container(id = output_id, class = "tabler-out-ui", ...)
 }
 
-#' @aliases htmlOutput
+#' @aliases html_output
 #' @rdname tabler-outputs
 #' @export
-htmlOutput <- uiOutput
+html_output <- ui_output
 
 # ---------------------------------------------------------------------------
 # Render functions (server side)
@@ -63,12 +63,12 @@ htmlOutput <- uiOutput
 
 #' @title Render Text
 #' @description Returns a character string that is HTML-escaped and injected as
-#'   the inner HTML of the matching \code{textOutput} placeholder.
+#'   the inner HTML of the matching \code{text_output} placeholder.
 #' @param expr Expression that evaluates to a character vector.
-#' @return A \code{tabler_render} object for use with \code{tablerApp}.
+#' @return A \code{tabler_render} object for use with \code{tabler_app}.
 #' @rdname tabler-outputs
 #' @export
-renderText <- function(expr) {
+render_text <- function(expr) {
   .render(substitute(expr), parent.frame(), "text")
 }
 
@@ -79,33 +79,33 @@ renderText <- function(expr) {
 #' @return A \code{tabler_render} object.
 #' @rdname tabler-outputs
 #' @export
-renderPrint <- function(expr) {
+render_print <- function(expr) {
   .render(substitute(expr), parent.frame(), "print")
 }
 
 #' @title Render UI
 #' @description Returns an HTML tag tree that replaces the inner HTML of the
-#'   matching \code{uiOutput} placeholder.
-#' @param expr Expression that returns a tag or tagList.
+#'   matching \code{ui_output} placeholder.
+#' @param expr Expression that returns a tag or tag_list.
 #' @return A \code{tabler_render} object.
 #' @rdname tabler-outputs
 #' @export
-renderUI <- function(expr) {
+render_ui <- function(expr) {
   .render(substitute(expr), parent.frame(), "ui")
 }
 
 #' @title Plot Output Placeholder
 #' @description Places a \code{<div>} in the UI whose content is replaced by a
-#'   base-R plot rendered server-side via \code{renderPlot}.
-#' @param outputId The output identifier.
+#'   base-R plot rendered server-side via \code{render_plot}.
+#' @param output_id The output identifier.
 #' @param width    CSS width string (default \code{"100\%"}).
 #' @param height   CSS height string (default \code{"400px"}).
 #' @return An HTML tag.
 #' @rdname tabler-outputs
 #' @export
-plotOutput <- function(outputId, width = "100%", height = "400px") {
+plot_output <- function(output_id, width = "100%", height = "400px") {
   div(
-    id = outputId,
+    id = output_id,
     class = "tabler-out-ui",
     style = paste0("width:", width, ";min-height:", height, ";")
   )
@@ -113,7 +113,7 @@ plotOutput <- function(outputId, width = "100%", height = "400px") {
 
 #' @title Render a Plot
 #' @description Evaluates \code{expr} inside an SVG graphics device, and
-#'   injects the resulting inline SVG into the matching \code{plotOutput}
+#'   injects the resulting inline SVG into the matching \code{plot_output}
 #'   placeholder.  Works with base-R graphics, \pkg{tinyplot}, \pkg{ggplot2},
 #'   \pkg{lattice}, and any other graphics system that honours the active
 #'   device.
@@ -123,7 +123,7 @@ plotOutput <- function(outputId, width = "100%", height = "400px") {
 #' @return A \code{tabler_render} object.
 #' @rdname tabler-outputs
 #' @export
-renderPlot <- function(expr, width = 800, height = 400) {
+render_plot <- function(expr, width = 800, height = 400) {
   structure(
     list(
       expr = substitute(expr), env = parent.frame(), type = "plot",
@@ -138,15 +138,15 @@ renderPlot <- function(expr, width = 800, height = 400) {
 #'   htmlwidget (e.g. from \pkg{d3po}, \pkg{leaflet}, \pkg{plotly}) rendered by
 #'   a matching server-side call.  The widget is served inside a sandboxed
 #'   \code{<iframe>} so its own JS/CSS cannot conflict with the page.
-#' @param outputId The output identifier (must match the server-side name).
+#' @param output_id The output identifier (must match the server-side name).
 #' @param width    CSS width string (default \code{"100\%"}).
 #' @param height   CSS height string (default \code{"400px"}).
 #' @return An HTML tag.
 #' @rdname tabler-outputs
 #' @export
-widgetOutput <- function(outputId, width = "100%", height = "400px") {
+widget_output <- function(output_id, width = "100%", height = "400px") {
   div(
-    id = outputId,
+    id = output_id,
     class = "tabler-out-ui",
     style = paste0("width:", width, ";min-height:", height, ";")
   )
@@ -155,7 +155,7 @@ widgetOutput <- function(outputId, width = "100%", height = "400px") {
 #' @title Render an HTML Widget
 #' @description Generic render function for any \pkg{htmlwidgets}-based widget.
 #'   Captures the expression \emph{without} evaluating it and stores the calling
-#'   environment, so \code{tablerApp} can evaluate it inside a reactive context
+#'   environment, so \code{tabler_app} can evaluate it inside a reactive context
 #'   without requiring a live Shiny session.  Reactive values referenced inside
 #'   \code{expr} are tracked automatically.
 #'
@@ -171,10 +171,10 @@ widgetOutput <- function(outputId, width = "100%", height = "400px") {
 #' @param expr Expression that returns an \code{htmlwidget} object (e.g.
 #'   \code{d3po(...)}, \code{leaflet(...)}).
 #' @return A zero-argument function with \code{tabler_expr} and
-#'   \code{tabler_env} attributes recognised by \code{tablerApp}.
+#'   \code{tabler_env} attributes recognised by \code{tabler_app}.
 #' @rdname tabler-outputs
 #' @export
-renderWidget <- function(expr) {
+render_widget <- function(expr) {
   e <- substitute(expr)
   env <- parent.frame()
   fn <- function() eval(e, env)
@@ -185,46 +185,46 @@ renderWidget <- function(expr) {
 
 #' @title Create a Download Handler
 #' @description Assigned to \code{output$id}, serves a file for download when
-#'   the browser requests the matching \code{\link{downloadButton}}'s link,
-#'   similar to \code{shiny::downloadHandler()}. Unlike other outputs, the
+#'   the browser requests the matching \code{\link{download_button}}'s link,
+#'   similar to \code{shiny::download_handler()}. Unlike other outputs, the
 #'   file is generated fresh (not cached/pushed) each time it is requested.
 #' @param filename A string, or a zero-argument function returning a string,
 #'   giving the filename offered to the browser (e.g. \code{"data.csv"}).
 #' @param content A one-argument function \code{function(file) {...}} that
 #'   writes the file's contents to the path given by \code{file}.
-#' @param contentType Optional MIME type string. If \code{NULL} (default), it
+#' @param content_type Optional MIME type string. If \code{NULL} (default), it
 #'   is guessed from the filename's extension.
-#' @return A \code{tabler_render} object for use with \code{tablerApp}.
+#' @return A \code{tabler_render} object for use with \code{tabler_app}.
 #' @rdname tabler-outputs
 #' @export
-downloadHandler <- function(filename, content, contentType = NULL) {
+download_handler <- function(filename, content, content_type = NULL) {
   structure(
-    list(filename = filename, content = content, contentType = contentType, type = "download"),
+    list(filename = filename, content = content, content_type = content_type, type = "download"),
     class = "tabler_render"
   )
 }
 
 #' @title Download Button/Link
 #' @description Creates a link that triggers a file download from the
-#'   matching \code{\link{downloadHandler}}, similar to
-#'   \code{shiny::downloadButton()}/\code{shiny::downloadLink()}.
-#' @param outputId The output identifier (must match the server-side
-#'   \code{downloadHandler} assigned to \code{output[[outputId]]}).
+#'   matching \code{\link{download_handler}}, similar to
+#'   \code{shiny::download_button()}/\code{shiny::download_link()}.
+#' @param output_id The output identifier (must match the server-side
+#'   \code{download_handler} assigned to \code{output[[output_id]]}).
 #' @param label Link/button text.
 #' @param class Additional CSS classes (default \code{"btn-primary"} for
-#'   \code{downloadButton}, none for \code{downloadLink}).
+#'   \code{download_button}, none for \code{download_link}).
 #' @param icon Optional icon name to prepend.
 #' @param ... Additional HTML attributes.
 #' @return An HTML tag.
 #' @rdname tabler-outputs
 #' @export
-downloadButton <- function(outputId, label = "Download", class = "btn-primary", icon = "download", ...) {
+download_button <- function(output_id, label = "Download", class = "btn-primary", icon = "download", ...) {
   icon_tag <- if (!is.null(icon)) tags$i(class = paste0("ti ti-", icon, " me-1"))
   tags$a(
-    id = outputId,
-    href = paste0("/downloads/", outputId),
+    id = output_id,
+    href = paste0("/downloads/", output_id),
     class = paste("btn", class),
-    `data-tabler-download` = outputId,
+    `data-tabler-download` = output_id,
     icon_tag,
     label,
     ...
@@ -233,13 +233,13 @@ downloadButton <- function(outputId, label = "Download", class = "btn-primary", 
 
 #' @rdname tabler-outputs
 #' @export
-downloadLink <- function(outputId, label = "Download", class = NULL, icon = NULL, ...) {
+download_link <- function(output_id, label = "Download", class = NULL, icon = NULL, ...) {
   icon_tag <- if (!is.null(icon)) tags$i(class = paste0("ti ti-", icon, " me-1"))
   tags$a(
-    id = outputId,
-    href = paste0("/downloads/", outputId),
+    id = output_id,
+    href = paste0("/downloads/", output_id),
     class = class,
-    `data-tabler-download` = outputId,
+    `data-tabler-download` = output_id,
     icon_tag,
     label,
     ...

@@ -23,10 +23,10 @@
 
 #' @title Add Tabler Dependencies
 #' @description Return link/script tags that load Tabler CSS/JS.  The httpuv
-#'   server in \code{\link{tablerApp}} serves these paths directly from the
+#'   server in \code{\link{tabler_app}} serves these paths directly from the
 #'   package's installed \code{inst/} directory.
 #' @param layout Layout type (for RTL-specific CSS).
-#' @return A tagList of \code{<link>} and \code{<script>} tags.
+#' @return A tag_list of \code{<link>} and \code{<script>} tags.
 #' @keywords internal
 #' @noRd
 add_deps <- function(layout = "default") {
@@ -36,7 +36,7 @@ add_deps <- function(layout = "default") {
   css_socials_file <- if (!is_rtl) "css/tabler-socials.min.css" else "css/tabler-socials.rtl.min.css"
   css_flags_file <- if (!is_rtl) "css/tabler-flags.min.css" else "css/tabler-flags.rtl.min.css"
 
-  tagList(
+  tag_list(
     tags$link(rel = "stylesheet", href = paste0("/tabler-1.4.0/", css_file)),
     tags$link(rel = "stylesheet", href = paste0("/tabler-1.4.0/", css_themes_file)),
     tags$link(rel = "stylesheet", href = paste0("/tabler-1.4.0/", css_socials_file)),

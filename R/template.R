@@ -67,6 +67,7 @@ pkg_template <- function(path = NULL, pkgname = NULL) {
   writeLines(lines, con = paste0(path, "/.Rbuildignore"))
 
   lines <- c(
+    "#' @title PACKAGE TITLE",
     "#' @import tabler",
     "#' @keywords internal",
     "\"_PACKAGE\""

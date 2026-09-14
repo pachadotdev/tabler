@@ -24,7 +24,7 @@ layout_vertical_transparent <- function(navbar, sidebar, body, footer, theme = "
       side_nav <- filter_theme_li(side_nav)
     }
   }
-  tagList(
+  tag_list(
     div(
       class = "page",
       side_nav,

@@ -127,7 +127,7 @@ layout_horizontal <- function(navbar, sidebar, body, footer, theme = "light", co
     header_tag <- top_nav
   }
 
-  tagList(
+  tag_list(
     div(
       class = "page",
       if (!is.null(header_tag)) header_tag,

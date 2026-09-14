@@ -34,7 +34,7 @@
 #'
 #' server <- function(input, output, session) {}
 #'
-#' # tablerApp(ui, server)
+#' # tabler_app(ui, server)
 #' @return HTML tag with dependencies attached
 #' @rdname tabler-page
 ## NOTE: exported names intentionally short (no `tabler_` prefix)
@@ -145,7 +145,7 @@ page <- function(
   }
   script_text <- paste(script_lines, collapse = ";")
 
-  # Build head and body separately and return a tagList so the httpuv
+  # Build head and body separately and return a tag_list so the httpuv
   # server can render the full page.
   dep_tags <- add_deps(layout = layout)
 
@@ -158,7 +158,7 @@ page <- function(
     # `title()` renders an <h2> element intended for page body headers and
     # accidentally added that to the head when used here.
     if (!is.null(title)) tags$title(title),
-    script(HTML(script_text))
+    script(html(script_text))
   )
 
   settings_panel <- if (isTRUE(show_theme_button)) {
@@ -173,7 +173,7 @@ page <- function(
   ))
 
   # Return head and body as a tag list with dependency link/script tags.
-  tagList(html_head, html_body)
+  tag_list(html_head, html_body)
 }
 
 #' @title Create a Topbar Header
@@ -200,7 +200,7 @@ topbar <- function(title = NULL, brand_image = NULL, ...) {
       if (!is.null(first_li$children) && length(first_li$children) > 0) {
         anchor <- first_li$children[[1]]
         if (inherits(anchor, "tabler.tag") && anchor$name == "a") {
-          li_items[[1]]$children[[1]] <- tagAppendAttributes(anchor, class = "active")
+          li_items[[1]]$children[[1]] <- tag_append_attributes(anchor, class = "active")
         }
       }
 
@@ -281,7 +281,7 @@ sidebar_menu <- function(..., title = NULL) {
       if (!is.null(first_item$children) && length(first_item$children) > 0) {
         anchor <- first_item$children[[1]]
         if (inherits(anchor, "tabler.tag") && anchor$name == "a") {
-          items[[1]]$children[[1]] <- tagAppendAttributes(anchor, class = "active")
+          items[[1]]$children[[1]] <- tag_append_attributes(anchor, class = "active")
         }
       }
     }
@@ -338,7 +338,7 @@ horizontal_menu <- function(...) {
       if (!is.null(first_item$children) && length(first_item$children) > 0) {
         anchor <- first_item$children[[1]]
         if (inherits(anchor, "tabler.tag") && anchor$name == "a") {
-          items[[1]]$children[[1]] <- tagAppendAttributes(anchor, class = "active")
+          items[[1]]$children[[1]] <- tag_append_attributes(anchor, class = "active")
         }
       }
     }
@@ -370,7 +370,7 @@ menu_item <- function(text, tab_name = NULL, icon = NULL, href = NULL, badge = N
       span(
         class = "nav-link-icon d-md-none d-lg-inline-block",
         # comment placeholder for upstream SVG
-        HTML(sprintf("<!-- Download SVG icon from http://tabler.io/icons/icon/%s -->", icon)),
+        html(sprintf("<!-- Download SVG icon from http://tabler.io/icons/icon/%s -->", icon)),
         icon(icon)
       ),
       " "
@@ -436,7 +436,7 @@ menu_dropdown <- function(text, icon = NULL, href = NULL, items = list()) {
     if (!is.null(icon)) {
       span(
         class = "nav-link-icon d-md-none d-lg-inline-block",
-        HTML(sprintf("<!-- Download SVG icon from http://tabler.io/icons/icon/%s -->", icon)),
+        html(sprintf("<!-- Download SVG icon from http://tabler.io/icons/icon/%s -->", icon)),
         icon(icon)
       )
     },
@@ -491,7 +491,7 @@ tab_items <- function(...) {
     first_item <- items[[1]]
     if (inherits(first_item, "tabler.tag")) {
       # Add 'show active' classes to first tab
-      items[[1]] <- tagAppendAttributes(first_item, class = "show active")
+      items[[1]] <- tag_append_attributes(first_item, class = "show active")
     }
   }
 
@@ -602,7 +602,7 @@ navbar_menu <- function(..., brand = NULL, show_theme_button = FALSE) {
         anchor <- li$children[[1]]
         if (inherits(anchor, "tabler.tag") && !is.null(anchor$attribs[["data-bs-toggle"]]) && anchor$attribs[["data-bs-toggle"]] == "dropdown") {
           # Overwrite dropdown attributes for sidebar context instead of appending
-          # (tagAppendAttributes concatenates values, producing "outside false" etc.)
+          # (tag_append_attributes concatenates values, producing "outside false" etc.)
           anchor$attribs[["data-bs-auto-close"]] <- "false"
           anchor$attribs[["aria-expanded"]] <- "true"
           li$children[[1]] <- anchor
@@ -613,7 +613,7 @@ navbar_menu <- function(..., brand = NULL, show_theme_button = FALSE) {
 
     aside(
       class = "navbar navbar-vertical",
-      HTML("<!-- BEGIN SIDEBAR -->"),
+      html("<!-- BEGIN SIDEBAR -->"),
       div(
         class = "container-fluid",
         # toggler
@@ -647,13 +647,13 @@ navbar_menu <- function(..., brand = NULL, show_theme_button = FALSE) {
           )
         )
       ),
-      HTML("<!-- END SIDEBAR -->")
+      html("<!-- END SIDEBAR -->")
     )
   } else {
     # standard header
     tags$header(
       class = "navbar navbar-expand-md",
-      HTML("<!-- BEGIN NAVBAR  -->"),
+      html("<!-- BEGIN NAVBAR  -->"),
       div(
         class = "collapse navbar-collapse",
         id = "navbar-menu",
@@ -692,7 +692,7 @@ navbar_menu <- function(..., brand = NULL, show_theme_button = FALSE) {
           )
         )
       ),
-      HTML("<!-- END NAVBAR  -->")
+      html("<!-- END NAVBAR  -->")
     )
   }
 }

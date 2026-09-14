@@ -121,7 +121,7 @@ layout_navbar_dark <- function(navbar, sidebar, body, footer, theme = "light", c
     header_tag <- top_nav
   }
 
-  tagList(
+  tag_list(
     div(
       class = "page",
       if (!is.null(header_tag)) header_tag,

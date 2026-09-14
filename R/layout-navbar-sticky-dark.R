@@ -115,11 +115,11 @@ layout_navbar_sticky_dark <- function(navbar, sidebar, body, footer, color = NUL
     # If the provided top_nav is already a tag, wrap in sticky-top and set dark theme
     header_tag <- div(
       class = "sticky-top",
-      tagAppendAttributes(top_nav, `data-bs-theme` = "dark")
+      tag_append_attributes(top_nav, `data-bs-theme` = "dark")
     )
   }
 
-  tagList(
+  tag_list(
     div(
       class = "page",
       if (!is.null(header_tag)) header_tag,

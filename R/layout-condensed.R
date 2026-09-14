@@ -163,7 +163,7 @@ layout_condensed <- function(navbar, sidebar, body, footer, theme = "light", col
     header_tag <- top_nav
   }
 
-  tagList(
+  tag_list(
     div(
       class = "page",
       # Top navbar

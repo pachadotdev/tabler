@@ -108,7 +108,7 @@ layout_combo <- function(navbar, sidebar, body, footer, theme = "light", color =
   }
 
   # Mirror the HTML structure in layout-combo.html: page contains aside (sidebar), header (top navbar), then page-wrapper
-  tagList(
+  tag_list(
     div(
       class = "page",
 

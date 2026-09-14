@@ -100,7 +100,7 @@ layout_boxed <- function(navbar, sidebar, body, footer, theme = "light", color =
 
   page_wrapper <- div(class = "page-wrapper", body, if (!is.null(footer)) footer)
 
-  tagList(
+  tag_list(
     div(
       class = "page",
       if (!is.null(side_nav)) side_nav,
