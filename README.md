@@ -140,7 +140,7 @@ examples cover:
 
 * [Password](https://github.com/pachadotdev/tabler/blob/main/inst/extdata/app-template/18-combo-layout-with-login.R) with user "SpaceMariner" and password "IDDQD"
 * [GitHub login](https://github.com/pachadotdev/tabler/blob/main/inst/extdata/app-template/16-combo-layout-with-login-github.R) with any GitHub username (can be adjusted to members in an organization, etc.)
-* [Database stored password](https://github.com/pachadotdev/tabler/blob/main/inst/extdata/app-template/17combo-layout-with-login-sqlite.R) (similar for PostgreSQL and others)
+* [Database stored password](https://github.com/pachadotdev/tabler/blob/main/inst/extdata/app-template/17-combo-layout-with-login-sqlite.R) (similar for PostgreSQL and others)
 
 <figure>
 <img style = "width:50%" src="./screenshots/combo-layout-sign-in.png" title="Sign in"
