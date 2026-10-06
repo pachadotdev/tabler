@@ -749,7 +749,7 @@ tabler_app <- function(ui, server, host = "127.0.0.1", port = 3000L,
   }
 
   # Start server ----
-  srv <- httpserver::startServer(host, as.integer(port), list(
+  srv <- httpserver::start_server(host, as.integer(port), list(
     call      = http_handler,
     onWSOpen  = ws_handler
   ))
@@ -764,7 +764,7 @@ tabler_app <- function(ui, server, host = "127.0.0.1", port = 3000L,
       # Catch interrupt as well: if Ctrl+C fired inside service() above, an
       # unhandled interrupt here would skip stopServer() and leave the port bound.
       tryCatch(httpserver::service(500L), error = function(e) NULL, interrupt = function(e) NULL)
-      httpserver::stopServer(srv)
+      httpserver::stop_server(srv)
     },
     add = TRUE
   )
